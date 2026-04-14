@@ -139,20 +139,22 @@ export function Facility() {
 /* ═══ TESTIMONIALS ═══ */
 export function Testimonials() {
   const q = [
-    ['"I feel safe here. This isn\'t just a workout — I\'m actually learning a real skill."', 'Member testimonial placeholder'],
-    ['"It\'s so clean. I never thought I could do combat sports until I walked in here."', 'Member testimonial placeholder'],
-    ['"The coaches are the real deal. National medalists teaching beginners with zero ego."', 'Member testimonial placeholder'],
+    ['"As a complete beginner, my experience has been absolutely amazing. The training is customized to suit each individual\'s strengths. The gym is top-notch with world-class trainers — the standards here have far exceeded my expectations."', 'Lochen Raj GM', 'Beginner · 1 month training'],
+    ['"I have seen myself transforming mentally and physically. Coaches teach you every tiny detail to correct your form and posture. Overall my experience is really good and I would highly recommend this place."', 'Hindesh Akash', 'Training since October 2025'],
+    ['"I run my own MMA gym and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level. Trust me, this gym is going to produce a lot of champions."', 'Raktim Singha', 'MMA Coach & Gym Owner'],
+    ['"One of the best things unique to this academy is their approach towards holistic development of an athlete. From the best coaches to the strength and conditioning program, every aspect is well planned to provide all the support an athlete would require."', 'Sai Anjana G', 'Athlete'],
   ];
   return (
     <Section bg="var(--cream)">
       <Reveal><Eyebrow>What members say</Eyebrow><Heading>Don&apos;t take our word for it.</Heading></Reveal>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16, marginTop: 20 }}>
-        {q.map(([quote, name], i) => (
+        {q.map(([quote, name, tag], i) => (
           <Reveal key={i} delay={i * 0.1}>
             <div style={{ background: 'var(--warm)', borderRadius: 8, padding: 28, border: '1px solid var(--border)', position: 'relative' }}>
               <div style={{ fontFamily: 'var(--font-serif)', fontSize: 48, color: 'var(--gold)', lineHeight: 1, position: 'absolute', top: 12, left: 20, opacity: 0.5 }}>&ldquo;</div>
               <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, color: 'var(--text)', lineHeight: 1.65, fontStyle: 'italic', margin: '12px 0 16px', position: 'relative' }}>{quote}</p>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-muted)', fontWeight: 500, margin: 0 }}>— {name}</p>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text)', fontWeight: 600, margin: '0 0 2px' }}>— {name}</p>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-muted)', fontWeight: 500, margin: 0 }}>{tag}</p>
             </div>
           </Reveal>
         ))}
