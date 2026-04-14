@@ -17,7 +17,7 @@ export default function Nav({ onCta }) {
     <>
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: scrolled ? 'rgba(254,248,238,0.97)' : 'rgba(254,248,238,0.85)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${scrolled ? 'var(--border)' : 'transparent'}`, transition: 'all 0.3s ease' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64, padding: '0 24px' }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 900, letterSpacing: 3, color: 'var(--rust)', textTransform: 'uppercase', cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Namma Combat</div>
+          <img src="/logo.png" alt="Namma Combat" style={{ height: 36, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
           <div className="nc-desk" style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             {links.map(([id, label]) => (
               <span key={id} onClick={() => go(id)} style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', cursor: 'pointer', fontWeight: 400 }}>{label}</span>

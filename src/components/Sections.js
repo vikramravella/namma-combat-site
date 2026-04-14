@@ -264,10 +264,10 @@ export function LeadForm({ isOpen, onClose }) {
 /* ═══ FOOTER ═══ */
 export function Footer() {
   return (
-    <footer style={{ background: 'var(--cream)', padding: '40px 24px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
-      <div style={{ width: 48, height: 3, background: 'var(--gold)', margin: '0 auto 16px', borderRadius: 2 }} />
+    <footer style={{ background: 'var(--cream)', padding: '48px 24px 32px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
+      <img src="/seal.png" alt="Namma Combat" style={{ width: 64, height: 64, margin: '0 auto 16px', display: 'block' }} />
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 10, letterSpacing: 3, color: 'var(--rust)', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 600 }}>Skill · Strength · Sanctuary</p>
-      <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, letterSpacing: 2.5, color: 'var(--text)', margin: '0 0 12px', fontWeight: 900, textTransform: 'uppercase' }}>Namma Combat</p>
+      <img src="/logo.png" alt="Namma Combat" style={{ height: 28, margin: '8px auto 16px', display: 'block' }} />
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-muted)', margin: 0 }}>© 2026 Namma Combat. All rights reserved.</p>
     </footer>
   );
