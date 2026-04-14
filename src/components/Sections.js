@@ -185,7 +185,7 @@ export function Contact({ onCta }) {
         </Reveal>
         <Reveal delay={0.2}>
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.5!2d77.6!3d12.93!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU1JzQ4LjAiTiA3N8KwMzYnMDAuMCJF!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.597900076407!2d77.62831337496758!3d12.933545587378346!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae153352767a41%3A0xe303dd18a38a359d!2sNamma%20Combat!5e0!3m2!1sen!2sin!4v1776177011564!5m2!1sen!2sin"
             width="100%" height="280" style={{ border: 0, borderRadius: 8 }} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
           />
         </Reveal>
