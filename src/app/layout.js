@@ -30,7 +30,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/seal.svg" />
         <meta name="theme-color" content="#FEF8EE" />
         <meta name="google-site-verification" content="REPLACE_WITH_YOUR_CODE" />
       </head>
