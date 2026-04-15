@@ -34,27 +34,21 @@ function InlineForm() {
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const submit = async () => {
+  const submit = () => {
     if (!fd.name || !fd.phone) return;
     setLoading(true);
-    try {
-      const nameParts = fd.name.trim().split(' ');
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '-';
-      const formData = new URLSearchParams();
-      formData.append('xnQsjsdp', 'dd151ac2102b27c5d10dbdfbcd1c3c5d05b2229d068a2aaccdfe7a7a15be2ee2');
-      formData.append('zc_gad', '');
-      formData.append('xmIwtLD', '45ab45fef4c199ebfa9fef4bae4a69c8282fdf696cbf881a58be220609780e0062fe8e3601e5e6d7157e4e688dbdb0b0');
-      formData.append('actionType', 'TGVhZHM=');
-      formData.append('returnURL', 'https://namma-combat-site.vercel.app/trial');
-      formData.append('First Name', firstName);
-      formData.append('Last Name', lastName);
-      formData.append('Phone', fd.phone);
-      if (fd.interest) formData.append('LEADCF14', fd.interest);
-      await fetch('https://crm.zoho.in/crm/WebToLeadForm', { method: 'POST', body: formData, mode: 'no-cors' });
-    } catch (e) { console.log('Form submitted:', fd); }
-    setDone(true);
-    setLoading(false);
+    const nameParts = fd.name.trim().split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '-';
+    let iframe = document.getElementById('zoho_iframe');
+    if (!iframe) { iframe = document.createElement('iframe'); iframe.id = 'zoho_iframe'; iframe.name = 'zoho_iframe'; iframe.style.display = 'none'; document.body.appendChild(iframe); }
+    const form = document.createElement('form');
+    form.method = 'POST'; form.action = 'https://crm.zoho.in/crm/WebToLeadForm'; form.target = 'zoho_iframe'; form.acceptCharset = 'UTF-8';
+    const fields = { 'xnQsjsdp': 'dd151ac2102b27c5d10dbdfbcd1c3c5d05b2229d068a2aaccdfe7a7a15be2ee2', 'zc_gad': '', 'xmIwtLD': '45ab45fef4c199ebfa9fef4bae4a69c8282fdf696cbf881a58be220609780e0062fe8e3601e5e6d7157e4e688dbdb0b0', 'actionType': 'TGVhZHM=', 'returnURL': 'https://namma-combat-site.vercel.app/trial', 'First Name': firstName, 'Last Name': lastName, 'Phone': fd.phone };
+    if (fd.interest) fields['LEADCF14'] = fd.interest;
+    Object.entries(fields).forEach(([key, value]) => { const input = document.createElement('input'); input.type = 'hidden'; input.name = key; input.value = value; form.appendChild(input); });
+    document.body.appendChild(form); form.submit(); document.body.removeChild(form);
+    setTimeout(() => { setDone(true); setLoading(false); }, 1000);
   };
 
   if (done) {
