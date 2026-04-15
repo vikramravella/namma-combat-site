@@ -230,14 +230,14 @@ export function LeadForm({ isOpen, onClose }) {
     form.acceptCharset = 'UTF-8';
 
     const fields = {
-      'xnQsjsdp': 'dd151ac2102b27c5d10dbdfbcd1c3c5d05b2229d068a2aaccdfe7a7a15be2ee2',
+      'xnQsjsdp': '99653fdcad80d5ed508b1cbc2fb6734aa3b626c08882e43a3d49ae09e4d44988',
       'zc_gad': '',
-      'xmIwtLD': '45ab45fef4c199ebfa9fef4bae4a69c8282fdf696cbf881a58be220609780e0062fe8e3601e5e6d7157e4e688dbdb0b0',
+      'xmIwtLD': 'e37346fd7bac7aecec0937355410b4181a99c63b0b93668a95d3dcd0791c2a00afffb244e0a9b96c06a13bb8c8bd5cab',
       'actionType': 'TGVhZHM=',
       'returnURL': 'https://namma-combat-site.vercel.app/trial',
       'First Name': firstName,
       'Last Name': lastName,
-      'Phone': fd.phone,
+      'Phone': fd.phone, 'Lead Source': 'Website',
     };
     if (fd.interest) fields['LEADCF14'] = fd.interest;
 
