@@ -1,28 +1,23 @@
+import { Inter } from 'next/font/google';
 import './globals.css';
+import Script from 'next/script';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Namma Combat | The Institute of Mastery — Bangalore\'s Premier Combat Sports & Conditioning Academy',
-  description: 'Elite combat sports training — Boxing, MMA, BJJ, Kickboxing, Wrestling, Judo — plus world-class Strength & Conditioning. National medalist coaches. Zero intimidation. Book your free trial at Koramangala, Bangalore.',
-  keywords: 'boxing bangalore, mma bangalore, bjj bangalore, kickboxing bangalore, combat sports koramangala, gym koramangala, strength and conditioning bangalore, martial arts bangalore, namma combat',
+  title: 'Namma Combat — Bangalore\'s Premier Combat Sports Academy',
+  description: 'Boxing, MMA, Kickboxing, Wrestling, Judo, Strength & Conditioning in Koramangala, Bangalore. National-level coaches. Free trial class. Book now.',
+  keywords: 'boxing bangalore, mma bangalore, kickboxing bangalore, wrestling bangalore, judo bangalore, combat sports koramangala, gym koramangala, strength conditioning bangalore, namma combat',
   openGraph: {
-    title: 'Namma Combat | The Institute of Mastery',
-    description: 'Bangalore\'s premier combat sports & conditioning academy. Elite coaching from national medalists. Zero intimidation. Book your free trial.',
+    title: 'Namma Combat — Skill | Strength | Sanctuary',
+    description: 'Bangalore\'s premier combat sports academy. Boxing, MMA, Kickboxing, Wrestling, Judo, S&C. National-level coaches. Book your free trial.',
     url: 'https://nammacombat.com',
     siteName: 'Namma Combat',
     locale: 'en_IN',
     type: 'website',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Namma Combat | The Institute of Mastery',
-    description: 'Bangalore\'s premier combat sports & conditioning academy. Book your free trial.',
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  alternates: {
-    canonical: 'https://nammacombat.com',
+  icons: {
+    icon: '/favicon.svg',
   },
 };
 
@@ -30,12 +25,21 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/seal.svg" />
-        <meta name="theme-color" content="#FEF8EE" />
-        <meta name="google-site-verification" content="REPLACE_WITH_YOUR_CODE" />
+        {/* Google Analytics GA4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-WLF5WZ9HRS"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-WLF5WZ9HRS');
+          `}
+        </Script>
       </head>
-      <body>{children}</body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

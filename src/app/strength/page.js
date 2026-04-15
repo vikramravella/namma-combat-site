@@ -33,7 +33,7 @@ export default function StrengthLanding() {
   const [v, setV] = useState(false);
   useEffect(() => { setV(true); }, []);
   const points = [
-    ['PG in Performance Science', "Co-founder Naeem — former professional Indian Hockey player, PG in Performance Science, 8+ years building athletes. This isn\'t generic personal training."],
+    ['MSc in Performance Coaching (Setanta College)', "Co-founder Naeem — former professional Indian Hockey player, MSc in Performance Coaching from Setanta College (the institution behind Premier League and NBA practitioners). 8+ years of science-based athlete development."],
     ['Animal Flow included', "Most gyms charge extra. At Namma Combat, Animal Flow is part of your membership — building mobility, coordination, and bodyweight strength."],
     ['Premium equipment', "Technogym Skill Row & Skill Ski, Hammer Strength air bikes, custom stainless steel squat racks. Equipment that elite facilities use."],
     ['Free postural assessment', "Worth ₹7,000 elsewhere — included with every membership. Your training plan is built on data, not guesswork."],
@@ -48,7 +48,7 @@ export default function StrengthLanding() {
           <div>
             <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 12px' }}>Strength &amp; conditioning in Bangalore</p>
             <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>Strength that<br/>serves a purpose.</h1>
-            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Not a regular gym. A structured S&amp;C program designed by a performance scientist with a PG in Performance Science. Animal Flow, HIIT, Olympic Lifting, and premium equipment.</p>
+            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Not a regular gym. A structured S&amp;C program designed by a performance coach with an MSc from Setanta College — the institution behind Premier League and NBA practitioners. Animal Flow, HIIT, Olympic Lifting, and premium equipment.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 36 }}>
               {points.map(([title, desc], i) => (<div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}><span style={{ fontFamily: T.fontBody, fontSize: 14, color: T.rust, fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span><div><p style={{ fontFamily: T.fontBody, fontSize: 14, fontWeight: 600, color: T.text, margin: '0 0 2px' }}>{title}</p><p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{desc}</p></div></div>))}
             </div>
