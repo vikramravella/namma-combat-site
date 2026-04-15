@@ -143,6 +143,8 @@ export function Testimonials() {
     ['"I have seen myself transforming mentally and physically. Coaches teach you every tiny detail to correct your form and posture. Overall my experience is really good and I would highly recommend this place."', 'Hindesh Akash', 'Training since October 2025'],
     ['"I run my own MMA gym and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level. Trust me, this gym is going to produce a lot of champions."', 'Raktim Singha', 'MMA Coach & Gym Owner'],
     ['"One of the best things unique to this academy is their approach towards holistic development of an athlete. From the best coaches to the strength and conditioning program, every aspect is well planned to provide all the support an athlete would require."', 'Sai Anjana G', 'Athlete'],
+    ['"I\'ve seen clear improvement in my kids\' stamina, technique, and mindset since joining. If you want professional combat training with world-class coaching, Namma Combat is easily the best in Koramangala."', 'Karthik Eashwar', 'Parent'],
+    ['"I have trained under multiple coaches across India but I can say that Coach Bhagyarajan is the best coach I am training under and I have started feeling very confident in just 2 months of training."', 'Shubham', 'Trained across India'],
   ];
   return (
     <Section bg="var(--cream)">
