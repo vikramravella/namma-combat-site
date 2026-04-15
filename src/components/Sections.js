@@ -139,24 +139,20 @@ export function Facility() {
 /* ═══ TESTIMONIALS ═══ */
 export function Testimonials() {
   const q = [
-    ['"As a complete beginner, my experience has been absolutely amazing. The training is customized to suit each individual\'s strengths. The gym is top-notch with world-class trainers — the standards here have far exceeded my expectations."', 'Lochen Raj GM', 'Beginner · 1 month training'],
-    ['"I have seen myself transforming mentally and physically. Coaches teach you every tiny detail to correct your form and posture. Overall my experience is really good and I would highly recommend this place."', 'Hindesh Akash', 'Training since October 2025'],
-    ['"I run my own MMA gym and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level. Trust me, this gym is going to produce a lot of champions."', 'Raktim Singha', 'MMA Coach & Gym Owner'],
-    ['"One of the best things unique to this academy is their approach towards holistic development of an athlete. From the best coaches to the strength and conditioning program, every aspect is well planned to provide all the support an athlete would require."', 'Sai Anjana G', 'Athlete'],
-    ['"I\'ve seen clear improvement in my kids\' stamina, technique, and mindset since joining. If you want professional combat training with world-class coaching, Namma Combat is easily the best in Koramangala."', 'Karthik Eashwar', 'Parent'],
-    ['"I have trained under multiple coaches across India but I can say that Coach Bhagyarajan is the best coach I am training under and I have started feeling very confident in just 2 months of training."', 'Shubham', 'Trained across India'],
+    ['"I feel safe here. This isn\'t just a workout — I\'m actually learning a real skill."', 'Member testimonial placeholder'],
+    ['"It\'s so clean. I never thought I could do combat sports until I walked in here."', 'Member testimonial placeholder'],
+    ['"The coaches are the real deal. National medalists teaching beginners with zero ego."', 'Member testimonial placeholder'],
   ];
   return (
     <Section bg="var(--cream)">
       <Reveal><Eyebrow>What members say</Eyebrow><Heading>Don&apos;t take our word for it.</Heading></Reveal>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16, marginTop: 20 }}>
-        {q.map(([quote, name, tag], i) => (
+        {q.map(([quote, name], i) => (
           <Reveal key={i} delay={i * 0.1}>
             <div style={{ background: 'var(--warm)', borderRadius: 8, padding: 28, border: '1px solid var(--border)', position: 'relative' }}>
               <div style={{ fontFamily: 'var(--font-serif)', fontSize: 48, color: 'var(--gold)', lineHeight: 1, position: 'absolute', top: 12, left: 20, opacity: 0.5 }}>&ldquo;</div>
               <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, color: 'var(--text)', lineHeight: 1.65, fontStyle: 'italic', margin: '12px 0 16px', position: 'relative' }}>{quote}</p>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text)', fontWeight: 600, margin: '0 0 2px' }}>— {name}</p>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-muted)', fontWeight: 500, margin: 0 }}>{tag}</p>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-muted)', fontWeight: 500, margin: 0 }}>— {name}</p>
             </div>
           </Reveal>
         ))}
@@ -200,63 +196,18 @@ export function Contact({ onCta }) {
 
 /* ═══ LEAD FORM ═══ */
 export function LeadForm({ isOpen, onClose }) {
-  const [fd, setFd] = useState({ name: '', phone: '', interest: '' });
+  const [fd, setFd] = useState({ name: '', phone: '', email: '', interest: '', notes: '' });
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   if (!isOpen) return null;
 
-  const submit = () => {
-    if (!fd.name || !fd.phone) return;
+  const submit = async () => {
     setLoading(true);
-    const nameParts = fd.name.trim().split(' ');
-    const firstName = nameParts[0] || '';
-    const lastName = nameParts.slice(1).join(' ') || '-';
-
-    // Create hidden iframe to receive form response
-    let iframe = document.getElementById('zoho_iframe');
-    if (!iframe) {
-      iframe = document.createElement('iframe');
-      iframe.id = 'zoho_iframe';
-      iframe.name = 'zoho_iframe';
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-    }
-
-    // Create and submit a real HTML form
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'https://crm.zoho.in/crm/WebToLeadForm';
-    form.target = 'zoho_iframe';
-    form.acceptCharset = 'UTF-8';
-
-    const fields = {
-      'xnQsjsdp': '99653fdcad80d5ed508b1cbc2fb6734aa3b626c08882e43a3d49ae09e4d44988',
-      'zc_gad': '',
-      'xmIwtLD': 'e37346fd7bac7aecec0937355410b4181a99c63b0b93668a95d3dcd0791c2a00afffb244e0a9b96c06a13bb8c8bd5cab',
-      'actionType': 'TGVhZHM=',
-      'returnURL': 'https://namma-combat-site.vercel.app/trial',
-      'First Name': firstName,
-      'Last Name': lastName,
-      'Phone': fd.phone, 'Lead Source': 'Website',
-    };
-    if (fd.interest) fields['LEADCF14'] = fd.interest;
-
-    Object.entries(fields).forEach(([key, value]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = value;
-      form.appendChild(input);
-    });
-
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
-
-    setTimeout(() => {
-      setDone(true);
-      setLoading(false);
-    }, 1000);
+    // TODO: Connect to Zoho CRM API
+    console.log('Lead:', fd);
+    await new Promise(r => setTimeout(r, 800));
+    setDone(true);
+    setLoading(false);
   };
 
   return (
@@ -269,7 +220,7 @@ export function LeadForm({ isOpen, onClose }) {
               <span style={{ fontSize: 22, color: 'var(--rust)' }}>✓</span>
             </div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--text)', margin: '0 0 8px', textTransform: 'uppercase' }}>We&apos;ll call you soon.</h3>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text-light)', lineHeight: 1.6 }}>Our team will call you soon to schedule your complimentary trial class.</p>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text-light)', lineHeight: 1.6 }}>Our team will reach out within 24 hours to schedule your complimentary trial class and postural assessment.</p>
             <PrimaryBtn onClick={onClose} style={{ marginTop: 20 }}>Done</PrimaryBtn>
           </div>
         ) : (
@@ -278,7 +229,7 @@ export function LeadForm({ isOpen, onClose }) {
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'var(--text)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 0.5 }}>Start your journey.</h3>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', margin: '0 0 24px' }}>We&apos;ll call to schedule your complimentary trial class.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {[{ k: 'name', l: 'Full name *', t: 'text', p: 'Your name' }, { k: 'phone', l: 'Phone number *', t: 'tel', p: '+91...' }].map(({ k, l, t, p }) => (
+              {[{ k: 'name', l: 'Full name', t: 'text', p: 'Your name' }, { k: 'phone', l: 'Phone number', t: 'tel', p: '+91...' }, { k: 'email', l: 'Email (optional)', t: 'email', p: 'you@example.com' }].map(({ k, l, t, p }) => (
                 <div key={k}>
                   <label style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 4 }}>{l}</label>
                   <input type={t} placeholder={p} value={fd[k]} onChange={e => setFd({ ...fd, [k]: e.target.value })}
@@ -290,8 +241,13 @@ export function LeadForm({ isOpen, onClose }) {
                 <select value={fd.interest} onChange={e => setFd({ ...fd, interest: e.target.value })}
                   style={{ width: '100%', padding: '12px 14px', fontFamily: 'var(--font-body)', fontSize: 14, border: '1px solid var(--border)', borderRadius: 6, background: '#fff', color: fd.interest ? 'var(--text)' : 'var(--text-muted)', outline: 'none', boxSizing: 'border-box' }}>
                   <option value="">Select...</option>
-                  {['Boxing','Kickboxing','MMA - Mixed Martial Arts','Wrestling','Judo','S&C - Strength & Conditioning','Animal Flow','Kids / Youth Program','Not sure — help me decide'].map(o => <option key={o} value={o}>{o}</option>)}
+                  {['Boxing','Kickboxing','MMA','Brazilian Jiu-Jitsu','Wrestling','Judo','Strength & Conditioning','Animal Flow','Kids / Youth Program','General Fitness','Not sure — help me decide'].map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
+              </div>
+              <div>
+                <label style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 4 }}>Anything else? (optional)</label>
+                <textarea placeholder="Your goals, questions..." value={fd.notes} onChange={e => setFd({ ...fd, notes: e.target.value })} rows={3}
+                  style={{ width: '100%', padding: '12px 14px', fontFamily: 'var(--font-body)', fontSize: 14, border: '1px solid var(--border)', borderRadius: 6, background: '#fff', color: 'var(--text)', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }} />
               </div>
               <PrimaryBtn onClick={submit} style={{ width: '100%', textAlign: 'center', marginTop: 4, padding: 16, opacity: loading ? 0.7 : 1 }}>
                 {loading ? 'Submitting...' : 'Submit — we\'ll call you'}
