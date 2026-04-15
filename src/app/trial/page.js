@@ -30,16 +30,29 @@ const PrimaryBtn = ({ children, onClick, style }) => {
 
 /* ═══ LEAD FORM (INLINE) ═══ */
 function InlineForm() {
-  const [fd, setFd] = useState({ name: '', phone: '', email: '', interest: 'General Trial', notes: '' });
+  const [fd, setFd] = useState({ name: '', phone: '', interest: 'General Trial' });
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const submit = async () => {
     if (!fd.name || !fd.phone) return;
     setLoading(true);
-    // TODO: Connect to Zoho CRM API
-    console.log('Lead:', fd);
-    await new Promise(r => setTimeout(r, 800));
+    try {
+      const nameParts = fd.name.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '-';
+      const formData = new URLSearchParams();
+      formData.append('xnQsjsdp', 'dd151ac2102b27c5d10dbdfbcd1c3c5d05b2229d068a2aaccdfe7a7a15be2ee2');
+      formData.append('zc_gad', '');
+      formData.append('xmIwtLD', '45ab45fef4c199ebfa9fef4bae4a69c8282fdf696cbf881a58be220609780e0062fe8e3601e5e6d7157e4e688dbdb0b0');
+      formData.append('actionType', 'TGVhZHM=');
+      formData.append('returnURL', 'https://namma-combat-site.vercel.app/trial');
+      formData.append('First Name', firstName);
+      formData.append('Last Name', lastName);
+      formData.append('Phone', fd.phone);
+      if (fd.interest) formData.append('LEADCF14', fd.interest);
+      await fetch('https://crm.zoho.in/crm/WebToLeadForm', { method: 'POST', body: formData, mode: 'no-cors' });
+    } catch (e) { console.log('Form submitted:', fd); }
     setDone(true);
     setLoading(false);
   };
@@ -62,7 +75,6 @@ function InlineForm() {
         {[
           { k: 'name', l: 'Full name *', t: 'text', p: 'Your name' },
           { k: 'phone', l: 'Phone number *', t: 'tel', p: '+91...' },
-          { k: 'email', l: 'Email (optional)', t: 'email', p: 'you@example.com' },
         ].map(({ k, l, t, p }) => (
           <div key={k}>
             <label style={{ fontFamily: T.fontBody, fontSize: 12, fontWeight: 600, color: T.text, display: 'block', marginBottom: 4 }}>{l}</label>
@@ -74,7 +86,7 @@ function InlineForm() {
           <label style={{ fontFamily: T.fontBody, fontSize: 12, fontWeight: 600, color: T.text, display: 'block', marginBottom: 4 }}>Interested in</label>
           <select value={fd.interest} onChange={e => setFd({ ...fd, interest: e.target.value })}
             style={{ width: '100%', padding: '13px 14px', fontFamily: T.fontBody, fontSize: 14, border: `1px solid ${T.border}`, borderRadius: 6, background: '#fff', color: T.text, outline: 'none', boxSizing: 'border-box' }}>
-            {['General Trial', 'Boxing', 'Kickboxing', 'MMA', 'Wrestling', 'Judo', 'Strength & Conditioning', 'Animal Flow', 'Kids / Youth Program', 'Not sure — help me decide'].map(o => <option key={o} value={o}>{o}</option>)}
+            {['General Trial', 'Boxing', 'Kickboxing', 'MMA - Mixed Martial Arts', 'Wrestling', 'Judo', 'S&C - Strength & Conditioning', 'Animal Flow', 'Kids / Youth Program', 'Not sure — help me decide'].map(o => <option key={o} value={o}>{o}</option>)}
           </select>
         </div>
         <PrimaryBtn onClick={submit} style={{ width: '100%', textAlign: 'center', padding: 16, marginTop: 4, opacity: loading ? 0.7 : 1 }}>

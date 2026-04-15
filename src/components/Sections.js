@@ -200,16 +200,38 @@ export function Contact({ onCta }) {
 
 /* ═══ LEAD FORM ═══ */
 export function LeadForm({ isOpen, onClose }) {
-  const [fd, setFd] = useState({ name: '', phone: '', email: '', interest: '', notes: '' });
+  const [fd, setFd] = useState({ name: '', phone: '', interest: '' });
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   if (!isOpen) return null;
 
   const submit = async () => {
+    if (!fd.name || !fd.phone) return;
     setLoading(true);
-    // TODO: Connect to Zoho CRM API
-    console.log('Lead:', fd);
-    await new Promise(r => setTimeout(r, 800));
+    try {
+      const nameParts = fd.name.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '-';
+
+      const formData = new URLSearchParams();
+      formData.append('xnQsjsdp', 'dd151ac2102b27c5d10dbdfbcd1c3c5d05b2229d068a2aaccdfe7a7a15be2ee2');
+      formData.append('zc_gad', '');
+      formData.append('xmIwtLD', '45ab45fef4c199ebfa9fef4bae4a69c8282fdf696cbf881a58be220609780e0062fe8e3601e5e6d7157e4e688dbdb0b0');
+      formData.append('actionType', 'TGVhZHM=');
+      formData.append('returnURL', 'https://namma-combat-site.vercel.app/trial');
+      formData.append('First Name', firstName);
+      formData.append('Last Name', lastName);
+      formData.append('Phone', fd.phone);
+      if (fd.interest) formData.append('LEADCF14', fd.interest);
+
+      await fetch('https://crm.zoho.in/crm/WebToLeadForm', {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors',
+      });
+    } catch (e) {
+      console.log('Form submitted (no-cors):', fd);
+    }
     setDone(true);
     setLoading(false);
   };
@@ -233,7 +255,7 @@ export function LeadForm({ isOpen, onClose }) {
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'var(--text)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 0.5 }}>Start your journey.</h3>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', margin: '0 0 24px' }}>We&apos;ll call to schedule your complimentary trial class.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {[{ k: 'name', l: 'Full name', t: 'text', p: 'Your name' }, { k: 'phone', l: 'Phone number', t: 'tel', p: '+91...' }, { k: 'email', l: 'Email (optional)', t: 'email', p: 'you@example.com' }].map(({ k, l, t, p }) => (
+              {[{ k: 'name', l: 'Full name *', t: 'text', p: 'Your name' }, { k: 'phone', l: 'Phone number *', t: 'tel', p: '+91...' }].map(({ k, l, t, p }) => (
                 <div key={k}>
                   <label style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 4 }}>{l}</label>
                   <input type={t} placeholder={p} value={fd[k]} onChange={e => setFd({ ...fd, [k]: e.target.value })}
@@ -245,13 +267,8 @@ export function LeadForm({ isOpen, onClose }) {
                 <select value={fd.interest} onChange={e => setFd({ ...fd, interest: e.target.value })}
                   style={{ width: '100%', padding: '12px 14px', fontFamily: 'var(--font-body)', fontSize: 14, border: '1px solid var(--border)', borderRadius: 6, background: '#fff', color: fd.interest ? 'var(--text)' : 'var(--text-muted)', outline: 'none', boxSizing: 'border-box' }}>
                   <option value="">Select...</option>
-                  {['Boxing','Kickboxing','MMA','Brazilian Jiu-Jitsu','Wrestling','Judo','Strength & Conditioning','Animal Flow','Kids / Youth Program','General Fitness','Not sure — help me decide'].map(o => <option key={o} value={o}>{o}</option>)}
+                  {['Boxing','Kickboxing','MMA - Mixed Martial Arts','Wrestling','Judo','S&C - Strength & Conditioning','Animal Flow','Kids / Youth Program','Not sure — help me decide'].map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
-              </div>
-              <div>
-                <label style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 4 }}>Anything else? (optional)</label>
-                <textarea placeholder="Your goals, questions..." value={fd.notes} onChange={e => setFd({ ...fd, notes: e.target.value })} rows={3}
-                  style={{ width: '100%', padding: '12px 14px', fontFamily: 'var(--font-body)', fontSize: 14, border: '1px solid var(--border)', borderRadius: 6, background: '#fff', color: 'var(--text)', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }} />
               </div>
               <PrimaryBtn onClick={submit} style={{ width: '100%', textAlign: 'center', marginTop: 4, padding: 16, opacity: loading ? 0.7 : 1 }}>
                 {loading ? 'Submitting...' : 'Submit — we\'ll call you'}
