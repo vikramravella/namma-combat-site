@@ -64,7 +64,7 @@ function InlineForm() {
           <span style={{ fontSize: 26, color: T.rust }}>✓</span>
         </div>
         <h3 style={{ fontFamily: T.fontDisplay, fontSize: 20, color: T.text, margin: '0 0 10px', textTransform: 'uppercase' }}>We&apos;ll call you soon.</h3>
-        <p style={{ fontFamily: T.fontBody, fontSize: 15, color: T.textLight, lineHeight: 1.6, maxWidth: 360, margin: '0 auto' }}>Our team will reach out within 24 hours to schedule your complimentary trial class and postural assessment.</p>
+        <p style={{ fontFamily: T.fontBody, fontSize: 15, color: T.textLight, lineHeight: 1.6, maxWidth: 360, margin: '0 auto' }}>Our team will call you soon to schedule your complimentary trial class.</p>
       </div>
     );
   }

@@ -246,7 +246,7 @@ export function LeadForm({ isOpen, onClose }) {
               <span style={{ fontSize: 22, color: 'var(--rust)' }}>✓</span>
             </div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--text)', margin: '0 0 8px', textTransform: 'uppercase' }}>We&apos;ll call you soon.</h3>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text-light)', lineHeight: 1.6 }}>Our team will reach out within 24 hours to schedule your complimentary trial class and postural assessment.</p>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text-light)', lineHeight: 1.6 }}>Our team will call you soon to schedule your complimentary trial class.</p>
             <PrimaryBtn onClick={onClose} style={{ marginTop: 20 }}>Done</PrimaryBtn>
           </div>
         ) : (
