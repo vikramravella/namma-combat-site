@@ -16,7 +16,7 @@ export default function Hero({ onCta }) {
           </Reveal>
           <Reveal delay={0.15}>
             <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(16px, 2.2vw, 21px)', color: 'var(--text-light)', lineHeight: 1.55, margin: '12px 0 0', fontStyle: 'italic', maxWidth: 480 }}>
-              Bangalore&apos;s premier combat sports &amp; conditioning academy.
+              India&apos;s premier combat sports &amp; conditioning academy.
             </p>
           </Reveal>
           <Reveal delay={0.2}>
