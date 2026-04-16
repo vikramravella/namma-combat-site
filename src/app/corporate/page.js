@@ -19,7 +19,7 @@ function InlineForm() {
     if (!iframe) { iframe = document.createElement('iframe'); iframe.id = 'zoho_iframe'; iframe.name = 'zoho_iframe'; iframe.style.display = 'none'; document.body.appendChild(iframe); }
     const form = document.createElement('form');
     form.method = 'POST'; form.action = 'https://crm.zoho.in/crm/WebToLeadForm'; form.target = 'zoho_iframe'; form.acceptCharset = 'UTF-8';
-    const fields = { 'xnQsjsdp': '99653fdcad80d5ed508b1cbc2fb6734aa3b626c08882e43a3d49ae09e4d44988', 'zc_gad': '', 'xmIwtLD': 'e37346fd7bac7aecec0937355410b4181a99c63b0b93668a95d3dcd0791c2a00afffb244e0a9b96c06a13bb8c8bd5cab', 'actionType': 'TGVhZHM=', 'returnURL': 'https://namma-combat-site.vercel.app/trial', 'First Name': firstName, 'Last Name': lastName, 'Phone': fd.phone, 'Lead Source': 'Website' };
+    const fields = { 'xnQsjsdp': '99653fdcad80d5ed508b1cbc2fb6734aa3b626c08882e43a3d49ae09e4d44988', 'zc_gad': '', 'xmIwtLD': 'e37346fd7bac7aecec0937355410b4181a99c63b0b93668a95d3dcd0791c2a00afffb244e0a9b96c06a13bb8c8bd5cab', 'actionType': 'TGVhZHM=', 'returnURL': 'https://academy.nammacombat.com/trial', 'First Name': firstName, 'Last Name': lastName, 'Phone': fd.phone, 'Lead Source': 'Website' };
     if (fd.interest) fields['LEADCF14'] = fd.interest;
     Object.entries(fields).forEach(([key, value]) => { const input = document.createElement('input'); input.type = 'hidden'; input.name = key; input.value = value; form.appendChild(input); });
     document.body.appendChild(form); form.submit(); document.body.removeChild(form);

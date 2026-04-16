@@ -11,7 +11,7 @@ export const metadata = {
   openGraph: {
     title: 'Namma Combat — Skill | Strength | Sanctuary',
     description: 'Bangalore\'s premier combat sports academy. Boxing, MMA, Kickboxing, Wrestling, Judo, S&C. National-level coaches. Book your free trial.',
-    url: 'https://nammacombat.com',
+    url: 'https://academy.nammacombat.com',
     siteName: 'Namma Combat',
     locale: 'en_IN',
     type: 'website',

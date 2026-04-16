@@ -234,7 +234,7 @@ export function LeadForm({ isOpen, onClose }) {
       'zc_gad': '',
       'xmIwtLD': 'e37346fd7bac7aecec0937355410b4181a99c63b0b93668a95d3dcd0791c2a00afffb244e0a9b96c06a13bb8c8bd5cab',
       'actionType': 'TGVhZHM=',
-      'returnURL': 'https://namma-combat-site.vercel.app/trial',
+      'returnURL': 'https://academy.nammacombat.com/trial',
       'First Name': firstName,
       'Last Name': lastName,
       'Phone': fd.phone, 'Lead Source': 'Website',
