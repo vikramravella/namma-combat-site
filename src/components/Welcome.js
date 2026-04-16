@@ -1,4 +1,3 @@
-'use client';
 import { Reveal, Section, Eyebrow, Heading, SubHeading, GoldBar, Body } from './ui';
 
 export default function Welcome() {
@@ -19,7 +18,7 @@ export default function Welcome() {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, marginTop: 8 }}>
         {[
-          ['The injury-free mandate', 'Safety is non-negotiable. Every beginner starts with a structured foundation phase — 8 S&C sessions and 4 combat classes — building the joint strength and conditioning that prevents injuries long-term.'],
+          ['The injury-free mandate', 'Safety is non-negotiable — at every level. Beginners build their foundation with structured S&C and combat sessions before intensity increases. Intermediate and advanced athletes train with proper load management, periodisation, and technique correction. Every training plan is designed to keep you performing for years, not weeks.'],
           ['Holistic unity', 'Combat sports and strength & conditioning under one roof. Animal Flow, HIIT, Olympic lifting — all included in your membership, not charged as extras like other places.'],
           ['Inclusive excellence', 'A premium, welcoming space for all ages, genders, and experience levels. From a mother learning self-defence to a pro fighter in camp.'],
         ].map(([t, d], i) => (
