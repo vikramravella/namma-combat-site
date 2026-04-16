@@ -34,10 +34,10 @@ export default function StrengthLanding() {
   useEffect(() => { setV(true); }, []);
   const points = [
     ['MSc in Performance Coaching (Setanta College)', "Co-founder Naeem — former professional Indian Hockey player, MSc in Performance Coaching from Setanta College (the institution behind Premier League and NBA practitioners). 8+ years of science-based athlete development."],
-    ['Animal Flow included', "Most gyms charge extra. At Namma Combat, Animal Flow is part of your membership — building mobility, coordination, and bodyweight strength."],
+    ['Animal Flow included', "Most places charge extra. At Namma Combat, Animal Flow is part of your membership — building mobility, coordination, and bodyweight strength."],
     ['Premium equipment', "Technogym Skill Row & Skill Ski, Hammer Strength air bikes, custom stainless steel squat racks. Equipment that elite facilities use."],
     ['Free postural assessment', "Worth ₹7,000 elsewhere — included with every membership. Your training plan is built on data, not guesswork."],
-    ['Open gym access', "Gold members can use all equipment anytime — come in during lunch for a Skill Row session, evening for structured S&C, weekends for Animal Flow."],
+    ['Open floor access', "Gold members can use all equipment anytime — come in during lunch for a Skill Row session, evening for structured S&C, weekends for Animal Flow."],
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>
@@ -48,7 +48,7 @@ export default function StrengthLanding() {
           <div>
             <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 12px' }}>Strength &amp; conditioning in Bangalore</p>
             <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>Strength that<br/>serves a purpose.</h1>
-            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Not a regular gym. A structured S&amp;C program designed by a performance coach with an MSc from Setanta College — the institution behind Premier League and NBA practitioners. Animal Flow, HIIT, Olympic Lifting, and premium equipment.</p>
+            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Not a regular fitness centre. A structured S&amp;C program designed by a performance coach with an MSc from Setanta College — the institution behind Premier League and NBA practitioners. Animal Flow, HIIT, Olympic Lifting, and premium equipment.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 36 }}>
               {points.map(([title, desc], i) => (<div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}><span style={{ fontFamily: T.fontBody, fontSize: 14, color: T.rust, fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span><div><p style={{ fontFamily: T.fontBody, fontSize: 14, fontWeight: 600, color: T.text, margin: '0 0 2px' }}>{title}</p><p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{desc}</p></div></div>))}
             </div>

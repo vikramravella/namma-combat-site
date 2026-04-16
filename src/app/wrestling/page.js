@@ -37,7 +37,7 @@ export default function WrestlingLanding() {
     ['Foundation of all combat sports', "Wrestling teaches balance, body control, takedowns, and ground positioning. Whether your goal is MMA, self-defence, or pure wrestling — this is where it starts."],
     ['Free postural assessment', "Worth ₹7,000 elsewhere — included with every membership. We assess your mobility, strength, and imbalances before training."],
     ['Structured beginner plan', "8 S&C classes + 4 combat sessions in your first 2 weeks. Your body gets conditioned before grappling intensity increases."],
-    ['Dedicated mat space', "Full wrestling mats, proper training area, and a facility designed for combat sports — not a corner of a commercial gym."],
+    ['Dedicated mat space', "Full wrestling mats, proper training area, and a facility designed for combat sports — not a corner of a commercial fitness centre."],
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>

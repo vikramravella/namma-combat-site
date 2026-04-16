@@ -35,7 +35,7 @@ export default function WomensLanding() {
   const points = [
     ['Women\'s S&C specialist on staff', "Coach Spoorthi — certified S&C coach specialising in women\'s health, functional movement, and running performance. Animal Flow Level 1 certified."],
     ['Real self-defence skills', "Boxing, Judo, wrestling techniques that actually work. Not a seminar — ongoing training that builds genuine confidence and capability."],
-    ['Safe, respectful environment', "Separate changing areas. 24/7 CCTV. BLS-certified staff. A culture built on respect — this is a sanctuary, not an intimidating gym."],
+    ['Safe, respectful environment', "Separate changing areas. 24/7 CCTV. BLS-certified staff. A culture built on respect — this is a sanctuary, not an intimidating fitness centre."],
     ['Free postural assessment', "Worth ₹7,000 elsewhere — included with every membership. Understand your body before you start training."],
     ['Structured beginner plan', "8 S&C classes + 4 combat sessions in your first 2 weeks. No one throws you into the deep end. Proper progression, always."],
   ];

@@ -37,7 +37,7 @@ export default function BoxingLanding() {
     ['Technique-first approach', "Boxing isn't about hitting hard — it's about hitting right. Footwork, guard, timing, distance management. We build boxers from the fundamentals up."],
     ['Free postural assessment', 'Worth ₹7,000 elsewhere — included with every membership. We assess your body before you throw a single punch.'],
     ['Structured beginner plan', '8 S&C classes + 4 combat sessions in your first 2 weeks. Your body gets prepared before intensity increases.'],
-    ['Premium facility', 'Heavy bags, speed bags, double-end bags, full-size ring. Yamaha sound system. Not a basement gym — a proper boxing academy.'],
+    ['Premium facility', 'Heavy bags, speed bags, double-end bags, full-size ring. Yamaha sound system. Not a commercial fitness centre — a proper boxing academy.'],
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>

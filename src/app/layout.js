@@ -5,13 +5,13 @@ import Script from 'next/script';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Namma Combat — Bangalore\'s Premier Combat Sports Academy',
-  description: 'Boxing, MMA, Kickboxing, Wrestling, Judo, Strength & Conditioning in Koramangala, Bangalore. National-level coaches. Free trial class. Book now.',
+  title: 'Namma Combat — India\'s Premier Combat Sports Academy',
+  description: 'India\'s premier combat sports academy in Koramangala, Bangalore. Boxing, MMA, Kickboxing, Wrestling, Judo, S&C. National-level coaches. Free trial class. Book now.',
   keywords: 'boxing bangalore, mma bangalore, kickboxing bangalore, wrestling bangalore, judo bangalore, combat sports koramangala, gym koramangala, strength conditioning bangalore, namma combat',
   openGraph: {
     title: 'Namma Combat — Skill | Strength | Sanctuary',
-    description: 'Bangalore\'s premier combat sports academy. Boxing, MMA, Kickboxing, Wrestling, Judo, S&C. National-level coaches. Book your free trial.',
-    url: 'https://academy.nammacombat.com',
+    description: 'India\'s premier combat sports academy. Boxing, MMA, Kickboxing, Wrestling, Judo, S&C. National-level coaches. Book your free trial.',
+    url: 'https://nammacombat.com',
     siteName: 'Namma Combat',
     locale: 'en_IN',
     type: 'website',

@@ -128,7 +128,7 @@ export default function TrialLanding() {
               </h1>
 
               <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>
-                Experience Bangalore&apos;s premier combat sports academy. One complimentary session — Boxing, MMA, Kickboxing, Wrestling, Judo, or Strength &amp; Conditioning. No commitment, no pressure.
+                Experience India&apos;s premier combat sports academy. One complimentary session — Boxing, MMA, Kickboxing, Wrestling, Judo, or Strength &amp; Conditioning. No commitment, no pressure.
               </p>
 
               {/* TRUST POINTS */}
@@ -154,9 +154,9 @@ export default function TrialLanding() {
               <div style={{ padding: '20px 24px', background: T.warm, borderRadius: 8, border: `1px solid ${T.border}` }}>
                 <div style={{ fontFamily: T.fontSerif, fontSize: 24, color: T.gold, lineHeight: 1, marginBottom: 4, opacity: 0.6 }}>&ldquo;</div>
                 <p style={{ fontFamily: T.fontSerif, fontSize: 15, color: T.text, lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 10px' }}>
-                  I run my own MMA gym and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level.
+                  I run my own MMA academy and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level.
                 </p>
-                <p style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, fontWeight: 600, margin: 0 }}>— Raktim Singha, MMA Coach &amp; Gym Owner</p>
+                <p style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, fontWeight: 600, margin: 0 }}>— Raktim Singha, MMA Coach &amp; Academy Owner</p>
               </div>
             </div>
 

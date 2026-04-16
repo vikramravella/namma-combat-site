@@ -34,7 +34,7 @@ export default function MMALanding() {
   useEffect(() => { setV(true); }, []);
   const points = [
     ['Learn from an MMA pioneer', "Head Coach Kantharaj Agasa — 12 professional MMA wins, national wrestler, NIS Patiala certified Judo coach, Gold medals in BJJ and Judo. This is where serious MMA training happens."],
-    ['Genuine sparring sessions', "One of the few gyms in Bangalore with dedicated, authentic MMA sparring sessions. Not just drills — real competitive training."],
+    ['Genuine sparring sessions', "One of the few academies in Bangalore with dedicated, authentic MMA sparring sessions. Not just drills — real competitive training."],
     ['Complete martial arts system', "Striking, wrestling, ground work, clinch — all taught as separate disciplines that come together in MMA. No shortcuts, no gaps."],
     ['Free postural assessment', "Worth ₹7,000 elsewhere — included with every membership. We understand your body before we build your game."],
     ['Structured beginner pathway', "8 S&C classes + 4 combat sessions in your first 2 weeks. Build strength and movement quality before MMA intensity."],
@@ -54,9 +54,9 @@ export default function MMALanding() {
             </div>
             <div style={{ padding: '20px 24px', background: T.warm, borderRadius: 8, border: `1px solid ${T.border}` }}>
               <div style={{ fontFamily: T.fontSerif, fontSize: 24, color: T.gold, lineHeight: 1, marginBottom: 4, opacity: 0.6 }}>&ldquo;</div>
-              <p style={{ fontFamily: T.fontSerif, fontSize: 15, color: T.text, lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 10px' }}>I run my own MMA gym and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level.</p>
+              <p style={{ fontFamily: T.fontSerif, fontSize: 15, color: T.text, lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 10px' }}>I run my own MMA academy and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level.</p>
               <p style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, fontWeight: 600, margin: '0 0 2px' }}>— Raktim Singha</p>
-              <p style={{ fontFamily: T.fontBody, fontSize: 11, color: T.textMuted, margin: 0 }}>MMA Coach &amp; Gym Owner</p>
+              <p style={{ fontFamily: T.fontBody, fontSize: 11, color: T.textMuted, margin: 0 }}>MMA Coach &amp; Academy Owner</p>
             </div>
           </div>
           <div style={{ position: 'sticky', top: 24, opacity: v?1:0, transform: v?'translateY(0)':'translateY(20px)', transition: 'all 0.6s ease 0.3s' }}>
