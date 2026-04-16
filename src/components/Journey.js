@@ -1,13 +1,12 @@
-'use client';
 import { Reveal, Section, Eyebrow, Heading, SubHeading, GoldBar, PrimaryBtn, PhotoBox } from './ui';
 
 export default function Journey({ onCta }) {
   const steps = [
-    { num: '01', title: 'Free trial class', label: 'Trial', desc: 'Experience the space, meet the coaches, feel the vibe. No commitment, no pressure. This is your first step — come see if we\'re the right fit for you.' },
-    { num: '02', title: 'Postural assessment', label: 'Assess', desc: 'Once you join, we begin with a comprehensive postural assessment — not a quick glance, but a thorough evaluation of your body\'s imbalances, strengths, and weaknesses. This is typically charged ₹7,000 elsewhere. It\'s included with every membership.' },
-    { num: '03', title: 'Your structured plan', label: 'Plan', desc: 'Based on your assessment and goals, we build you a personalised training plan. No guesswork, no generic programs. Your coaches know exactly where you\'re starting and where you need to go.' },
-    { num: '04', title: 'The foundation phase', label: 'Foundation', desc: 'For beginners, we strongly recommend starting with 8 S&C sessions including Animal Flow and 4 combat classes in your first two weeks. This builds the athletic base your body needs — joint strength, mobility, and conditioning — so you can train hard and stay injury-free for years. Most gyms skip this. We don\'t.' },
-    { num: '05', title: 'Train with freedom', label: 'Mastery', desc: 'Once your foundation is set, your membership is wide open. Box in the morning, wrestle in the evening, hit the Technogym Skill Row at lunch. Every 3 months, we reassess your posture, review your progress, and recalibrate your training. Your growth is tracked, not assumed.' },
+    { num: '01', title: 'Free trial class', label: 'Trial', desc: 'Whether you\'ve never thrown a punch or you\'re a seasoned fighter looking for a new home — your first session is on us. Experience the space, meet the coaches, and see how we train. No commitment, no pressure.' },
+    { num: '02', title: 'Postural assessment', label: 'Assess', desc: 'Once you join, every member — beginner or advanced — starts with a comprehensive postural assessment. We evaluate your body\'s imbalances, strengths, and movement patterns. This is typically charged ₹7,000 elsewhere. It\'s included with every membership. For experienced athletes, this reveals hidden imbalances that limit performance.' },
+    { num: '03', title: 'Your structured plan', label: 'Plan', desc: 'Based on your assessment, experience level, and goals, we build a personalised training plan. A complete beginner gets a different path than an intermediate practitioner looking to compete. No guesswork, no generic programs — your coaches know exactly where you are and where you need to go.' },
+    { num: '04', title: 'Train at your level', label: 'Train', desc: 'Beginners build their athletic base with S&C and Animal Flow before entering combat sessions — this prevents injuries and builds lasting foundations. Intermediate athletes sharpen technique and start structured sparring. Competitive fighters get match preparation, advanced drilling, and fight-ready conditioning. Every level trains with intention.' },
+    { num: '05', title: 'Grow without limits', label: 'Mastery', desc: 'Your membership is wide open. Box in the morning, wrestle in the evening, hit the Technogym Skill Row at lunch. Every 3 months, we reassess your posture, review your progress, and recalibrate your training. Whether you\'re chasing your first milestone or preparing for a national competition — your growth is tracked, not assumed.' },
   ];
 
   return (
@@ -15,7 +14,7 @@ export default function Journey({ onCta }) {
       <Reveal>
         <Eyebrow>Your journey</Eyebrow>
         <Heading>We don&apos;t just hand you a membership card.</Heading>
-        <SubHeading>From your first visit to your hundredth session, every step is structured.</SubHeading>
+        <SubHeading>From your first visit to your hundredth session — beginners, intermediate athletes, and competitive fighters all train with structure and purpose.</SubHeading>
         <GoldBar />
       </Reveal>
       <div style={{ marginTop: 8 }}>
