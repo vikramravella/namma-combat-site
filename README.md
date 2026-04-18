@@ -169,13 +169,13 @@ Two tables rendered on homepage + standalone `/schedule` redirects to section.
 - Elite S&C 9 AM + 8 PM
 
 **Coach assignments:**
-- Boxing → Coach Packiarajan
+- Boxing → Coach Rajan
 - Kickboxing → Coach Kantharaj
 - Jiu-Jitsu → Coach Kantharaj
 - Wrestling → Coach Venkatesh
 - Judo → Coach Kantharaj
 - MMA → Coach Kantharaj
-- Elite Combat/MMA → Kantharaj, Packiarajan & Venkatesh
+- Elite Combat/MMA → Kantharaj, Rajan & Venkatesh
 - All Sanctuary classes → Spoorthi or Manoj (either/or, not both)
 - Evening Elite S&C (8 PM) → Naeem, Spoorthi or Manoj
 
@@ -219,7 +219,7 @@ find src -type f -name "*.js" -exec sed -i '' "s|'xmIwtLD': '[a-f0-9]*'|'xmIwtLD
 
 1. **Kantharaj Agasa** — Co-founder & Head Coach (MMA, Judo, BJJ, Kickboxing, Jiu-Jitsu). Indian MMA Pioneer, 12 professional wins, NIS Patiala certified.
 2. **Mohammed Naeem** — Co-founder & Head of S&C. MSc Performance Coaching, Setanta College (institution behind Premier League + NBA practitioners).
-3. **Packiarajan (Raj Anna)** — Boxing Lead. NIS Patiala, national medalist, ex-army.
+3. **Rajan** — Boxing Lead. NIS Patiala, national medalist, ex-army.
 4. **Venkatesh A** — Wrestling Coach. NIS Patiala, Master's in Sports Management.
 5. **Spoorthi Nagraj** — S&C & Women's Health. Animal Flow L1 certified.
 6. **Manoj** — S&C coach. Bio pending (Vinod to add to Team section).
