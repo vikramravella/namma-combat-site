@@ -10,7 +10,14 @@ export default function Nav({ onCta }) {
     window.addEventListener('scroll', fn, { passive: true });
     return () => window.removeEventListener('scroll', fn);
   }, []);
-  const go = (id) => { setMob(false); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
+  const go = (id) => {
+    setMob(false);
+    const el = document.getElementById(id);
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
   const links = [['journey', 'Your Journey'], ['arena', 'The Arena'], ['sanctuary', 'The Sanctuary'], ['team', 'Team'], ['facility', 'Facility'], ['schedule', 'Schedule'], ['memberships', 'Memberships'], ['contact', 'Contact']];
   
   return (
