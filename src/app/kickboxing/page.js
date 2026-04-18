@@ -22,7 +22,7 @@ function InlineForm() {
     const fields = { 'xnQsjsdp': '7f86d216d021c558ef213f9f58487a514e5c706d4eaccbc094e22e3fc4da61d2', 'zc_gad': '', 'xmIwtLD': 'cca4493149c188cf2f9842a325ca8ef7dfc26845273560ab6e7d2278d5c513b5e7eb5e760e03184a103077105dc14280', 'actionType': 'TGVhZHM=', 'returnURL': 'https://nammacombat.com/trial', 'First Name': firstName, 'Last Name': lastName, 'Phone': fd.phone, 'Lead Source': 'Website' };
     if (fd.interest) fields['LEADCF14'] = fd.interest;
     Object.entries(fields).forEach(([key, value]) => { const input = document.createElement('input'); input.type = 'hidden'; input.name = key; input.value = value; form.appendChild(input); });
-    document.body.appendChild(form); form.submit(); document.body.removeChild(form);
+    document.body.appendChild(form); form.submit(); document.body.removeChild(form); if (typeof window !== 'undefined' && window.gtag) { window.gtag('event', 'generate_lead', { 'source': window.location.pathname, 'interest': fd.interest || 'general' }); }
     setTimeout(() => { setDone(true); setLoading(false); }, 1000);
   };
   if (done) return (<div style={{ textAlign: 'center', padding: '40px 20px' }}><div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(154,53,32,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}><span style={{ fontSize: 26, color: T.rust }}>✓</span></div><h3 style={{ fontFamily: T.fontDisplay, fontSize: 20, color: T.text, margin: '0 0 10px', textTransform: 'uppercase' }}>We&apos;ll call you soon.</h3><p style={{ fontFamily: T.fontBody, fontSize: 15, color: T.textLight, lineHeight: 1.6, maxWidth: 360, margin: '0 auto' }}>Our team will call you soon to schedule your complimentary trial class.</p></div>);
