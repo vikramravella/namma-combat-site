@@ -252,6 +252,7 @@ export function LeadForm({ isOpen, onClose }) {
     document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
+    if (typeof window !== 'undefined' && window.gtag) { window.gtag('event', 'generate_lead', { 'source': window.location.pathname, 'interest': fd.interest || 'general' }); }
 
     setTimeout(() => {
       setDone(true);
