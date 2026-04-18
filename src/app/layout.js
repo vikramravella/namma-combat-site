@@ -15,7 +15,22 @@ export const metadata = {
     siteName: 'Namma Combat',
     locale: 'en_IN',
     type: 'website',
+    images: [
+      {
+        url: 'https://nammacombat.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Namma Combat — Skill, Strength, Sanctuary',
+      },
+    ],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Namma Combat — Skill | Strength | Sanctuary',
+    description: 'India\'s premier combat sports academy. Free trial available.',
+    images: ['https://nammacombat.com/og-image.png'],
+  },
+  metadataBase: new URL('https://nammacombat.com'),
   icons: {
     icon: '/favicon.svg',
   },
