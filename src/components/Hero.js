@@ -3,7 +3,7 @@ import { Reveal, PrimaryBtn, GhostBtn, PhotoBox } from './ui';
 
 export default function Hero({ onCta }) {
   return (
-    <section className="nc-hero" style={{ background: 'var(--cream)', paddingTop: 32 }}>
+    <section className="nc-hero" style={{ background: 'var(--cream)', paddingTop: 56 }}>
       <div className="nc-hero-grid" style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 24px 0', display: 'grid', gridTemplateColumns: '1fr', gap: 40 }}>
         <div style={{ maxWidth: 620 }}>
           <Reveal>
