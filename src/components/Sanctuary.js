@@ -31,7 +31,7 @@ export default function Sanctuary() {
   return (
     <Section id="sanctuary" bg="var(--warm)">
       <Reveal><Eyebrow>The sanctuary · strength floor</Eyebrow><Heading>Build the engine.</Heading>
-        <Body style={{ maxWidth: 560 }}>Technogym Skill Row, Skill Ski, Hammer Strength air bikes, custom stainless steel squat racks — equipment you won&apos;t find in a typical combat gym. Open gym access included with every membership.</Body>
+        <Body style={{ maxWidth: 560 }}>Technogym Skill Row, Skill Ski, Hammer Strength air bikes, custom stainless steel squat racks — equipment you won&apos;t find in a typical combat academy. Open floor access included with every membership.</Body>
       </Reveal>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
         {d.map(([n, t], i) => <DCard key={n} name={n} tagline={t} delay={i * 0.05} />)}
