@@ -27,7 +27,7 @@ export function Team() {
   const coaches = [
     ['Kantharaj Agasa', 'Co-founder & Head Coach', 'Indian MMA Pioneer with 12 professional wins. National-level wrestler. NIS Patiala certified Judo coach. Gold medals in BJJ and Judo.'],
     ['Mohammed Naeem', 'Co-founder & Head of S&C', 'Former professional Indian Hockey player. MSc in Performance Coaching (Setanta College). 8+ years building athletes. Known for sustainable, elite transformations.'],
-    ['Packiarajan', 'Boxing Lead', 'NIS Patiala certified Boxing Coach. Multiple national Gold + Best Boxer awards. Former international competitor with decades of ring experience.'],
+    ['Rajan', 'Boxing Lead', 'NIS Patiala certified Boxing Coach. Multiple national Gold + Best Boxer awards. Former international competitor with decades of ring experience.'],
     ['Venkatesh A', 'Wrestling Coach', 'NIS Patiala certified Wrestling Coach. Master\'s in Sports Management. University-level coaching and certified wrestling official.'],
     ['Spoorthi Nagraj', 'S&C & Women\'s Health', 'Certified S&C Coach specialising in women\'s health, functional movement, and running performance. Animal Flow Level 1 certified.'],
   ];

@@ -37,13 +37,13 @@ const sanctuarySchedule = {
 };
 
 const combatCoach = {
-  'Boxing': 'Coach Packiarajan',
+  'Boxing': 'Coach Rajan',
   'Kickboxing': 'Coach Kantharaj',
   'Jiu-Jitsu': 'Coach Kantharaj',
   'Wrestling': 'Coach Venkatesh',
   'Judo': 'Coach Kantharaj',
   'MMA': 'Coach Kantharaj',
-  'Elite Combat/MMA': 'Kantharaj, Packiarajan & Venkatesh',
+  'Elite Combat/MMA': 'Kantharaj, Rajan & Venkatesh',
   'Open Mat': 'Open training',
   'Workshop': 'Guest coaches',
 };
