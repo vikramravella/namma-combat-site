@@ -47,3 +47,10 @@ body {
   background: rgba(154, 53, 32, 0.15);
   color: var(--text);
 }
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .nc-scroll-hint { display: block !important; }
+  /* Reduce horizontal padding on phones for better screen use */
+  section > div { padding-left: 16px !important; padding-right: 16px !important; }
+}

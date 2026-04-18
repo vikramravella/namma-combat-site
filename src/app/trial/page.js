@@ -72,7 +72,7 @@ function InlineForm() {
         ].map(({ k, l, t, p }) => (
           <div key={k}>
             <label style={{ fontFamily: T.fontBody, fontSize: 12, fontWeight: 600, color: T.text, display: 'block', marginBottom: 4 }}>{l}</label>
-            <input type={t} placeholder={p} value={fd[k]} onChange={e => setFd({ ...fd, [k]: e.target.value })}
+            <input type={t} inputMode={t === 'tel' ? 'tel' : 'text'} autoComplete={t === 'tel' ? 'tel' : k === 'name' ? 'name' : 'off'} placeholder={p} value={fd[k]} onChange={e => setFd({ ...fd, [k]: e.target.value })}
               style={{ width: '100%', padding: '13px 14px', fontFamily: T.fontBody, fontSize: 14, border: `1px solid ${T.border}`, borderRadius: 6, background: '#fff', color: T.text, outline: 'none', boxSizing: 'border-box' }} />
           </div>
         ))}

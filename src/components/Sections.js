@@ -281,7 +281,7 @@ export function LeadForm({ isOpen, onClose }) {
               {[{ k: 'name', l: 'Full name *', t: 'text', p: 'Your name' }, { k: 'phone', l: 'Phone number *', t: 'tel', p: '+91...' }].map(({ k, l, t, p }) => (
                 <div key={k}>
                   <label style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 4 }}>{l}</label>
-                  <input type={t} placeholder={p} value={fd[k]} onChange={e => setFd({ ...fd, [k]: e.target.value })}
+                  <input type={t} inputMode={t === 'tel' ? 'tel' : 'text'} autoComplete={t === 'tel' ? 'tel' : k === 'name' ? 'name' : 'off'} placeholder={p} value={fd[k]} onChange={e => setFd({ ...fd, [k]: e.target.value })}
                     style={{ width: '100%', padding: '12px 14px', fontFamily: 'var(--font-body)', fontSize: 14, border: '1px solid var(--border)', borderRadius: 6, background: '#fff', color: 'var(--text)', outline: 'none', boxSizing: 'border-box' }} />
                 </div>
               ))}

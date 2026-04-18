@@ -31,10 +31,13 @@ export default function Nav({ onCta }) {
             ))}
             <PrimaryBtn onClick={onCta} style={{ padding: '10px 22px', fontSize: 12 }}>Book free trial</PrimaryBtn>
           </div>
-          <div className="nc-mob-btn" onClick={() => setMob(!mob)} style={{ display: 'none', cursor: 'pointer', flexDirection: 'column', gap: 5, width: 28, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+          <div className="nc-mob-actions" style={{ display: 'none', alignItems: 'center', gap: 12 }}>
+            <button onClick={onCta} style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, background: 'var(--rust)', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 0.3 }}>Book trial</button>
+            <div className="nc-mob-btn" onClick={() => setMob(!mob)} style={{ cursor: 'pointer', flexDirection: 'column', gap: 5, width: 28, height: 28, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <span style={{ width: 18, height: 2, background: 'var(--text)', transition: 'all 0.3s', transform: mob ? 'rotate(45deg) translateY(3.5px)' : 'none' }} />
             <span style={{ width: 18, height: 2, background: 'var(--text)', transition: 'all 0.3s', opacity: mob ? 0 : 1 }} />
             <span style={{ width: 18, height: 2, background: 'var(--text)', transition: 'all 0.3s', transform: mob ? 'rotate(-45deg) translateY(-3.5px)' : 'none' }} />
+            </div>
           </div>
         </div>
         {mob && (
@@ -47,7 +50,7 @@ export default function Nav({ onCta }) {
         )}
       </nav>
       <style jsx global>{`
-        @media(max-width:768px){.nc-desk{display:none!important}.nc-mob-btn{display:flex!important}}
+        @media(max-width:768px){.nc-desk{display:none!important}.nc-mob-actions{display:flex!important}}
       `}</style>
     </>
   );
