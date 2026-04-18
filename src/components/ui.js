@@ -30,23 +30,23 @@ export function Reveal({ children, delay = 0, style = {} }) {
 
 /* ─── Typography ─── */
 export function GoldBar() {
-  return <div style={{ width: 48, height: 3, background: 'var(--gold)', margin: '14px 0 20px', borderRadius: 2 }} />;
+  return <div style={{ width: 48, height: 3, background: 'var(--gold)', margin: '10px 0 14px', borderRadius: 2 }} />;
 }
 
 export function Eyebrow({ children, style = {} }) {
-  return <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: 3, color: 'var(--rust)', textTransform: 'uppercase', fontWeight: 600, margin: '0 0 8px', ...style }}>{children}</p>;
+  return <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: 3, color: 'var(--rust)', textTransform: 'uppercase', fontWeight: 600, margin: '0 0 6px', ...style }}>{children}</p>;
 }
 
 export function Heading({ children, style = {} }) {
-  return <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 4vw, 38px)', fontWeight: 900, color: 'var(--text)', lineHeight: 1.15, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1, ...style }}>{children}</h2>;
+  return <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 4vw, 38px)', fontWeight: 900, color: 'var(--text)', lineHeight: 1.15, margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 1, ...style }}>{children}</h2>;
 }
 
 export function SubHeading({ children, style = {} }) {
-  return <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(16px, 2.5vw, 20px)', color: 'var(--text-light)', lineHeight: 1.5, margin: '0 0 8px', fontStyle: 'italic', fontWeight: 400, ...style }}>{children}</p>;
+  return <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(16px, 2.5vw, 20px)', color: 'var(--text-light)', lineHeight: 1.5, margin: '0 0 6px', fontStyle: 'italic', fontWeight: 400, ...style }}>{children}</p>;
 }
 
 export function Body({ children, style = {} }) {
-  return <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--text-light)', lineHeight: 1.7, margin: '0 0 20px', ...style }}>{children}</p>;
+  return <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--text-light)', lineHeight: 1.7, margin: '0 0 14px', ...style }}>{children}</p>;
 }
 
 /* ─── Buttons ─── */
@@ -76,7 +76,7 @@ export function PhotoBox({ label, h = 200, style = {} }) {
     }}>
       <div style={{ position: 'absolute', inset: 0, opacity: 0.04, backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(227,199,104,0.5) 20px, rgba(227,199,104,0.5) 21px)' }} />
       <div style={{ position: 'relative', zIndex: 1 }}>
-        {label && <p style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(16px, 3vw, 28px)', color: 'rgba(227,199,104,0.2)', textTransform: 'uppercase', letterSpacing: 3, margin: '0 0 8px', fontWeight: 900 }}>{label}</p>}
+        {label && <p style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(16px, 3vw, 28px)', color: 'rgba(227,199,104,0.2)', textTransform: 'uppercase', letterSpacing: 3, margin: '0 0 6px', fontWeight: 900 }}>{label}</p>}
         <div style={{ width: 32, height: 1, background: 'rgba(227,199,104,0.2)', margin: '0 auto' }} />
       </div>
     </div>
@@ -86,7 +86,7 @@ export function PhotoBox({ label, h = 200, style = {} }) {
 /* ─── Section Wrapper ─── */
 export function Section({ children, id, bg = 'var(--cream)', style = {} }) {
   return (
-    <section id={id} className="nc-section" style={{ background: bg, padding: '56px 24px', ...style }}>
+    <section id={id} className="nc-section" style={{ background: bg, padding: '40px 24px', ...style }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>{children}</div>
     </section>
   );
