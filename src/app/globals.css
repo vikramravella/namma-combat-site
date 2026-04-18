@@ -51,6 +51,9 @@ body {
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .nc-scroll-hint { display: block !important; }
-  /* Reduce horizontal padding on phones for better screen use */
-  section > div { padding-left: 16px !important; padding-right: 16px !important; }
+  .nc-section { padding: 36px 16px !important; }
+  .nc-hero { padding-top: 24px !important; }
+  .nc-hero > div { padding: 16px 16px 0 !important; gap: 24px !important; }
+  .nc-footer { padding: 32px 16px 24px !important; }
+  .nc-landing-grid { gap: 24px !important; }
 }

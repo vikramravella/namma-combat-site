@@ -110,14 +110,14 @@ export default function TrialLanding() {
       <div style={{ minHeight: '100vh', background: T.cream }}>
 
         {/* ═══ TOP BAR ═══ */}
-        <div style={{ background: T.cream, padding: '16px 24px', borderBottom: `1px solid ${T.border}`, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ background: T.cream, padding: '14px 24px', borderBottom: `1px solid ${T.border}`, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <img src="/logo.svg" alt="Namma Combat" style={{ height: 28 }} />
         </div>
 
         {/* ═══ HERO ═══ */}
-        <div style={{ padding: '48px 24px 40px', maxWidth: 960, margin: '0 auto', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
+        <div style={{ padding: '32px 16px 28px', maxWidth: 960, margin: '0 auto', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 48, alignItems: 'start' }}>
+          <div className="nc-landing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 48, alignItems: 'start' }}>
 
             {/* LEFT — MESSAGE */}
             <div>

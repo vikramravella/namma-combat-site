@@ -86,7 +86,7 @@ export function PhotoBox({ label, h = 200, style = {} }) {
 /* ─── Section Wrapper ─── */
 export function Section({ children, id, bg = 'var(--cream)', style = {} }) {
   return (
-    <section id={id} style={{ background: bg, padding: '80px 24px', ...style }}>
+    <section id={id} className="nc-section" style={{ background: bg, padding: '56px 24px', ...style }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>{children}</div>
     </section>
   );

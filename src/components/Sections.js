@@ -308,7 +308,7 @@ export function LeadForm({ isOpen, onClose }) {
 /* ═══ FOOTER ═══ */
 export function Footer() {
   return (
-    <footer style={{ background: 'var(--cream)', padding: '48px 24px 32px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
+    <footer className="nc-footer" style={{ background: 'var(--cream)', padding: '40px 24px 28px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
       <img src="/seal.svg" alt="Namma Combat" style={{ width: 64, height: 64, margin: '0 auto 16px', display: 'block' }} />
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 10, letterSpacing: 3, color: 'var(--rust)', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 600 }}>Skill · Strength · Sanctuary</p>
       <img src="/logo.svg" alt="Namma Combat" style={{ height: 28, margin: '8px auto 16px', display: 'block' }} />
