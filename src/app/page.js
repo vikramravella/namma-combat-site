@@ -22,11 +22,11 @@ export default function Home() {
       <Journey onCta={open} />
       <Arena />
       <Sanctuary />
-      <Schedule />
       <Kids />
       <Team />
-      <Memberships onCta={open} />
       <Facility />
+      <Schedule />
+      <Memberships onCta={open} />
       <Testimonials />
       <Contact onCta={open} />
       <Footer />

@@ -49,9 +49,9 @@ const combatCoach = {
 };
 
 const sanctuaryCoach = (className, time) => {
-  if (className === 'Elite S&C' && time === '20:00') return 'Naeem, Spoorthi & Manoj';
+  if (className === 'Elite S&C' && time === '20:00') return 'Naeem, Spoorthi or Manoj';
   if (className === 'Workshop') return 'Guest coaches';
-  return 'Spoorthi & Manoj';
+  return 'Spoorthi or Manoj';
 };
 
 const isElite = (v) => v && v.toLowerCase().includes('elite');
@@ -134,7 +134,6 @@ export default function Schedule() {
               <li><strong>Elite classes and Open Mat</strong> are 90-minute sessions.</li>
               <li><strong>Saturday Elite classes</strong> are held outdoors.</li>
               <li><strong>Workshops</strong> are not part of any membership. Ask us for details.</li>
-              <li><strong>Kids and adults</strong> train together. No separate junior programs.</li>
               <li><strong>Schedule may adjust</strong> for holidays and special events — WhatsApp us to confirm.</li>
             </ul>
           </div>

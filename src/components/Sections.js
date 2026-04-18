@@ -117,7 +117,7 @@ export function Facility() {
     ['Safety first', 'Separate changing areas for men and women. 24/7 CCTV. Fire safety compliant.'],
   ];
   return (
-    <Section bg="var(--warm)">
+    <Section id="facility" bg="var(--warm)">
       <Reveal><Eyebrow>Uncompromising standards</Eyebrow><Heading>Your environment matters.</Heading>
         <Body style={{ maxWidth: 540 }}>This is a sanctuary, not a dungeon. Premium infrastructure, pristine hygiene, and a space where a corporate executive feels as comfortable as a pro athlete.</Body>
       </Reveal>
