@@ -6,7 +6,7 @@ const T = { rust: '#9A3520', gold: '#E3C768', cream: '#FEF8EE', warm: '#F5F0E8',
 const PrimaryBtn = ({ children, onClick, style }) => { const [h, setH] = useState(false); return (<button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)} style={{ fontFamily: T.fontBody, fontSize: 14, fontWeight: 600, color: T.cream, background: h ? '#7A2A18' : T.rust, border: 'none', padding: '14px 32px', borderRadius: 4, cursor: 'pointer', transition: 'all 0.2s', letterSpacing: 0.5, ...style }}>{children}</button>); };
 
 function InlineForm() {
-  const [fd, setFd] = useState({ name: '', phone: '', interest: 'Strength & Conditioning', notes: '' });
+  const [fd, setFd] = useState({ name: '', phone: '', interest: 'S&C - Strength & Conditioning', notes: '' });
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const submit = () => {

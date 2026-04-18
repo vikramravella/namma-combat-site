@@ -6,7 +6,7 @@ const T = { rust: '#9A3520', gold: '#E3C768', cream: '#FEF8EE', warm: '#F5F0E8',
 const PrimaryBtn = ({ children, onClick, style }) => { const [h, setH] = useState(false); return (<button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)} style={{ fontFamily: T.fontBody, fontSize: 14, fontWeight: 600, color: T.cream, background: h ? '#7A2A18' : T.rust, border: 'none', padding: '14px 32px', borderRadius: 4, cursor: 'pointer', transition: 'all 0.2s', letterSpacing: 0.5, ...style }}>{children}</button>); };
 
 function InlineForm() {
-  const [fd, setFd] = useState({ name: '', phone: '', interest: 'MMA - Mixed Martial Arts', notes: '' });
+  const [fd, setFd] = useState({ name: '', phone: '', interest: 'Animal Flow', notes: '' });
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const submit = () => {
@@ -29,15 +29,15 @@ function InlineForm() {
   return (<div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>{[{ k: 'name', l: 'Full name *', t: 'text', p: 'Your name' }, { k: 'phone', l: 'Phone number *', t: 'tel', p: '+91...' }].map(({ k, l, t, p }) => (<div key={k}><label style={{ fontFamily: T.fontBody, fontSize: 12, fontWeight: 600, color: T.text, display: 'block', marginBottom: 4 }}>{l}</label><input type={t} placeholder={p} value={fd[k]} onChange={e => setFd({ ...fd, [k]: e.target.value })} style={{ width: '100%', padding: '13px 14px', fontFamily: T.fontBody, fontSize: 14, border: `1px solid ${T.border}`, borderRadius: 6, background: '#fff', color: T.text, outline: 'none', boxSizing: 'border-box' }} /></div>))}<div><label style={{ fontFamily: T.fontBody, fontSize: 12, fontWeight: 600, color: T.text, display: 'block', marginBottom: 4 }}>Interested in</label><select value={fd.interest} onChange={e => setFd({ ...fd, interest: e.target.value })} style={{ width: '100%', padding: '13px 14px', fontFamily: T.fontBody, fontSize: 14, border: `1px solid ${T.border}`, borderRadius: 6, background: '#fff', color: T.text, outline: 'none', boxSizing: 'border-box' }}>{['Boxing','Kickboxing','MMA - Mixed Martial Arts','Wrestling','Judo','S&C - Strength & Conditioning','Animal Flow','Kids / Youth Program','Not sure — help me decide'].map(o => <option key={o} value={o}>{o}</option>)}</select></div><PrimaryBtn onClick={submit} style={{ width: '100%', textAlign: 'center', padding: 16, marginTop: 4, opacity: loading ? 0.7 : 1 }}>{loading ? 'Submitting...' : 'Book my free trial'}</PrimaryBtn><p style={{ fontFamily: T.fontBody, fontSize: 11, color: T.textMuted, textAlign: 'center', margin: 0 }}>Or WhatsApp us directly at 77700 87700</p></div>);
 }
 
-export default function MMALanding() {
+export default function AnimalFlowLanding() {
   const [v, setV] = useState(false);
   useEffect(() => { setV(true); }, []);
   const points = [
-    ['Learn from an MMA pioneer', "Head Coach Kantharaj Agasa — 12 professional MMA wins, national wrestler, NIS Patiala certified Judo coach, Gold medals in BJJ and Judo. This is where serious MMA training happens."],
-    ['Genuine sparring sessions', "One of the few academies in Bangalore with dedicated, authentic MMA sparring sessions. Not just drills — real competitive training."],
-    ['Complete martial arts system', "Striking, wrestling, ground work, clinch — all taught as separate disciplines that come together in MMA. No shortcuts, no gaps."],
-    ['Free postural assessment', "Worth ₹7,000 elsewhere — included with every membership. We understand your body before we build your game."],
-    ['Structured beginner pathway', "8 S&C classes + 4 combat sessions in your first 2 weeks. Build strength and movement quality before MMA intensity."],
+    ['Certified Animal Flow instructors', "Trained in the official Animal Flow methodology — the ground-based movement system used by elite athletes, dancers, and martial artists worldwide."],
+    ['Built for every body', "Whether you're stiff from a desk job, recovering from injury, or a competitive athlete — Animal Flow meets you where you are and unlocks movement you didn't know you had."],
+    ['Included in your membership', "Most studios charge ₹2,500+ per session for Animal Flow. Here, it's part of your membership alongside S&C, combat classes, and open floor access."],
+    ['Mobility, coordination, strength — in one session', "No weights, no machines. Just your bodyweight moving through primal patterns that build wrist, shoulder, hip, and core strength simultaneously."],
+    ['The perfect cross-training', "Fighters use Animal Flow for footwork and joint resilience. Runners use it for hip mobility. Office workers use it to undo years of sitting. It complements everything."],
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>
@@ -46,24 +46,24 @@ export default function MMALanding() {
       <div style={{ padding: '48px 24px 40px', maxWidth: 960, margin: '0 auto', opacity: v?1:0, transform: v?'translateY(0)':'translateY(20px)', transition: 'all 0.6s ease' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 48, alignItems: 'start' }}>
           <div>
-            <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 12px' }}>MMA training in Bangalore</p>
-            <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>Train MMA with<br/>a pioneer.</h1>
-            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Learn mixed martial arts under Kantharaj Agasa — the man who took Indian MMA to the next level. 12 professional wins, national-level wrestler, NIS certified Judo coach.</p>
+            <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 12px' }}>Animal Flow classes in Bangalore</p>
+            <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>Move like an<br/>animal. Train like<br/>an athlete.</h1>
+            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Animal Flow is a ground-based movement practice that builds mobility, coordination, and raw bodyweight strength. Led by certified instructors as part of your S&amp;C program — designed by a performance coach with an MSc from Setanta College. Most places charge extra for Animal Flow. Here, it's included.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 36 }}>
               {points.map(([title, desc], i) => (<div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}><span style={{ fontFamily: T.fontBody, fontSize: 14, color: T.rust, fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span><div><p style={{ fontFamily: T.fontBody, fontSize: 14, fontWeight: 600, color: T.text, margin: '0 0 2px' }}>{title}</p><p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{desc}</p></div></div>))}
             </div>
             <div style={{ padding: '20px 24px', background: T.warm, borderRadius: 8, border: `1px solid ${T.border}` }}>
               <div style={{ fontFamily: T.fontSerif, fontSize: 24, color: T.gold, lineHeight: 1, marginBottom: 4, opacity: 0.6 }}>&ldquo;</div>
-              <p style={{ fontFamily: T.fontSerif, fontSize: 15, color: T.text, lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 10px' }}>I run my own MMA academy and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level.</p>
-              <p style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, fontWeight: 600, margin: '0 0 2px' }}>— Raktim Singha</p>
-              <p style={{ fontFamily: T.fontBody, fontSize: 11, color: T.textMuted, margin: 0 }}>MMA Coach &amp; Academy Owner</p>
+              <p style={{ fontFamily: T.fontSerif, fontSize: 15, color: T.text, lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 10px' }}>I have seen myself transforming mentally and physically. Coaches teach you every tiny detail to correct your form and posture. I would highly recommend this place.</p>
+              <p style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, fontWeight: 600, margin: '0 0 2px' }}>— Hindesh Akash</p>
+              <p style={{ fontFamily: T.fontBody, fontSize: 11, color: T.textMuted, margin: 0 }}>Training since October 2025</p>
             </div>
           </div>
           <div style={{ position: 'sticky', top: 24, opacity: v?1:0, transform: v?'translateY(0)':'translateY(20px)', transition: 'all 0.6s ease 0.3s' }}>
             <div style={{ background: '#fff', borderRadius: 12, padding: '32px 28px', border: `1px solid ${T.border}`, boxShadow: '0 4px 24px rgba(44,35,24,0.06)' }}>
               <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 8px' }}>Book your free trial</p>
               <h2 style={{ fontFamily: T.fontDisplay, fontSize: 20, color: T.text, margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 0.5 }}>Start your journey.</h2>
-              <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, margin: '0 0 24px' }}>We&apos;ll call to schedule your complimentary MMA trial.</p>
+              <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, margin: '0 0 24px' }}>We&apos;ll call to schedule your complimentary Animal Flow trial.</p>
               <InlineForm />
             </div>
             <div style={{ marginTop: 16, padding: '16px 20px', background: T.warm, borderRadius: 8, border: `1px solid ${T.border}`, display: 'flex', gap: 12, alignItems: 'center' }}><span style={{ fontSize: 20 }}>📍</span><div><p style={{ fontFamily: T.fontBody, fontSize: 13, fontWeight: 600, color: T.text, margin: '0 0 2px' }}>10, 80 Feet Road, 4th Block Koramangala</p><p style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, margin: 0 }}>Mon–Sat: 6 AM – 9 PM</p></div></div>
