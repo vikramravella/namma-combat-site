@@ -11,7 +11,7 @@ export default function Nav({ onCta }) {
     return () => window.removeEventListener('scroll', fn);
   }, []);
   const go = (id) => { setMob(false); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
-  const links = [['journey', 'Your Journey'], ['arena', 'The Arena'], ['sanctuary', 'The Sanctuary'], ['team', 'Team'], ['memberships', 'Memberships'], ['contact', 'Contact']];
+  const links = [['journey', 'Your Journey'], ['arena', 'The Arena'], ['sanctuary', 'The Sanctuary'], ['schedule', 'Schedule'], ['team', 'Team'], ['memberships', 'Memberships'], ['contact', 'Contact']];
   
   return (
     <>
