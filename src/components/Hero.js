@@ -3,8 +3,8 @@ import { Reveal, PrimaryBtn, GhostBtn, PhotoBox } from './ui';
 
 export default function Hero({ onCta }) {
   return (
-    <section className="nc-hero" style={{ background: 'var(--cream)', paddingTop: 40 }}>
-      <div className="nc-hero-grid" style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 24px 0', display: 'grid', gridTemplateColumns: '1fr', gap: 40 }}>
+    <section className="nc-hero" style={{ background: 'var(--cream)', paddingTop: 56 }}>
+      <div className="nc-hero-grid" style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px 0', display: 'grid', gridTemplateColumns: '1fr', gap: 40 }}>
         <div style={{ maxWidth: 620 }}>
           <Reveal>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 10, letterSpacing: 3, color: 'var(--rust)', textTransform: 'uppercase', fontWeight: 600, marginBottom: 12, background: 'rgba(227,199,104,0.12)', display: 'inline-block', padding: '6px 14px', borderRadius: 3 }}>
