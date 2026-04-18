@@ -47,3 +47,11 @@ body {
   background: rgba(154, 53, 32, 0.15);
   color: var(--text);
 }
+
+/* Fix for fixed nav bar — offset anchor scroll */
+html {
+  scroll-padding-top: 90px;
+}
+section[id], [id] {
+  scroll-margin-top: 90px;
+}
