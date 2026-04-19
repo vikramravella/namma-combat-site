@@ -32,12 +32,40 @@ function InlineForm() {
 export default function AnimalFlowLanding() {
   const [v, setV] = useState(false);
   useEffect(() => { setV(true); }, []);
-  const points = [
-    ['Certified Animal Flow instructors', "Trained in the official Animal Flow methodology — the ground-based movement system used by elite athletes, dancers, and martial artists worldwide."],
-    ['Built for every body', "Whether you're stiff from a desk job, recovering from injury, or a competitive athlete — Animal Flow meets you where you are and unlocks movement you didn't know you had."],
-    ['Included in your membership', "Most studios charge ₹2,500+ per session for Animal Flow. Here, it's part of your membership alongside S&C, combat classes, and open floor access."],
-    ['Mobility, coordination, strength — in one session', "No weights, no machines. Just your bodyweight moving through primal patterns that build wrist, shoulder, hip, and core strength simultaneously."],
-    ['The perfect cross-training', "Fighters use Animal Flow for footwork and joint resilience. Runners use it for hip mobility. Office workers use it to undo years of sitting. It complements everything."],
+  const levels = [
+    {
+      label: 'Level 1 — Foundation',
+      intro: 'The entry point. Ground-based movement, one piece at a time.',
+      items: [
+        'Wrist mobilisations — preparing the joints for ground work',
+        'Activations — Beast, Crab, Ape — the three base positions',
+        'Form-specific stretches — loaded mobility built into the practice',
+        'Traveling forms — Underswitch, Side Kickthrough, Scorpion, Front Kickthrough',
+        'Switches — the connective tissue between every flow',
+      ],
+    },
+    {
+      label: 'Level 2 — Flow Development',
+      intro: 'Movements connect. Patterns emerge.',
+      items: [
+        'Call-and-response flows — coach-led sequences with real tempo',
+        'Combining forms into continuous movement',
+        'Advanced transitions — Front Step Through, Reverse Underswitch',
+        'Improvisational drilling — reading the body, responding to the floor',
+        'Building breath-to-movement coordination',
+      ],
+    },
+    {
+      label: 'Level 3 — Creative Expression',
+      intro: 'The body becomes fluent. Movement becomes art.',
+      items: [
+        'Complex flows with multiple transitions and form variations',
+        'Creative self-expression — finding your own movement vocabulary',
+        'Performance-level athleticism — strength, mobility, control integrated',
+        'Teaching elements — understanding the mechanics behind each form',
+        'Continuous exploration — Animal Flow as a lifetime practice',
+      ],
+    },
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>
@@ -49,8 +77,30 @@ export default function AnimalFlowLanding() {
             <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 12px' }}>Animal Flow classes in Bangalore</p>
             <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>Move like an<br/>animal. Train like<br/>an athlete.</h1>
             <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Animal Flow is a ground-based movement practice that builds mobility, coordination, and raw bodyweight strength. Led by certified instructors as part of your S&amp;C program — designed by a performance coach with an MSc from Setanta College. Most places charge extra for Animal Flow. Here, it's included.</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 36 }}>
-              {points.map(([title, desc], i) => (<div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}><span style={{ fontFamily: T.fontBody, fontSize: 14, color: T.rust, fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span><div><p style={{ fontFamily: T.fontBody, fontSize: 14, fontWeight: 600, color: T.text, margin: '0 0 2px' }}>{title}</p><p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{desc}</p></div></div>))}
+            <div style={{ marginBottom: 36 }}>
+              <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 8px' }}>What you'll learn</p>
+              <h2 style={{ fontFamily: T.fontDisplay, fontSize: 24, fontWeight: 900, color: T.text, margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: 0.5 }}>Animal Flow at every level.</h2>
+              <p style={{ fontFamily: T.fontBody, fontSize: 14, color: T.textLight, lineHeight: 1.6, margin: '0 0 24px', fontStyle: 'italic' }}>Ground-based movement for joint health, mobility, and full-body coordination. Included in every membership.</p>
+              {levels.map((lvl, i) => (
+                <div key={i} style={{ marginBottom: 28, opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}>
+                  <h3 style={{ fontFamily: T.fontDisplay, fontSize: 15, fontWeight: 900, color: T.rust, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>{lvl.label}</h3>
+                  <p style={{ fontFamily: T.fontBody, fontSize: 14, color: T.text, fontWeight: 500, margin: '0 0 10px', fontStyle: 'italic' }}>{lvl.intro}</p>
+                  {lvl.items.map((item, j) => (
+                    <div key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 6 }}>
+                      <span style={{ fontFamily: T.fontBody, fontSize: 13, color: T.rust, fontWeight: 700, marginTop: 2, flexShrink: 0 }}>•</span>
+                      <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{item}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <div style={{ marginTop: 24, padding: '18px 22px', background: 'rgba(227,199,104,0.12)', borderLeft: `3px solid ${T.gold}`, borderRadius: 4 }}>
+                <h3 style={{ fontFamily: T.fontDisplay, fontSize: 13, fontWeight: 900, color: T.text, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>Why Animal Flow works</h3>
+                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}>Your joints stay healthy. Your shoulders, hips, wrists, and spine move through ranges they forgot they had. Strength and mobility built together, not separately. For combat athletes — injury prevention. For desk workers — an antidote to the chair.</p>
+              </div>
+              <div style={{ marginTop: 16, padding: '18px 22px', background: T.warm, borderLeft: `3px solid ${T.rust}`, borderRadius: 4 }}>
+                <h3 style={{ fontFamily: T.fontDisplay, fontSize: 13, fontWeight: 900, color: T.text, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>Who teaches you</h3>
+                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}><strong style={{ color: T.text }}>Coach Spoorthi Nagraj</strong> &mdash; Animal Flow Level 1 certified. Specialises in functional movement, women's health, and coordination-led strength. Supported by <strong style={{ color: T.text }}>Coach Manoj</strong> for beginner sessions.</p>
+              </div>
             </div>
             <div style={{ padding: '20px 24px', background: T.warm, borderRadius: 8, border: `1px solid ${T.border}` }}>
               <div style={{ fontFamily: T.fontSerif, fontSize: 24, color: T.gold, lineHeight: 1, marginBottom: 4, opacity: 0.6 }}>&ldquo;</div>
