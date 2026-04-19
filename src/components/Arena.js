@@ -29,7 +29,7 @@ export default function Arena() {
     ['Boxing', 'The sweet science. Footwork, mechanics, and the cleanest stress relief.', '/boxing'],
     ['Kickboxing', 'Dynamic striking. Explosive power, sharp reflexes, full-body conditioning.', '/kickboxing'],
     ['MMA', 'Every range integrated. Strikes, takedowns, ground control — the complete sport.', '/mma'],
-    ['Brazilian Jiu-Jitsu', 'Human chess. Leverage and technique let you control any opponent.', '/mma'],
+    ['Brazilian Jiu-Jitsu', 'Human chess. Leverage and technique let you control any opponent.', '/bjj'],
     ['Wrestling', 'Functional strength, mental toughness, total positional control on the mat.', '/wrestling'],
     ['Judo', 'The gentle way. Throws, sweeps, and complete mastery of balance.', '/judo'],
   ];
