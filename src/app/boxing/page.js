@@ -33,7 +33,7 @@ export default function BoxingLanding() {
   const [v, setV] = useState(false);
   useEffect(() => { setV(true); }, []);
   const points = [
-    ['National medalist coach', 'Coach Packiarajan — multiple national Gold medals, Best Boxer awards, NIS Patiala certified. Decades of ring experience distilled into every session.'],
+    ['National medalist coach', 'Coach Bhagyarajan — multiple national Gold medals, Best Boxer awards, NIS Patiala certified. Decades of ring experience distilled into every session.'],
     ['Technique-first approach', "Boxing isn't about hitting hard — it's about hitting right. Footwork, guard, timing, distance management. We build boxers from the fundamentals up."],
     ['Free postural assessment', 'Worth ₹7,000 elsewhere — included with every membership. We assess your body before you throw a single punch.'],
     ['Structured beginner plan', '8 S&C classes + 4 combat sessions in your first 2 weeks. Your body gets prepared before intensity increases.'],
