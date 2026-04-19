@@ -28,8 +28,8 @@ export default function Sanctuary() {
   const d = [
     ['Strength & Conditioning', 'Sport-specific lifting for explosive power, longevity, and lasting athletic performance.', '/strength'],
     ['Animal Flow', 'Ground-based movement. Joint health, mobility, and full-body coordination.', '/animal-flow'],
-    ['HIIT', 'Short, sharp bursts on Hammer Strength air bikes and Technogym rowers.', '/strength'],
-    ['Olympic Weightlifting', 'Snatch and clean & jerk. Explosive coordination at the highest level.', '/strength'],
+    ['HIIT', 'Short, sharp bursts on Hammer Strength air bikes and Technogym rowers.', '/hiit'],
+    ['Olympic Weightlifting', 'Snatch and clean & jerk. Explosive coordination at the highest level.', '/olympic-lifting'],
   ];
   return (
     <Section id="sanctuary" bg="var(--warm)">
