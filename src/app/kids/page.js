@@ -32,12 +32,40 @@ function InlineForm() {
 export default function KidsLanding() {
   const [v, setV] = useState(false);
   useEffect(() => { setV(true); }, []);
-  const points = [
-    ['Coaches who teach, not just train', "Every coach is NIS Patiala certified — they studied how to teach at India\'s premier sports institute. They know the difference between coaching adults and coaching kids."],
-    ['Real martial arts, not daycare', "Your child learns actual boxing technique, Judo throws, wrestling fundamentals. Structured progression, genuine skill development."],
-    ['Safety is non-negotiable', "BLS-certified staff. AED on-site. Age-appropriate training intensity. Proper protective equipment. 24/7 CCTV."],
-    ['Physical + mental development', "Combat sports teach focus, resilience, respect, and self-control. These are life skills that transfer to school, relationships, and everything else."],
-    ['Premium facility', "Not a park or a community hall. A proper 4,200 sq ft combat sports academy with dedicated mat space, equipment, and changing areas."],
+  const levels = [
+    {
+      label: 'Ages 6 to 8 — Foundation',
+      intro: 'The youngest group. We build the athlete through play.',
+      items: [
+        'Movement literacy — running, jumping, rolling, climbing, balancing',
+        'Age-appropriate combat basics — learning to fall, simple positions',
+        'Listening, following instructions, training with focus',
+        'Confidence through progress — small wins, celebrated often',
+        'Safety-first environment — BLS-certified coaches, AED on-site',
+      ],
+    },
+    {
+      label: 'Ages 9 to 12 — Skill Building',
+      intro: 'The sweet spot. Real technique enters the training.',
+      items: [
+        'Sport-specific fundamentals across Boxing, Wrestling, Judo, BJJ',
+        'Structured drills, controlled partner work, technical progression',
+        'Introduction to strength training — bodyweight patterns, proper form',
+        'Discipline, teamwork, and handling both winning and losing',
+        'Option to specialise if they find the sport they love',
+      ],
+    },
+    {
+      label: 'Ages 13 to 15 — Competitive Pathway',
+      intro: 'For the serious teenager. Training that shapes an athlete.',
+      items: [
+        'Advanced technique in their chosen sport(s)',
+        'Structured S&C with age-appropriate progressive loading',
+        'Competition pathway — local, state, and national-level if they choose',
+        'Mental skills — dealing with pressure, setbacks, and focus',
+        'A real community of young athletes who train together',
+      ],
+    },
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>
@@ -49,8 +77,30 @@ export default function KidsLanding() {
             <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 12px' }}>Kids martial arts in Bangalore</p>
             <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>Discipline starts<br/>young.</h1>
             <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Boxing, Judo, Wrestling, S&amp;C, and Animal Flow for kids and teenagers. National-level coaches who know how to teach young athletes — building discipline, confidence, and real skills.</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 36 }}>
-              {points.map(([title, desc], i) => (<div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}><span style={{ fontFamily: T.fontBody, fontSize: 14, color: T.rust, fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span><div><p style={{ fontFamily: T.fontBody, fontSize: 14, fontWeight: 600, color: T.text, margin: '0 0 2px' }}>{title}</p><p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{desc}</p></div></div>))}
+            <div style={{ marginBottom: 36 }}>
+              <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 8px' }}>What your child will learn</p>
+              <h2 style={{ fontFamily: T.fontDisplay, fontSize: 24, fontWeight: 900, color: T.text, margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: 0.5 }}>Coaching built around the age.</h2>
+              <p style={{ fontFamily: T.fontBody, fontSize: 14, color: T.textLight, lineHeight: 1.6, margin: '0 0 24px', fontStyle: 'italic' }}>Children aren\'t small adults. Every age group gets training designed for how bodies and minds grow at that stage.</p>
+              {levels.map((lvl, i) => (
+                <div key={i} style={{ marginBottom: 28, opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}>
+                  <h3 style={{ fontFamily: T.fontDisplay, fontSize: 15, fontWeight: 900, color: T.rust, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>{lvl.label}</h3>
+                  <p style={{ fontFamily: T.fontBody, fontSize: 14, color: T.text, fontWeight: 500, margin: '0 0 10px', fontStyle: 'italic' }}>{lvl.intro}</p>
+                  {lvl.items.map((item, j) => (
+                    <div key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 6 }}>
+                      <span style={{ fontFamily: T.fontBody, fontSize: 13, color: T.rust, fontWeight: 700, marginTop: 2, flexShrink: 0 }}>•</span>
+                      <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{item}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <div style={{ marginTop: 24, padding: '18px 22px', background: 'rgba(227,199,104,0.12)', borderLeft: `3px solid ${T.gold}`, borderRadius: 4 }}>
+                <h3 style={{ fontFamily: T.fontDisplay, fontSize: 13, fontWeight: 900, color: T.text, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>For parents</h3>
+                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}>Safety is non-negotiable. BLS-certified staff, AED on-site, 24/7 CCTV. Separate changing areas. Clear code of conduct. Parents are welcome to observe any session. Zero tolerance for inappropriate behaviour from anyone — student, coach, or member.</p>
+              </div>
+              <div style={{ marginTop: 16, padding: '18px 22px', background: T.warm, borderLeft: `3px solid ${T.rust}`, borderRadius: 4 }}>
+                <h3 style={{ fontFamily: T.fontDisplay, fontSize: 13, fontWeight: 900, color: T.text, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>Who coaches your child</h3>
+                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}>NIS Patiala certified combat coaches with national-level competition backgrounds. Coach Kantharaj (Judo / BJJ / Wrestling), Coach Bhagyarajan (Boxing), Coach Venkatesh (Wrestling), Coach Spoorthi and Coach Manoj (S&C and movement). Every coach is trained to work with young athletes.</p>
+              </div>
             </div>
             <div style={{ padding: '20px 24px', background: T.warm, borderRadius: 8, border: `1px solid ${T.border}` }}>
               <div style={{ fontFamily: T.fontSerif, fontSize: 24, color: T.gold, lineHeight: 1, marginBottom: 4, opacity: 0.6 }}>&ldquo;</div>
