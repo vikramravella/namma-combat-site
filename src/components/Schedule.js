@@ -1,8 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Reveal, Section, Eyebrow, Heading, SubHeading, GoldBar } from './ui';
 
-// Arena schedule
 const arenaSchedule = {
   header: ['TIME', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
   morning: [
@@ -57,25 +56,23 @@ const sanctuaryCoach = (className, time) => {
 const isElite = (v) => v && v.toLowerCase().includes('elite');
 const isEmpty = (v) => !v || v.trim() === '';
 
-function Table({ title, subtitle, schedule, type }) {
+const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const dayLabelsShort = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+function DesktopTable({ title, subtitle, schedule, type }) {
   const getCoach = (className, time) => {
     if (isEmpty(className)) return '';
     if (type === 'combat') return combatCoach[className] || '';
     return sanctuaryCoach(className, time);
   };
-
-  // Total rows = morning + evening (to compute rowSpan for merged Sunday cell)
   const totalRows = schedule.morning.length + schedule.evening.length;
-
   const renderRow = (row, rowIndex) => {
     const [time, ...cells] = row;
-    // Sunday is the last column (index 6 in cells array, since TIME was removed)
     const sundayIdx = cells.length - 1;
     return (
       <tr key={time}>
         <td style={{ padding: '14px 10px', fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--rust)', textAlign: 'center', background: 'var(--warm)', borderBottom: '1px solid var(--border)', minWidth: 65, letterSpacing: 0.5 }}>{time}</td>
         {cells.map((cell, i) => {
-          // Sunday column: only render on first row, span all rows
           if (i === sundayIdx) {
             if (rowIndex !== 0) return null;
             return (
@@ -106,7 +103,6 @@ function Table({ title, subtitle, schedule, type }) {
     <div style={{ marginBottom: 48 }}>
       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text)', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 2 }}>{title}</h3>
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', margin: '0 0 20px', letterSpacing: 0.5 }}>{subtitle}</p>
-      <div className="nc-scroll-hint" style={{ display: 'none', fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase' }}>← Swipe to see all days →</div>
       <div style={{ overflowX: 'auto', border: '1px solid var(--border)', borderRadius: 8, background: '#fff', WebkitOverflowScrolling: 'touch' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 780, tableLayout: 'fixed' }}>
           <colgroup>
@@ -139,7 +135,109 @@ function Table({ title, subtitle, schedule, type }) {
   );
 }
 
+function MobileDayView({ title, subtitle, schedule, type, selectedDay, onDayChange }) {
+  const getCoach = (className, time) => {
+    if (isEmpty(className)) return '';
+    if (type === 'combat') return combatCoach[className] || '';
+    return sanctuaryCoach(className, time);
+  };
+
+  const isSunday = selectedDay === 6;
+
+  const buildSessions = (rows) => rows.map(row => {
+    const [time, ...cells] = row;
+    const cell = cells[selectedDay];
+    return { time, cell };
+  }).filter(s => !isEmpty(s.cell));
+
+  const morningSessions = buildSessions(schedule.morning);
+  const eveningSessions = buildSessions(schedule.evening);
+  const hasAny = morningSessions.length > 0 || eveningSessions.length > 0;
+
+  const renderSession = ({ time, cell }) => {
+    const elite = isElite(cell);
+    const coach = getCoach(cell, time);
+    return (
+      <div key={time + cell} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700, color: 'var(--rust)', letterSpacing: 0.5, minWidth: 52, paddingTop: 2 }}>{time}</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'var(--text)', letterSpacing: 0.3, textTransform: 'uppercase', marginBottom: 2 }}>{cell}</div>
+          {elite && <span style={{ display: 'inline-block', fontFamily: 'var(--font-body)', fontSize: 9, color: 'var(--rust)', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', background: 'rgba(227,199,104,0.2)', padding: '2px 6px', borderRadius: 3, marginBottom: 4 }}>Advanced</span>}
+          {coach && <div style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', lineHeight: 1.4, marginTop: 2 }}>{coach}</div>}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ marginBottom: 36 }}>
+      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--text)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 2 }}>{title}</h3>
+      <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', margin: '0 0 16px', letterSpacing: 0.5 }}>{subtitle}</p>
+
+      <div style={{ display: 'flex', gap: 4, marginBottom: 18, background: 'var(--warm)', padding: 4, borderRadius: 8, border: '1px solid var(--border)' }}>
+        {dayLabels.map((d, i) => (
+          <button
+            key={i}
+            onClick={() => onDayChange(i)}
+            style={{
+              flex: 1,
+              padding: '10px 0',
+              border: 'none',
+              background: selectedDay === i ? 'var(--rust)' : 'transparent',
+              color: selectedDay === i ? '#fff' : 'var(--text-light)',
+              fontFamily: 'var(--font-body)',
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: 1,
+              textTransform: 'uppercase',
+              borderRadius: 6,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {dayLabelsShort[i]}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '4px 16px' }}>
+        {isSunday ? (
+          <div style={{ padding: '36px 20px', textAlign: 'center' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--rust)', letterSpacing: 3, textTransform: 'uppercase', marginBottom: 6 }}>Workshop</div>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', lineHeight: 1.5 }}>All-day workshop sessions.<br/>WhatsApp us for details.</div>
+          </div>
+        ) : !hasAny ? (
+          <div style={{ padding: '28px 12px', textAlign: 'center', fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-muted)', fontStyle: 'italic' }}>No sessions scheduled.</div>
+        ) : (
+          <>
+            {morningSessions.length > 0 && (
+              <div>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: 2, textTransform: 'uppercase', padding: '12px 0 4px' }}>Morning</div>
+                {morningSessions.map(renderSession)}
+              </div>
+            )}
+            {eveningSessions.length > 0 && (
+              <div>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: 2, textTransform: 'uppercase', padding: '14px 0 4px' }}>Evening</div>
+                {eveningSessions.map(renderSession)}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Schedule() {
+  const [selectedDay, setSelectedDay] = useState(0);
+
+  useEffect(() => {
+    const jsDay = new Date().getDay();
+    const mondayFirstIdx = jsDay === 0 ? 6 : jsDay - 1;
+    setSelectedDay(mondayFirstIdx);
+  }, []);
+
   return (
     <Section id="schedule" bg="var(--cream)">
       <Reveal>
@@ -150,9 +248,9 @@ export default function Schedule() {
       </Reveal>
 
       <Reveal delay={0.1}>
-        <div style={{ marginTop: 16 }}>
-          <Table title="The Arena" subtitle="Combat Sports Timetable" schedule={arenaSchedule} type="combat" />
-          <Table title="The Sanctuary" subtitle="Strength & Conditioning Timetable" schedule={sanctuarySchedule} type="sanctuary" />
+        <div className="nc-schedule-desktop" style={{ marginTop: 16 }}>
+          <DesktopTable title="The Arena" subtitle="Combat Sports Timetable" schedule={arenaSchedule} type="combat" />
+          <DesktopTable title="The Sanctuary" subtitle="Strength & Conditioning Timetable" schedule={sanctuarySchedule} type="sanctuary" />
 
           <div style={{ padding: '24px 28px', background: 'var(--warm)', borderRadius: 8, border: '1px solid var(--border)', maxWidth: 780 }}>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: 2, color: 'var(--rust)', textTransform: 'uppercase', fontWeight: 700, margin: '0 0 12px' }}>Good to know</p>
@@ -164,9 +262,29 @@ export default function Schedule() {
             </ul>
           </div>
         </div>
+
+        <div className="nc-schedule-mobile" style={{ display: 'none', marginTop: 16 }}>
+          <MobileDayView title="The Arena" subtitle="Combat Sports Timetable" schedule={arenaSchedule} type="combat" selectedDay={selectedDay} onDayChange={setSelectedDay} />
+          <MobileDayView title="The Sanctuary" subtitle="Strength & Conditioning Timetable" schedule={sanctuarySchedule} type="sanctuary" selectedDay={selectedDay} onDayChange={setSelectedDay} />
+
+          <div style={{ padding: '18px 20px', background: 'var(--warm)', borderRadius: 8, border: '1px solid var(--border)', marginTop: 20 }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: 2, color: 'var(--rust)', textTransform: 'uppercase', fontWeight: 700, margin: '0 0 10px' }}>Good to know</p>
+            <ul style={{ margin: 0, padding: '0 0 0 18px', fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', lineHeight: 1.7 }}>
+              <li><strong>Elite classes and Open Mat</strong> are 90 minutes.</li>
+              <li><strong>Saturday Elite classes</strong> are held outdoors.</li>
+              <li><strong>Workshops</strong> aren&apos;t part of membership.</li>
+              <li><strong>Schedule may adjust</strong> for holidays — WhatsApp us.</li>
+            </ul>
+          </div>
+        </div>
+
+        <style jsx global>{`
+          @media (max-width: 768px) {
+            .nc-schedule-desktop { display: none !important; }
+            .nc-schedule-mobile { display: block !important; }
+          }
+        `}</style>
       </Reveal>
     </Section>
   );
 }
-
-/* mobile swipe hint */
