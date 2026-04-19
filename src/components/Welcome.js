@@ -6,11 +6,11 @@ export default function Welcome() {
       <div style={{ maxWidth: 800 }}>
         <Reveal>
           <Eyebrow>Welcome to Namma Combat</Eyebrow>
-          <Heading>Trade vanity for capability.</Heading>
-          <SubHeading>The same hour at a gym builds a reflection. Here, it builds a skill.</SubHeading>
+          <Heading>A capable body. A focused mind.</Heading>
+          <SubHeading>Skill. Power. Confidence. Built to last a lifetime.</SubHeading>
           <GoldBar />
           <Body>
-            Most fitness centres train you to look better. We train you to <em>be</em> better. Skill. Power. Confidence. A capable body that shows up in real life — not just in the mirror.
+            Combat sports build capability you carry for life. Strength built with science. Movement built with intention. Every session takes you somewhere new.
           </Body>
         </Reveal>
       </div>
