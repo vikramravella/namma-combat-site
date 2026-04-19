@@ -222,7 +222,7 @@ find src -type f -name "*.js" -exec sed -i '' "s|'xmIwtLD': '[a-f0-9]*'|'xmIwtLD
 3. **Rajan** — Boxing Lead. NIS Patiala, national medalist, ex-army.
 4. **Venkatesh A** — Wrestling Coach. NIS Patiala, Master's in Sports Management.
 5. **Spoorthi Nagraj** — S&C & Women's Health. Animal Flow L1 certified.
-6. **Manoj** — S&C coach. Bio pending (Vinod to add to Team section).
+6. **Manoj Kumar** — S&C Coach. Skill India certified in Strength & Conditioning. Former state-level hockey athlete (Karnataka League winner, School Games winner, South Zone University finalist). Specialises in coaching beginners through fundamentals — patient, detail-oriented, teacher-focused.
 
 **Not on the team:**
 - Coach Lal left the academy — do not reference.
@@ -313,6 +313,11 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 - [x] Spacing cleanup across all sections, landing pages, desktop + mobile
 - [x] Smooth scroll offset so nav links land at headings cleanly
 - [x] Contact + Footer fit together in viewport
+- [x] Packiarajan renamed to Rajan (pronunciation clarity)
+- [x] Sunday schedule merged into single WORKSHOP cell (both floors)
+- [x] GA4 lead tracking added (generate_lead event on all forms)
+- [x] Zoho CRM confirmed receiving leads in <20 seconds
+- [x] Manoj Kumar added to Team section
 
 ---
 
@@ -320,7 +325,7 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 
 - [ ] **Photos** — swap PhotoBox placeholders (hero action shot, discipline cards, coach portraits with arms crossed on beige wall, facility wide shots, kids group, Journey sequence)
 - [ ] **Meta Pixel** when Facebook Business Manager access restored
-- [ ] **Manoj bio** for Team section (waiting for him to send credentials)
+- [x] Manoj bio added to Team section (done Apr 18 eve)
 - [ ] **Gateway page** at nammacombat.com (Academy/Community switcher) — build when community app launches
 - [ ] **mail.nammacombat.com** redirect to Gmail (low priority)
 
