@@ -44,7 +44,7 @@ export function Team() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 16 }}>
         {coaches.map(([name, role, creds], i) => (
           <Reveal key={name} delay={i * 0.04}>
-            <div style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--cream)' }}>
+            <div className="nc-card" style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--cream)' }}>
               <PhotoBox label={name.split(' ')[0]} h={210} style={{ borderRadius: 0, borderBottom: '1px solid rgba(224,214,200,0.3)' }} />
               <div style={{ padding: '14px 16px' }}>
                 <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 900, color: 'var(--text)', margin: '0 0 3px', textTransform: 'uppercase', letterSpacing: 0.3 }}>{name}</h3>
@@ -145,7 +145,7 @@ export function Testimonials() {
     ['"I run my own MMA academy and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level. Trust me, this academy is going to produce a lot of champions."', 'Raktim Singha', 'MMA Coach & Academy Owner'],
     ['"One of the best things unique to this academy is their approach towards holistic development of an athlete. From the best coaches to the strength and conditioning program, every aspect is well planned to provide all the support an athlete would require."', 'Sai Anjana G', 'Athlete'],
     ['"I\'ve seen clear improvement in my kids\' stamina, technique, and mindset since joining. If you want professional combat training with world-class coaching, Namma Combat is easily the best in Koramangala."', 'Karthik Eashwar', 'Parent'],
-    ['"I have trained under multiple coaches across India but I can say that Coach Bhagyarajan is the best coach I am training under and I have started feeling very confident in just 2 months of training."', 'Shubham', 'Trained across India'],
+    ['"I have trained under multiple coaches across India but I can say that Coach Rajan is the best coach I am training under and I have started feeling very confident in just 2 months of training."', 'Shubham', 'Trained across India'],
   ];
   return (
     <Section bg="var(--cream)">

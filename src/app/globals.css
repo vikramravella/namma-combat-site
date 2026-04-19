@@ -57,3 +57,28 @@ body {
   .nc-footer { padding: 32px 16px 24px !important; }
   .nc-landing-grid { gap: 24px !important; }
 }
+
+/* === Micro-interactions (Apr 18) === */
+.nc-card { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease; }
+.nc-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(44,35,24,0.08); border-color: var(--rust) !important; }
+
+.nc-disc-card { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease; position: relative; }
+.nc-disc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(44,35,24,0.08); border-color: var(--rust) !important; }
+.nc-disc-card::after { content: '→'; position: absolute; top: 14px; right: 16px; font-size: 18px; color: var(--rust); opacity: 0; transform: translateX(-6px); transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none; }
+.nc-disc-card:hover::after { opacity: 1; transform: translateX(0); }
+
+.nc-nav-link { position: relative; }
+.nc-nav-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 2px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; }
+.nc-nav-link:hover::after { transform: scaleX(1); }
+
+button:active, a.nc-btn:active { transform: scale(0.98); }
+
+.nc-gold-bar { animation: goldBarIn 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+@keyframes goldBarIn { from { opacity: 0; transform: scaleX(0); transform-origin: left; } to { opacity: 1; transform: scaleX(1); transform-origin: left; } }
+
+.nc-primary-btn:hover { box-shadow: 0 4px 20px rgba(227,199,104,0.35); }
+
+@media (prefers-reduced-motion: reduce) {
+  .nc-card, .nc-disc-card, .nc-nav-link::after, .nc-gold-bar { transition: none !important; animation: none !important; }
+  .nc-card:hover, .nc-disc-card:hover { transform: none !important; }
+}
