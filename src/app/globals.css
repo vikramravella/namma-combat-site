@@ -60,7 +60,7 @@ body {
 
 /* === Micro-interactions (Apr 18) === */
 .nc-card { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease; }
-.nc-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(44,35,24,0.08); border-color: var(--gold) !important; }
+.nc-card:hover { }
 
 .nc-disc-card { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease; position: relative; }
 .nc-disc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(44,35,24,0.08); border-color: var(--rust) !important; }
