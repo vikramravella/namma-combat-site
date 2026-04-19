@@ -6,19 +6,19 @@ export default function Welcome() {
       <div style={{ maxWidth: 800 }}>
         <Reveal>
           <Eyebrow>Welcome to Namma Combat</Eyebrow>
-          <Heading>Your morning treadmill is boring.</Heading>
-          <SubHeading>It&apos;s time to build a capable body and a focused mind.</SubHeading>
+          <Heading>Trade vanity for capability.</Heading>
+          <SubHeading>The same hour at a gym builds a reflection. Here, it builds a skill.</SubHeading>
           <GoldBar />
           <Body>
-            Elite pedigree meets professional safety standards. Built for the everyday professional, the empowered woman, and the aspiring athlete.
+            Most fitness centres train you to look better. We train you to <em>be</em> better. Skill. Power. Confidence. A capable body that shows up in real life — not just in the mirror.
           </Body>
         </Reveal>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, marginTop: 8 }}>
         {[
-          ['The injury-free mandate', 'Safety is non-negotiable at every level. Structured training, proper load management, and technique correction — designed to keep you performing for years, not weeks.'],
-          ['Holistic unity', 'Combat sports and strength & conditioning under one roof. Animal Flow, HIIT, Olympic lifting — all included.'],
-          ['Inclusive excellence', 'Premium, welcoming space for every age, gender, and experience level. From self-defence to fight camp.'],
+          ['A skill that stays with you', 'Boxing, wrestling, jiu-jitsu — combat sports build capability you carry for life. Your body remembers. Your confidence compounds.'],
+          ['Strength built with science', 'Animal Flow, Olympic lifting, structured S&C — power and mobility designed by coaches who understand how bodies actually work.'],
+          ['Built for every body', 'Premium space for every age, gender, and starting point. From your first session to your hundredth — you belong here.'],
         ].map(([t, d], i) => (
           <Reveal key={i} delay={i * 0.1}>
             <div style={{ padding: 24, background: 'var(--warm)', borderRadius: 8, borderLeft: '3px solid var(--rust)', minHeight: 120 }}>
