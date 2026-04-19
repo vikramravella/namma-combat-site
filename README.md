@@ -330,6 +330,30 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 
 ---
 
+
+## Pending Photoshoot Decisions (Apr 19 — revisit next week)
+
+When Vinod shoots photos for the site, the following layout decisions need to be made:
+
+- **Why section** (`src/components/Why.js`) — currently text-only, full-width. Layout was briefly made 2-column (text + photo box) but reverted because it broke consistency with other narrative sections (Welcome).
+  - **Decision needed:** Add visuals in one of two ways:
+    - **Option A:** Single wide horizontal photo below the closer line (facility interior, empty, architectural). Full-section width, matches Facility section pattern.
+    - **Option B:** Row of 3 small supporting images below the closer — one per differentiator (postural assessment / Animal Flow / group class). Matches Arena/Sanctuary card-grid pattern.
+  - **Recommendation on shot:** Empty facility interior — the Sanctuary floor with Technogym, or Arena with ring. No people. This section is about *the space*, not people using it (coaches are in Team, action is in Arena/Sanctuary).
+  - **Priority:** This section currently feels text-heavy without a visual. Photo unlocks it.
+
+- **Hero right side** (`src/components/Hero.js`) — currently a dark PhotoBox placeholder. Was debated: Option A (branded pattern + seal), Option B (silhouette), Option C (bold typography). Decided to wait until Vinod shoots.
+  - **Decision needed:** Replace with a striking action shot (someone mid-training, sweat, intensity). Hero photo should land in under 2 seconds and sell the brand before visitor reads anything.
+
+- **All PhotoBox placeholders across the site** need to be swapped for real photos:
+  - Hero action shot (right side)
+  - Journey step visuals (×5)
+  - Arena discipline cards (Boxing, Kickboxing, MMA, BJJ, Wrestling, Judo)
+  - Sanctuary discipline cards (S&C, Animal Flow, HIIT, Olympic Lifting)
+  - Coach portraits (×6 — Kantharaj, Naeem, Rajan, Venkatesh, Spoorthi, Manoj)
+  - Facility interior wide shot
+  - Kids group training photo
+
 ## Account Ownership (all under Vinod's control)
 
 - GitHub: vikramravella
