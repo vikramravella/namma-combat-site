@@ -30,6 +30,7 @@ export function Team() {
     ['Rajan', 'Boxing Lead', 'NIS Patiala certified Boxing Coach. Multiple national Gold + Best Boxer awards. Former international competitor with decades of ring experience.'],
     ['Venkatesh A', 'Wrestling Coach', 'NIS Patiala certified Wrestling Coach. Master\'s in Sports Management. University-level coaching and certified wrestling official.'],
     ['Spoorthi Nagraj', 'S&C & Women\'s Health', 'Certified S&C Coach specialising in women\'s health, functional movement, and running performance. Animal Flow Level 1 certified.'],
+    ['Manoj Kumar', 'S&C Coach', 'From competing on hockey fields at the state level to coaching on the training floor at Namma Combat — Manoj brings an athlete\'s understanding of how bodies learn under pressure. State Hockey Karnataka League winner, School Games winner, and South Zone University finalist, he knows what structured training can unlock. Skill India certified in Strength & Conditioning, Manoj specialises in coaching beginners through the fundamentals — breaking down movement, correcting form, and building confidence one session at a time. Patient, detail-oriented, and genuinely invested in every member\'s progress — no matter where they start.'],
   ];
   return (
     <Section id="team" bg="var(--warm)">

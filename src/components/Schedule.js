@@ -64,12 +64,27 @@ function Table({ title, subtitle, schedule, type }) {
     return sanctuaryCoach(className, time);
   };
 
-  const renderRow = (row) => {
+  // Total rows = morning + evening (to compute rowSpan for merged Sunday cell)
+  const totalRows = schedule.morning.length + schedule.evening.length;
+
+  const renderRow = (row, rowIndex) => {
     const [time, ...cells] = row;
+    // Sunday is the last column (index 6 in cells array, since TIME was removed)
+    const sundayIdx = cells.length - 1;
     return (
       <tr key={time}>
         <td style={{ padding: '14px 10px', fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--rust)', textAlign: 'center', background: 'var(--warm)', borderBottom: '1px solid var(--border)', minWidth: 65, letterSpacing: 0.5 }}>{time}</td>
         {cells.map((cell, i) => {
+          // Sunday column: only render on first row, span all rows
+          if (i === sundayIdx) {
+            if (rowIndex !== 0) return null;
+            return (
+              <td key={i} rowSpan={totalRows} style={{ padding: '20px 12px', textAlign: 'center', borderBottom: '1px solid var(--border)', borderLeft: '1px solid var(--border)', background: 'rgba(227,199,104,0.12)', verticalAlign: 'middle' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 900, color: 'var(--rust)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 }}>Workshop</div>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: 10, color: 'var(--text-light)', lineHeight: 1.4 }}>All day</div>
+              </td>
+            );
+          }
           if (isEmpty(cell)) {
             return <td key={i} style={{ padding: '12px 8px', textAlign: 'center', borderBottom: '1px solid var(--border)', borderLeft: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: 11, fontStyle: 'italic', fontFamily: 'var(--font-body)' }}>—</td>;
           }
@@ -102,11 +117,11 @@ function Table({ title, subtitle, schedule, type }) {
             </tr>
           </thead>
           <tbody>
-            {schedule.morning.map(renderRow)}
+            {schedule.morning.map((r, i) => renderRow(r, i))}
             <tr>
-              <td colSpan={8} style={{ padding: '8px 12px', borderTop: '2px dashed var(--gold)', borderBottom: '2px dashed var(--gold)', textAlign: 'center', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: 2, textTransform: 'uppercase', background: 'var(--cream)' }}>Afternoon Break</td>
+              <td colSpan={7} style={{ padding: '8px 12px', borderTop: '2px dashed var(--gold)', borderBottom: '2px dashed var(--gold)', textAlign: 'center', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: 2, textTransform: 'uppercase', background: 'var(--cream)' }}>Afternoon Break</td>
             </tr>
-            {schedule.evening.map(renderRow)}
+            {schedule.evening.map((r, i) => renderRow(r, i + schedule.morning.length))}
           </tbody>
         </table>
       </div>
