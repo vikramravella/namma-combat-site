@@ -357,52 +357,91 @@ When Vinod shoots photos for the site, the following layout decisions need to be
 
 ## Photo Specifications (for shoot day)
 
-### Journey section (5 photos, horizontal)
-Each PhotoBox = **320px × 120px** on desktop. Aspect ratio: **2.67:1 (wide horizontal)**
-Shoot at minimum **640×240**, ideally **1280×480** for retina sharpness.
+**Camera:** Leica SL3 (60MP full-frame, native 6000×4000 4:3)
+**Shoot in DNG (RAW)** — gives maximum flexibility in post for cropping + color grading.
 
-Recommended rhythm across 5 steps (avoid 5 identical action shots):
-1. **Trial** — architectural/space shot (entrance, coach greeting someone)
-2. **Assess** — detail close-up (posture chart, tablet, or hands-on evaluation)
-3. **Plan** — planning/tactical (training plan being written, whiteboard, laptop with program)
-4. **Train** — wide group action shot (multiple people training together)
+### Shooting principles (Leica SL3-specific)
+- Use **electronic shutter for silent capture** — coaches and athletes won't flinch mid-movement
+- **ISO 100-800 ideal**; SL3 handles up to ISO 6400 cleanly if indoor lighting is mixed
+- Shoot **slightly overexposed** (+0.3 to +0.7 EV) for the warm cream / beige aesthetic — easier to preserve highlights in Leica DNG than recover shadows
+- Use **APO-Summicron 35mm f/2** or **50mm f/2 SL** for environmental shots
+- **90mm f/2 SL** or **75mm** for coach portraits (flattering compression)
+- Avoid overly wide lenses (21mm, 24mm) — distortion feels generic-fitness, not premium
+
+### Aspect ratios needed (shoot wider, crop in post)
+
+| Shot | Final aspect | Final size | Shoot at minimum |
+|---|---|---|---|
+| Hero right side | ~6:5 (slight vertical) | 600×500px | 3000×2500px |
+| Journey steps (×5) | 2.67:1 (wide horizontal) | 320×120px | 1600×600px |
+| Coach portraits (×6) | 1:1 (square) | 230×210px | 1500×1500px |
+| Arena discipline cards (×6) | 4:3 | 320×240px | 1600×1200px |
+| Sanctuary discipline cards (×4) | 4:3 | 320×240px | 1600×1200px |
+| Facility wide shot | 16:7 panoramic | 1160×500px | 3500×1500px |
+| Kids group | 3:4 vertical | 230×300px | 1200×1600px |
+
+Leica SL3 native 6000×4000 RAW gives plenty of room to crop to any of these.
+
+### Export settings for web
+- **Format:** JPEG, quality 85 (balances file size + sharpness)
+- **Color profile:** sRGB (not Adobe RGB) — web browsers render sRGB correctly
+- **Max longest edge:** 1920px (any bigger = bloat without visible gain on most screens)
+- **Target file size:** 200-400KB per image (keeps site fast-loading)
+
+### Journey section (5 shots, horizontal 2.67:1)
+Rhythm across 5 steps — don't shoot 5 similar actions:
+1. **Trial** — architectural / entrance shot (empty, moody)
+2. **Assess** — close-up detail (hands on posture chart, tablet)
+3. **Plan** — planning moment (whiteboard, training plan being written)
+4. **Train** — wide group action shot (multiple people training)
 5. **Mastery** — signature hero moment (single fighter mid-technique, wide environmental)
 
-### Coach portraits (6 photos, roughly square)
-Each coach card = **230px min-width × 210px tall image area**. Aspect ratio: **~1:1 (square)**
-Shoot at minimum **800×800**.
-All coaches on the same warm beige wall background for consistency. Arms crossed or neutral standing pose, looking into camera, same lighting direction.
+### Coach portraits (6 shots, square 1:1)
+Consistency is the key:
+- **Same warm beige wall** for all 6 portraits
+- **Same lighting direction** (one window source camera-left works well in SL3's natural rendering)
+- **Same pose language** — arms crossed OR standing relaxed, looking into lens
+- **Coaches to shoot:** Kantharaj, Naeem, Rajan, Venkatesh, Spoorthi, Manoj
+- **Leica note:** SL3's color science handles skin tones especially well — you may not need heavy grading
 
-### Coaches to shoot
-1. Kantharaj Agasa
-2. Mohammed Naeem
-3. Rajan
-4. Venkatesh A
-5. Spoorthi Nagraj
-6. Manoj Kumar
+### Hero image (1 shot, ~6:5)
+Right side of hero. Striking action moment — sweat, intensity, movement.
+Options: a fighter mid-punch on a bag, a wrestler mid-takedown, a coach on pads with an athlete.
+**Not a portrait** — this needs energy. Shoot at wider aspect and crop in.
 
-### Hero image (1 photo, large)
-Right side of hero section. Currently ~600×500px dark box. Aspect ratio: **~6:5 (slightly vertical)**
-Should be a striking action shot — sweat, intensity, movement. Shoot at **1800×1500+**.
+### Discipline cards (10 shots, 4:3)
+One signature visual per discipline:
+- **Boxing** — hand wraps + gloves, or a glove striking a pad
+- **Kickboxing** — kick mid-air
+- **MMA** — cage / mat grappling shot
+- **BJJ** — two athletes in a guard position, dark/moody
+- **Wrestling** — takedown moment
+- **Judo** — throw mid-air (dynamic)
+- **S&C** — athlete under a barbell or on Technogym equipment
+- **Animal Flow** — low ground-movement, athlete in a beast position
+- **HIIT** — athlete mid-burpee or on air bike (fast energy)
+- **Olympic Weightlifting** — snatch or clean catch moment
 
-### Discipline cards — Arena (6 photos)
-Boxing, Kickboxing, MMA, Brazilian Jiu-Jitsu, Wrestling, Judo.
-Cards are ~320×240 each. Aspect ratio: **4:3**.
-One signature action per discipline.
+### Facility wide shot (1 shot, 16:7)
+Empty or near-empty interior. Architectural. Shows premium equipment without people blocking it.
+**Best time to shoot:** early morning, before first class, with natural light through windows.
 
-### Discipline cards — Sanctuary (4 photos)
-S&C, Animal Flow, HIIT, Olympic Weightlifting.
-Same 4:3 aspect as Arena cards.
+### Kids group (1 shot, 3:4 vertical)
+Coached environment, kids in rows or a drill. **Parental consent required for every child visible.**
 
-### Facility wide shot (1 photo)
-Sanctuary section "Your Environment Matters" has a large placeholder. Aspect ratio: **~16:7 wide panoramic**.
-Interior, empty or minimal people, architectural feel. Shoot wide.
+### Total minimum shoot list: **19 photos**
+Budget: half-day shoot at the academy should cover this if well-planned.
 
-### Kids group (1 photo)
-Currently 230x300 placeholder. Aspect ratio: **~3:4 vertical**.
-Kids training in a coached environment. Parental consent required.
+### Shot list priority (in case of time constraints)
+1. 6 coach portraits (highest priority — identity of the academy)
+2. Hero image (first impression)
+3. Facility wide shot (quality of space)
+4. 6 Arena discipline cards (the product)
+5. 4 Sanctuary discipline cards (the product)
+6. 5 Journey horizontal shots (nice to have)
+7. Kids group shot (only if parental consent is fast)
 
-### Total shoot list: 19 photos minimum
+
 ## Account Ownership (all under Vinod's control)
 
 - GitHub: vikramravella
