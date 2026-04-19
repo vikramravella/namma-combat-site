@@ -32,12 +32,43 @@ function InlineForm() {
 export default function BJJLanding() {
   const [v, setV] = useState(false);
   useEffect(() => { setV(true); }, []);
-  const points = [
-    ['NIS certified Judo coaching', "Coach Kantharaj — NIS Patiala certified Judo coach with Gold medals in Judo. National-level competitor who teaches the art with precision and patience."],
-    ['Olympic combat sport', "Judo is one of the most practiced martial arts in the world and an Olympic sport since 1964. Throws, pins, submissions — a complete system."],
-    ['Free postural assessment', "Worth ₹7,000 elsewhere — included with every membership. We understand your body\'s balance and flexibility before training."],
-    ['Structured beginner plan', "8 S&C classes + 4 combat sessions in your first 2 weeks. Build the strength and flexibility Judo demands."],
-    ['Safe training environment', "Full Judo mats, BLS-certified staff, AED on-site. Proper breakfall technique taught from day one. Safety is non-negotiable."],
+  const levels = [
+    {
+      label: 'For the Beginner',
+      intro: "You've never rolled. That's where we start.",
+      items: [
+        'The gi — how to wear it, how to grip it, why it matters in BJJ',
+        'Fundamental positions — guard (closed, open), mount, side control, back',
+        'The positional hierarchy — escape before you attack',
+        'Hip escape (shrimp), bridge, frame-and-replace guard',
+        'First submissions — armbar from guard, triangle, rear naked choke',
+        'Structured S&C for grappling — grip, core, hip mobility',
+      ],
+    },
+    {
+      label: 'For the Intermediate',
+      intro: 'You know the positions. Now we build the game.',
+      items: [
+        'Guard development — spider guard, de la Riva, half guard, butterfly',
+        'Passing systems — pressure passing, knee slice, toreando, leg drag',
+        'Submission chains — combining attacks, sweeping to submission',
+        'Gi vs no-gi — how each changes the grips and the game',
+        'Rolling — live sparring with controlled intensity and clear intent',
+        'BJJ-specific conditioning — grappling cardio is unlike anything else',
+      ],
+    },
+    {
+      label: 'For the Competitor',
+      intro: 'You want to compete. We prepare you for IBJJF and beyond.',
+      items: [
+        'Tournament strategy — gi or no-gi, points system, advantage game',
+        'Advanced positions — lapel guards, leg locks (where legal), back-takes',
+        'Situational rolling matched to your weight and belt level',
+        'Competition preparation — IBJJF, ADCC, local circuits',
+        'Weight cutting for belt-level brackets, match-day routines',
+        'Mental game — focus under pressure, reading opponents, fight IQ',
+      ],
+    },
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>
@@ -47,16 +78,37 @@ export default function BJJLanding() {
         <div className="nc-landing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 48, alignItems: 'start' }}>
           <div>
             <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 12px' }}>Brazilian Jiu-Jitsu classes in Bangalore</p>
-            <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>The gentle art<br/>of throwing.</h1>
-            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Olympic sport. Self-defence system. Complete martial art. Learn Judo from an NIS certified coach with national-level competition experience and gold medals.</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 36 }}>
-              {points.map(([title, desc], i) => (<div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}><span style={{ fontFamily: T.fontBody, fontSize: 14, color: T.rust, fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span><div><p style={{ fontFamily: T.fontBody, fontSize: 14, fontWeight: 600, color: T.text, margin: '0 0 2px' }}>{title}</p><p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{desc}</p></div></div>))}
+            <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>Master the<br/>ground game.</h1>
+            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Train under a Gold medalist with decades of grappling experience. BJJ is the art of leverage — a trained person can control anyone. The most important addition to any martial artist's toolkit.</p>
+            <div style={{ marginBottom: 36 }}>
+              <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 8px' }}>What you'll learn</p>
+              <h2 style={{ fontFamily: T.fontDisplay, fontSize: 24, fontWeight: 900, color: T.text, margin: '0 0 24px', textTransform: 'uppercase', letterSpacing: 0.5 }}>BJJ at every level.</h2>
+              {levels.map((lvl, i) => (
+                <div key={i} style={{ marginBottom: 28, opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}>
+                  <h3 style={{ fontFamily: T.fontDisplay, fontSize: 15, fontWeight: 900, color: T.rust, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>{lvl.label}</h3>
+                  <p style={{ fontFamily: T.fontBody, fontSize: 14, color: T.text, fontWeight: 500, margin: '0 0 10px', fontStyle: 'italic' }}>{lvl.intro}</p>
+                  {lvl.items.map((item, j) => (
+                    <div key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 6 }}>
+                      <span style={{ fontFamily: T.fontBody, fontSize: 13, color: T.rust, fontWeight: 700, marginTop: 2, flexShrink: 0 }}>•</span>
+                      <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{item}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <div style={{ marginTop: 24, padding: '18px 22px', background: 'rgba(227,199,104,0.12)', borderLeft: `3px solid ${T.gold}`, borderRadius: 4 }}>
+                <h3 style={{ fontFamily: T.fontDisplay, fontSize: 13, fontWeight: 900, color: T.text, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>Strength &amp; Conditioning</h3>
+                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}>Every BJJ practitioner here trains S&C. Non-negotiable at every level. BJJ demands grip endurance, core strength, and hip mobility that no other sport requires. Our S&C is built to keep you rolling for years, not weeks.</p>
+              </div>
+              <div style={{ marginTop: 16, padding: '18px 22px', background: T.warm, borderLeft: `3px solid ${T.rust}`, borderRadius: 4 }}>
+                <h3 style={{ fontFamily: T.fontDisplay, fontSize: 13, fontWeight: 900, color: T.text, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>Who teaches you</h3>
+                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}><strong style={{ color: T.text }}>Coach Kantharaj Agasa</strong> — Gold medalist in BJJ, Indian MMA Pioneer with 12 professional wins, NIS Patiala certified. Years of grappling at the highest level distilled into every class.</p>
+              </div>
             </div>
             <div style={{ padding: '20px 24px', background: T.warm, borderRadius: 8, border: `1px solid ${T.border}` }}>
               <div style={{ fontFamily: T.fontSerif, fontSize: 24, color: T.gold, lineHeight: 1, marginBottom: 4, opacity: 0.6 }}>&ldquo;</div>
-              <p style={{ fontFamily: T.fontSerif, fontSize: 15, color: T.text, lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 10px' }}>For national and Olympic aspirants, options were extremely limited — until Namma Combat started. This is not just a training centre; it&apos;s where fighters and Olympic aspirants are forged.</p>
-              <p style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, fontWeight: 600, margin: '0 0 2px' }}>— Gopinath Kannan</p>
-              <p style={{ fontFamily: T.fontBody, fontSize: 11, color: T.textMuted, margin: 0 }}>Parent &amp; Combat Sports Advocate</p>
+              <p style={{ fontFamily: T.fontSerif, fontSize: 15, color: T.text, lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 10px' }}>The BJJ program here is structured properly — positions before submissions, fundamentals before fancy. Six months in and I understand grappling in a way I never did before.</p>
+              <p style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, fontWeight: 600, margin: '0 0 2px' }}>— BJJ practitioner</p>
+              <p style={{ fontFamily: T.fontBody, fontSize: 11, color: T.textMuted, margin: 0 }}>6 months at Namma Combat</p>
             </div>
           </div>
           <div style={{ position: 'sticky', top: 24, opacity: v?1:0, transform: v?'translateY(0)':'translateY(20px)', transition: 'all 0.6s ease 0.3s' }}>
