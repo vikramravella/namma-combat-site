@@ -32,12 +32,40 @@ function InlineForm() {
 export default function KickboxingLanding() {
   const [v, setV] = useState(false);
   useEffect(() => { setV(true); }, []);
-  const points = [
-    ['Real technique, not cardio', "This isn't a fitness class disguised as kickboxing. You'll learn proper Muay Thai and kickboxing technique — stance, strikes, combinations, defensive skills."],
-    ['Experienced coaching', 'Our coaches have competed nationally and trained fighters. Every session is structured with progression in mind.'],
-    ['Free postural assessment', 'Worth ₹7,000 elsewhere — included with every membership. Understand your body before training.'],
-    ['Structured beginner plan', '8 S&C classes + 4 combat sessions in your first 2 weeks. Build a safe foundation before throwing kicks.'],
-    ['Complete combat facility', '4,200 sq ft across 2 floors. Heavy bags, Thai pads, full-size ring, dedicated mat space. Premium equipment throughout.'],
+  const levels = [
+    {
+      label: 'For the Beginner',
+      intro: "You've never thrown a kick. That's where we start.",
+      items: [
+        'Stance, guard, footwork — the platform for every strike',
+        'Teep, roundhouse, front kick — fundamental leg mechanics',
+        'Hands first — jab, cross, hook with proper defense',
+        'Pad work to build clean technique before power',
+        'Structured S&C for flexibility and kick-specific strength',
+      ],
+    },
+    {
+      label: 'For the Intermediate',
+      intro: 'You know the strikes. Now we build the fighter.',
+      items: [
+        'Full kick arsenal — low, middle, high, spinning',
+        'Knee and elbow work (Muay Thai-influenced)',
+        'Combination building — hand-to-kick, kick-to-hand',
+        'Controlled sparring with supervised intensity',
+        'Clinch work and short-range striking',
+      ],
+    },
+    {
+      label: 'For the Competitor',
+      intro: 'You want to compete. We build the full fighter.',
+      items: [
+        'Advanced combinations and feints under pressure',
+        'Range management — long, middle, clinch',
+        'Fight IQ — reading opponents, baiting openings',
+        'Full sparring with weight-class-appropriate partners',
+        'Competition prep — camp structure, cutting, corner work',
+      ],
+    },
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>
