@@ -325,7 +325,6 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 
 - [ ] **Photos** — swap PhotoBox placeholders (hero action shot, discipline cards, coach portraits with arms crossed on beige wall, facility wide shots, kids group, Journey sequence)
 - [ ] **Meta Pixel** when Facebook Business Manager access restored
-- [x] Manoj bio added to Team section (done Apr 18 eve)
 - [ ] **Gateway page** at nammacombat.com (Academy/Community switcher) — build when community app launches
 - [ ] **mail.nammacombat.com** redirect to Gmail (low priority)
 
