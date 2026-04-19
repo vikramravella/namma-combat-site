@@ -2,11 +2,11 @@ import { Reveal, Section, Eyebrow, Heading, SubHeading, GoldBar, PrimaryBtn, Pho
 
 export default function Journey({ onCta }) {
   const steps = [
-    { num: '01', title: 'Free trial class', label: 'Trial', desc: 'Whether you\'ve never thrown a punch or you\'re a seasoned fighter looking for a new home — your first session is on us. Experience the space, meet the coaches, and see how we train. No commitment, no pressure.' },
-    { num: '02', title: 'Postural assessment', label: 'Assess', desc: 'Once you join, every member — beginner or advanced — starts with a comprehensive postural assessment. We evaluate your body\'s imbalances, strengths, and movement patterns. This is typically charged ₹7,000 elsewhere. It\'s included with every membership. For experienced athletes, this reveals hidden imbalances that limit performance.' },
-    { num: '03', title: 'Your structured plan', label: 'Plan', desc: 'Based on your assessment, experience level, and goals, we build a personalised training plan. A complete beginner gets a different path than an intermediate practitioner looking to compete. No guesswork, no generic programs — your coaches know exactly where you are and where you need to go.' },
-    { num: '04', title: 'Train at your level', label: 'Train', desc: 'Beginners build their athletic base with S&C and Animal Flow before entering combat sessions — this prevents injuries and builds lasting foundations. Intermediate athletes sharpen technique and start structured sparring. Competitive fighters get match preparation, advanced drilling, and fight-ready conditioning. Every level trains with intention.' },
-    { num: '05', title: 'Grow without limits', label: 'Mastery', desc: 'Your membership is wide open. Box in the morning, wrestle in the evening, hit the Technogym Skill Row at lunch. Every 3 months, we reassess your posture, review your progress, and recalibrate your training. Whether you\'re chasing your first milestone or preparing for a national competition — your growth is tracked, not assumed.' },
+    { num: '01', title: 'Free trial class', label: 'Trial', desc: 'Your first session is on us. Meet the coaches, see the space, feel how we train. No commitment, no pressure.' },
+    { num: '02', title: 'Postural assessment', label: 'Assess', desc: 'Every member starts here — a full-body evaluation of imbalances, movement, and readiness. A service most centres charge separately for. Yours is included.' },
+    { num: '03', title: 'Your structured plan', label: 'Plan', desc: 'Your coaches build a personalised plan based on your assessment, level, and goals. No generic programs. No guesswork.' },
+    { num: '04', title: 'Train at your level', label: 'Train', desc: 'Beginners build their foundation with S&C and Animal Flow. Intermediates sharpen technique and sparring. Fighters train for competition. Every level trains with intention.' },
+    { num: '05', title: 'Grow without limits', label: 'Mastery', desc: 'Your membership is wide open — train across disciplines, across floors, any time. Every 3 months we reassess your posture and recalibrate your plan.' },
   ];
 
   return (
@@ -14,7 +14,7 @@ export default function Journey({ onCta }) {
       <Reveal>
         <Eyebrow>Your journey</Eyebrow>
         <Heading>We don&apos;t just hand you a membership card.</Heading>
-        <SubHeading>From your first visit to your hundredth session — beginners, intermediate athletes, and competitive fighters all train with structure and purpose.</SubHeading>
+        <SubHeading>Every member — beginner to competitive fighter — trains with structure and purpose.</SubHeading>
         <GoldBar />
       </Reveal>
       <div style={{ marginTop: 8 }}>
