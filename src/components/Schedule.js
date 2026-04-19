@@ -108,7 +108,17 @@ function Table({ title, subtitle, schedule, type }) {
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', margin: '0 0 20px', letterSpacing: 0.5 }}>{subtitle}</p>
       <div className="nc-scroll-hint" style={{ display: 'none', fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase' }}>← Swipe to see all days →</div>
       <div style={{ overflowX: 'auto', border: '1px solid var(--border)', borderRadius: 8, background: '#fff', WebkitOverflowScrolling: 'touch' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 780 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 780, tableLayout: 'fixed' }}>
+          <colgroup>
+            <col style={{ width: '70px' }} />
+            <col style={{ width: 'calc((100% - 70px) / 7)' }} />
+            <col style={{ width: 'calc((100% - 70px) / 7)' }} />
+            <col style={{ width: 'calc((100% - 70px) / 7)' }} />
+            <col style={{ width: 'calc((100% - 70px) / 7)' }} />
+            <col style={{ width: 'calc((100% - 70px) / 7)' }} />
+            <col style={{ width: 'calc((100% - 70px) / 7)' }} />
+            <col style={{ width: 'calc((100% - 70px) / 7)' }} />
+          </colgroup>
           <thead>
             <tr>
               {schedule.header.map((h, i) => (
