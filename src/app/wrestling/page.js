@@ -32,12 +32,40 @@ function InlineForm() {
 export default function WrestlingLanding() {
   const [v, setV] = useState(false);
   useEffect(() => { setV(true); }, []);
-  const points = [
-    ['NIS certified wrestling coach', "Coach Venkatesh — NIS Patiala certified Wrestling Coach, Master\'s in Sports Management, university-level coaching experience, and a certified wrestling official."],
-    ['Foundation of all combat sports', "Wrestling teaches balance, body control, takedowns, and ground positioning. Whether your goal is MMA, self-defence, or pure wrestling — this is where it starts."],
-    ['Free postural assessment', "Worth ₹7,000 elsewhere — included with every membership. We assess your mobility, strength, and imbalances before training."],
-    ['Structured beginner plan', "8 S&C classes + 4 combat sessions in your first 2 weeks. Your body gets conditioned before grappling intensity increases."],
-    ['Dedicated mat space', "Full wrestling mats, proper training area, and a facility designed for combat sports — not a corner of a commercial fitness centre."],
+  const levels = [
+    {
+      label: 'For the Beginner',
+      intro: "You've never shot a takedown. That's where we start.",
+      items: [
+        'Wrestling stance, level changes, motion drills',
+        'Fundamental takedowns — single leg, double leg',
+        'Sprawl and takedown defense basics',
+        'Top and bottom position fundamentals',
+        'Structured S&C to build the wrestling body',
+      ],
+    },
+    {
+      label: 'For the Intermediate',
+      intro: 'You know the basics. Now we build the wrestler.',
+      items: [
+        'Chain wrestling — linking takedowns and setups',
+        'Pummeling and underhook control',
+        'Mat wrestling — turns, rides, escapes',
+        'Live drilling and situational wrestling',
+        'Conditioning matched to match-pace intensity',
+      ],
+    },
+    {
+      label: 'For the Competitor',
+      intro: 'You want to compete. We prepare you to win.',
+      items: [
+        'Advanced attacks — sweeps, trips, throws',
+        'Match strategy and positional dominance',
+        'Full live wrestling with training partners',
+        'State/national tournament preparation',
+        'Weight cutting, recovery, match-day routines',
+      ],
+    },
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>
