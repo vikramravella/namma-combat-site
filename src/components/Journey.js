@@ -28,7 +28,7 @@ export default function Journey({ onCta }) {
                 </div>
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text-light)', lineHeight: 1.7, margin: 0, maxWidth: 560 }}>{step.desc}</p>
               </div>
-              <PhotoBox label={step.label} h={180} />
+              <PhotoBox label={step.label} h={120} />
             </div>
           </Reveal>
         ))}
