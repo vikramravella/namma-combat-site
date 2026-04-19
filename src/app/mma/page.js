@@ -77,8 +77,29 @@ export default function MMALanding() {
             <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 12px' }}>MMA training in Bangalore</p>
             <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>Train MMA with<br/>a pioneer.</h1>
             <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Learn mixed martial arts under Kantharaj Agasa — the man who took Indian MMA to the next level. 12 professional wins, national-level wrestler, NIS certified Judo coach.</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 36 }}>
-              {points.map(([title, desc], i) => (<div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}><span style={{ fontFamily: T.fontBody, fontSize: 14, color: T.rust, fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span><div><p style={{ fontFamily: T.fontBody, fontSize: 14, fontWeight: 600, color: T.text, margin: '0 0 2px' }}>{title}</p><p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{desc}</p></div></div>))}
+            <div style={{ marginBottom: 36 }}>
+              <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 8px' }}>What you'll learn</p>
+              <h2 style={{ fontFamily: T.fontDisplay, fontSize: 24, fontWeight: 900, color: T.text, margin: '0 0 24px', textTransform: 'uppercase', letterSpacing: 0.5 }}>MMA at every level.</h2>
+              {levels.map((lvl, i) => (
+                <div key={i} style={{ marginBottom: 28, opacity: v?1:0, transform: v?'translateY(0)':'translateY(10px)', transition: `all 0.5s ease ${0.2+i*0.1}s` }}>
+                  <h3 style={{ fontFamily: T.fontDisplay, fontSize: 15, fontWeight: 900, color: T.rust, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>{lvl.label}</h3>
+                  <p style={{ fontFamily: T.fontBody, fontSize: 14, color: T.text, fontWeight: 500, margin: '0 0 10px', fontStyle: 'italic' }}>{lvl.intro}</p>
+                  {lvl.items.map((item, j) => (
+                    <div key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 6 }}>
+                      <span style={{ fontFamily: T.fontBody, fontSize: 13, color: T.rust, fontWeight: 700, marginTop: 2, flexShrink: 0 }}>•</span>
+                      <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{item}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <div style={{ marginTop: 24, padding: '18px 22px', background: 'rgba(227,199,104,0.12)', borderLeft: `3px solid ${T.gold}`, borderRadius: 4 }}>
+                <h3 style={{ fontFamily: T.fontDisplay, fontSize: 13, fontWeight: 900, color: T.text, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>Strength &amp; Conditioning</h3>
+                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}>Every MMA athlete here trains S&C. Non-negotiable at every level. An MMA athlete's body takes more stress than any other sport — we build bodies that last camps, not just classes.</p>
+              </div>
+              <div style={{ marginTop: 16, padding: '18px 22px', background: T.warm, borderLeft: `3px solid ${T.rust}`, borderRadius: 4 }}>
+                <h3 style={{ fontFamily: T.fontDisplay, fontSize: 13, fontWeight: 900, color: T.text, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>Who teaches you</h3>
+                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}><strong style={{ color: T.text }}>Coach Kantharaj Agasa</strong> — Indian MMA Pioneer, 12 professional MMA wins, national-level wrestler, NIS Patiala certified Judo coach, Gold medals in BJJ and Judo. Supported by Coach Bhagyarajan (boxing), Coach Venkatesh (wrestling), Coach Naeem (S&C).</p>
+              </div>
             </div>
             <div style={{ padding: '20px 24px', background: T.warm, borderRadius: 8, border: `1px solid ${T.border}` }}>
               <div style={{ fontFamily: T.fontSerif, fontSize: 24, color: T.gold, lineHeight: 1, marginBottom: 4, opacity: 0.6 }}>&ldquo;</div>
