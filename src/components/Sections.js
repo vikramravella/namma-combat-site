@@ -44,7 +44,7 @@ export function Team() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 16 }}>
         {coaches.map(([name, role, creds], i) => (
           <Reveal key={name} delay={i * 0.04}>
-            <div className="nc-card" style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--cream)' }}>
+            <div className="nc-card" style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--cream)', height: '100%', display: 'flex', flexDirection: 'column' }}>
               <PhotoBox label={name.split(' ')[0]} h={210} style={{ borderRadius: 0, borderBottom: '1px solid rgba(224,214,200,0.3)' }} />
               <div style={{ padding: '14px 16px' }}>
                 <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 900, color: 'var(--text)', margin: '0 0 3px', textTransform: 'uppercase', letterSpacing: 0.3 }}>{name}</h3>
