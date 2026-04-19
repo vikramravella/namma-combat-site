@@ -105,7 +105,7 @@ export function Memberships({ onCta }) {
           </p>
         </div>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginTop: 24 }}>
-          Quarterly, semi-annual &amp; annual packages available with significant savings. Single class passes and personal training also available.
+          Monthly, quarterly, semi-annual, and annual packages available. Single class passes and personal training also available.
         </p>
       </Reveal>
     </Section>
