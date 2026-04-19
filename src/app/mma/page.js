@@ -32,12 +32,40 @@ function InlineForm() {
 export default function MMALanding() {
   const [v, setV] = useState(false);
   useEffect(() => { setV(true); }, []);
-  const points = [
-    ['Learn from an MMA pioneer', "Head Coach Kantharaj Agasa — 12 professional MMA wins, national wrestler, NIS Patiala certified Judo coach, Gold medals in BJJ and Judo. This is where serious MMA training happens."],
-    ['Genuine sparring sessions', "One of the few academies in Bangalore with dedicated, authentic MMA sparring sessions. Not just drills — real competitive training."],
-    ['Complete martial arts system', "Striking, wrestling, ground work, clinch — all taught as separate disciplines that come together in MMA. No shortcuts, no gaps."],
-    ['Free postural assessment', "Worth ₹7,000 elsewhere — included with every membership. We understand your body before we build your game."],
-    ['Structured beginner pathway', "8 S&C classes + 4 combat sessions in your first 2 weeks. Build strength and movement quality before MMA intensity."],
+  const levels = [
+    {
+      label: 'For the Beginner',
+      intro: "MMA isn't one skill — it's the integration of three. Before mixing, master the parts.",
+      items: [
+        'STRIKING RANGE: Boxing hands and kickboxing kicks — stance, guard, distance',
+        'GRAPPLING RANGE: Wrestling takedowns and BJJ positions — control before submission',
+        'STARTING TO INTEGRATE: Simple transitions — strike to clinch, clinch to takedown',
+        'Safe introduction to each range individually',
+        'Structured S&C to prepare your body for the full sport',
+      ],
+    },
+    {
+      label: 'For the Intermediate',
+      intro: 'Now the ranges start talking to each other.',
+      items: [
+        'Transitions under live resistance — striking to clinch, clinch to ground',
+        'Ground-and-pound vs guard retention',
+        'Situational drilling — cage pressure, scrambles, escapes',
+        'Live rolling and controlled MMA sparring',
+        'Sport-integrated conditioning — rounds with all ranges',
+      ],
+    },
+    {
+      label: 'For the Competitor',
+      intro: 'Every range sharp. Every gap closed.',
+      items: [
+        'Full MMA sparring with supervised intensity',
+        'Game planning for specific opponents',
+        'Cage work — fence wrestling, clinch fighting',
+        'Camp-structured training blocks for fights',
+        'Weight management, fight-night nutrition, corner work',
+      ],
+    },
   ];
   return (
     <><style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital@0;1&display=swap');@font-face{font-family:'Materia Pro';src:url('/fonts/MateriaPro-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:${T.cream};color:${T.text};-webkit-font-smoothing:antialiased;}`}</style>
