@@ -354,6 +354,55 @@ When Vinod shoots photos for the site, the following layout decisions need to be
   - Facility interior wide shot
   - Kids group training photo
 
+
+## Photo Specifications (for shoot day)
+
+### Journey section (5 photos, horizontal)
+Each PhotoBox = **320px × 120px** on desktop. Aspect ratio: **2.67:1 (wide horizontal)**
+Shoot at minimum **640×240**, ideally **1280×480** for retina sharpness.
+
+Recommended rhythm across 5 steps (avoid 5 identical action shots):
+1. **Trial** — architectural/space shot (entrance, coach greeting someone)
+2. **Assess** — detail close-up (posture chart, tablet, or hands-on evaluation)
+3. **Plan** — planning/tactical (training plan being written, whiteboard, laptop with program)
+4. **Train** — wide group action shot (multiple people training together)
+5. **Mastery** — signature hero moment (single fighter mid-technique, wide environmental)
+
+### Coach portraits (6 photos, roughly square)
+Each coach card = **230px min-width × 210px tall image area**. Aspect ratio: **~1:1 (square)**
+Shoot at minimum **800×800**.
+All coaches on the same warm beige wall background for consistency. Arms crossed or neutral standing pose, looking into camera, same lighting direction.
+
+### Coaches to shoot
+1. Kantharaj Agasa
+2. Mohammed Naeem
+3. Rajan
+4. Venkatesh A
+5. Spoorthi Nagraj
+6. Manoj Kumar
+
+### Hero image (1 photo, large)
+Right side of hero section. Currently ~600×500px dark box. Aspect ratio: **~6:5 (slightly vertical)**
+Should be a striking action shot — sweat, intensity, movement. Shoot at **1800×1500+**.
+
+### Discipline cards — Arena (6 photos)
+Boxing, Kickboxing, MMA, Brazilian Jiu-Jitsu, Wrestling, Judo.
+Cards are ~320×240 each. Aspect ratio: **4:3**.
+One signature action per discipline.
+
+### Discipline cards — Sanctuary (4 photos)
+S&C, Animal Flow, HIIT, Olympic Weightlifting.
+Same 4:3 aspect as Arena cards.
+
+### Facility wide shot (1 photo)
+Sanctuary section "Your Environment Matters" has a large placeholder. Aspect ratio: **~16:7 wide panoramic**.
+Interior, empty or minimal people, architectural feel. Shoot wide.
+
+### Kids group (1 photo)
+Currently 230x300 placeholder. Aspect ratio: **~3:4 vertical**.
+Kids training in a coached environment. Parental consent required.
+
+### Total shoot list: 19 photos minimum
 ## Account Ownership (all under Vinod's control)
 
 - GitHub: vikramravella
