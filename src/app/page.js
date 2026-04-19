@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Nav from '@/components/Nav';
 import Hero from '@/components/Hero';
 import Welcome from '@/components/Welcome';
+import Why from '@/components/Why';
 import Journey from '@/components/Journey';
 import Arena from '@/components/Arena';
 import Sanctuary from '@/components/Sanctuary';
@@ -19,6 +20,7 @@ export default function Home() {
       <Nav onCta={open} />
       <Hero onCta={open} />
       <Welcome />
+      <Why />
       <Journey onCta={open} />
       <Arena />
       <Sanctuary />
