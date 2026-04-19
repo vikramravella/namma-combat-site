@@ -63,14 +63,14 @@ export function Team() {
 export function Memberships({ onCta }) {
   const tiers = [
     { name: 'Silver', sub: 'The specialist', desc: 'One floor — your choice',
-      story: 'Silver exists because members asked for it. Some already have an S&C routine elsewhere and want combat only. Others want pure strength work without combat. You\'re restricted between floors, but never within your floor — attend every class, every program, as many sessions as you want.',
-      features: ['Choose The Arena (all combat sports) or The Sanctuary (all S&C + Animal Flow)', 'Unlimited sessions — no caps, no restrictions within your floor', 'Postural assessment included (valued at ₹7,000 elsewhere)', 'Structured beginner plan to build your foundation safely', 'Saturdays — bring a guest along to train with you'] },
+      story: 'Unlimited access to every class on your chosen floor. For members who want combat OR strength, not both.',
+      features: ['The Arena (all combat sports) OR The Sanctuary (all S&C + Animal Flow)', 'Unlimited sessions — any class, any number of times a day', 'Postural assessment included', 'Structured beginner plan'] },
     { name: 'Gold', sub: 'The athlete', desc: 'Both floors — zero limitations', popular: true,
-      story: 'This is what we genuinely recommend. Boxing in the morning, S&C in the evening, Animal Flow on the weekend, open floor on the Technogym Skill Row at lunch — Gold gives you complete freedom across both floors with no restrictions whatsoever.',
-      features: ['Full access to every combat sport — Boxing, Kickboxing, MMA, BJJ, Wrestling, Judo', 'Full access to the entire strength floor — all equipment, all S&C programs', 'Animal Flow, HIIT, Olympic Lifting — all included, not extra', 'Open floor — Technogym Skill Row, Skill Ski, Hammer Strength air bikes anytime', 'Postural assessment included (valued at ₹7,000 elsewhere)', 'Structured beginner plan + quarterly progress reviews', 'Saturdays — bring a guest along to train with you'] },
+      story: 'Everything, any time. Box in the morning, lift at lunch, flow in the evening — unlimited, across both floors.',
+      features: ['Full access to both floors — every combat sport + every S&C program', 'Unlimited sessions — any class, any number of times a day', 'Animal Flow, HIIT, Olympic Lifting — all included', 'Open floor — Technogym equipment anytime', 'Postural assessment + quarterly progress reviews'] },
     { name: 'Platinum', sub: 'The elite', desc: 'Gold + personal coaching + guests',
-      story: 'Everything in Gold, plus dedicated 1-on-1 coaching to accelerate your progress. Whether it\'s technique work, specialised sessions like Yoga or Dance, or focused fight preparation — Platinum gives you the personal attention to reach your goals faster.',
-      features: ['Everything in Gold — full access, zero limitations', '2 Personal Training sessions per month (any format you choose)', '2 Guest Passes per month (weekdays)', 'Specialised sessions — Yoga, Dance, or any program via PT', 'Postural assessment + quarterly reviews + personalised programming', 'Saturdays — bring a guest along to train with you'] },
+      story: 'Dedicated 1-on-1 coaching on top of everything Gold offers. For those who want to accelerate.',
+      features: ['Everything in Gold', '2 personal training sessions per month', '2 guest passes per month (weekdays)', 'Specialised sessions — Yoga, Dance, or fight prep via PT', 'Personalised programming + quarterly reviews'] },
   ];
   return (
     <Section id="memberships" bg="var(--cream)">
@@ -99,6 +99,11 @@ export function Memberships({ onCta }) {
         ))}
       </div>
       <Reveal delay={0.3}>
+        <div style={{ marginTop: 32, padding: '20px 28px', background: 'var(--warm)', borderLeft: '3px solid var(--gold)', borderRadius: 4, maxWidth: 780 }}>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text)', margin: 0, lineHeight: 1.6 }}>
+            <strong>Saturdays: bring your friends and family.</strong> Every membership lets members bring guests on Saturdays. Three or more guests? Just give us advance notice.
+          </p>
+        </div>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginTop: 24 }}>
           Quarterly, semi-annual &amp; annual packages available with significant savings. Single class passes and personal training also available.
         </p>
