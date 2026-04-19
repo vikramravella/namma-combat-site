@@ -241,7 +241,7 @@ export default function Schedule() {
   return (
     <Section id="schedule" bg="var(--cream)">
       <Reveal>
-        <Eyebrow>Weekly Timetable</Eyebrow>
+        <Eyebrow>Your week at Namma Combat</Eyebrow>
         <Heading>Train every day, on your schedule.</Heading>
         <SubHeading>Our doors open at 6 AM. Choose any class that fits your day.</SubHeading>
         <GoldBar />
