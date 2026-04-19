@@ -27,10 +27,10 @@ export function Team() {
   const coaches = [
     ['Kantharaj Agasa', 'Co-founder & Head Coach', 'Indian MMA Pioneer with 12 professional wins. National-level wrestler. NIS Patiala certified Judo coach. Gold medals in BJJ and Judo.'],
     ['Mohammed Naeem', 'Co-founder & Head of S&C', 'Former professional Indian Hockey player. MSc in Performance Coaching (Setanta College). 8+ years building athletes. Known for sustainable, elite transformations.'],
-    ['Rajan', 'Boxing Lead', 'NIS Patiala certified Boxing Coach. Multiple national Gold + Best Boxer awards. Former international competitor with decades of ring experience.'],
+    ['Bhagyarajan', 'Boxing Lead', 'NIS Patiala certified Boxing Coach. Multiple national Gold + Best Boxer awards. Former international competitor with decades of ring experience.'],
     ['Venkatesh A', 'Wrestling Coach', 'NIS Patiala certified Wrestling Coach. Master\'s in Sports Management. University-level coaching and certified wrestling official.'],
     ['Spoorthi Nagraj', 'S&C & Women\'s Health', 'Certified S&C Coach specialising in women\'s health, functional movement, and running performance. Animal Flow Level 1 certified.'],
-    ['Manoj Kumar', 'S&C Coach', 'From competing on hockey fields at the state level to coaching on the training floor at Namma Combat — Manoj brings an athlete\'s understanding of how bodies learn under pressure. State Hockey Karnataka League winner, School Games winner, and South Zone University finalist, he knows what structured training can unlock. Skill India certified in Strength & Conditioning, Manoj specialises in coaching beginners through the fundamentals — breaking down movement, correcting form, and building confidence one session at a time. Patient, detail-oriented, and genuinely invested in every member\'s progress — no matter where they start.'],
+    ['Manoj Kumar', 'S&C Coach', 'Skill India certified S&C Coach. Former state-level hockey athlete — Karnataka League winner, School Games winner, South Zone University finalist. Specialises in coaching beginners through the fundamentals.'],
   ];
   return (
     <Section id="team" bg="var(--warm)">
@@ -150,7 +150,7 @@ export function Testimonials() {
     ['"I run my own MMA academy and was looking to increase my knowledge base. If you are planning to compete professionally, Namma Combat is the place to be. The training is professional and next level. Trust me, this academy is going to produce a lot of champions."', 'Raktim Singha', 'MMA Coach & Academy Owner'],
     ['"One of the best things unique to this academy is their approach towards holistic development of an athlete. From the best coaches to the strength and conditioning program, every aspect is well planned to provide all the support an athlete would require."', 'Sai Anjana G', 'Athlete'],
     ['"I\'ve seen clear improvement in my kids\' stamina, technique, and mindset since joining. If you want professional combat training with world-class coaching, Namma Combat is easily the best in Koramangala."', 'Karthik Eashwar', 'Parent'],
-    ['"I have trained under multiple coaches across India but I can say that Coach Rajan is the best coach I am training under and I have started feeling very confident in just 2 months of training."', 'Shubham', 'Trained across India'],
+    ['"I have trained under multiple coaches across India but I can say that Coach Bhagyarajan is the best coach I am training under and I have started feeling very confident in just 2 months of training."', 'Shubham', 'Trained across India'],
   ];
   return (
     <Section bg="var(--cream)">
