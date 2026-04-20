@@ -324,6 +324,12 @@ export function Footer() {
       <img src="/seal.svg" alt="Namma Combat" style={{ width: 64, height: 64, margin: '0 auto 16px', display: 'block' }} />
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 10, letterSpacing: 3, color: 'var(--rust)', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 600 }}>Skill · Strength · Sanctuary</p>
       <img src="/logo.svg" alt="Namma Combat" style={{ height: 28, margin: '8px auto 16px', display: 'block' }} />
+      <div style={{ marginBottom: 14, display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+        <a href="/privacy" style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy</a>
+        <a href="/terms" style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}>Terms</a>
+        <a href="/refunds" style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}>Refunds</a>
+        <a href="/shipping" style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}>Shipping</a>
+      </div>
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-muted)', margin: 0 }}>© 2026 Namma Combat. All rights reserved.</p>
     </footer>
   );
