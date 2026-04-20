@@ -50,6 +50,7 @@ export default function JudoLanding() {
       intro: 'You know the throws. Now we build the judoka.',
       items: [
         'Advanced throws — Uchi-mata, Harai-goshi, Tai-otoshi, Sasae-tsurikomi-ashi',
+        'Gokyo no Waza — introduction to Kodokan’s 40 classical throws in five pedagogical groups',
         'Renraku-waza (combinations) and Kaeshi-waza (counters)',
         'Ne-waza — Osaekomi (holds), Shime-waza (chokes), Kansetsu-waza (joint locks)',
         'Randori — respectful live Judo practice with progressive intensity',
