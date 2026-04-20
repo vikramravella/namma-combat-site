@@ -60,6 +60,52 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-WLF5WZ9HRS');
           `}
         </Script>
+        <Script id="local-business-schema" type="application/ld+json" strategy="afterInteractive">
+          {`
+          {
+            "@context": "https://schema.org",
+            "@type": ["LocalBusiness", "SportsActivityLocation", "ExerciseGym"],
+            "name": "Namma Combat",
+            "description": "India's premier combat sports academy in Koramangala, Bangalore. Boxing, MMA, Kickboxing, BJJ, Wrestling, Judo, Olympic Weightlifting, and Strength & Conditioning under one roof.",
+            "url": "https://nammacombat.com",
+            "telephone": "+917770087700",
+            "email": "privacy@nammacombat.com",
+            "image": "https://nammacombat.com/og-image.png",
+            "logo": "https://nammacombat.com/logo.svg",
+            "priceRange": "₹₹",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "10, 80 Feet Road, 4th Block, Koramangala",
+              "addressLocality": "Bangalore",
+              "addressRegion": "Karnataka",
+              "postalCode": "560034",
+              "addressCountry": "IN"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": "12.9352",
+              "longitude": "77.6245"
+            },
+            "openingHoursSpecification": [
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                "opens": "06:00",
+                "closes": "21:00"
+              }
+            ],
+            "areaServed": {
+              "@type": "City",
+              "name": "Bangalore"
+            },
+            "sport": ["Boxing", "Mixed Martial Arts", "Kickboxing", "Brazilian Jiu-Jitsu", "Wrestling", "Judo", "Olympic Weightlifting"],
+            "sameAs": [
+              "https://nammacombat.com"
+            ],
+            "slogan": "Skill · Strength · Sanctuary"
+          }
+          `}
+        </Script>
       </head>
       <body className={inter.className}>{children}</body>
     </html>
