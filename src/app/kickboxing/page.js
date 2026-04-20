@@ -92,7 +92,7 @@ export default function KickboxingLanding() {
                   <p style={{ fontFamily: T.fontBody, fontSize: 14, color: T.text, fontWeight: 500, margin: '0 0 10px', fontStyle: 'italic' }}>{lvl.intro}</p>
                   {lvl.items.map((item, j) => (
                     <div key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 6 }}>
-                      <span style={{ fontFamily: T.fontBody, fontSize: 13, color: T.rust, fontWeight: 700, marginTop: 2, flexShrink: 0 }}>•</span>
+                      <span style={{ fontFamily: T.fontBody, fontSize: 13, color: T.gold, fontWeight: 700, marginTop: 2, flexShrink: 0 }}>•</span>
                       <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.5, margin: 0 }}>{item}</p>
                     </div>
                   ))}
