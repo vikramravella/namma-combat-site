@@ -77,6 +77,7 @@ export function Memberships({ onCta }) {
     {
       name: 'Silver',
       tagline: 'One floor',
+      story: 'The specialist — combat OR strength, not both.',
       prices: { monthly: 5775, quarterly: 15750, semi: 29400, annual: 47250 },
       savings: { monthly: null, quarterly: 1500, semi: 5000, annual: 21000 },
       features: ['Unlimited access to your chosen floor', 'All disciplines on that floor', 'Postural assessment included', 'Quarterly re-assessment'],
@@ -85,14 +86,16 @@ export function Memberships({ onCta }) {
       name: 'Student',
       tagline: 'Both floors · Student pricing',
       badge: 'Valid ID required',
+      story: 'Everything Gold offers, at Silver pricing. For school and college students.',
       prices: { monthly: 5775, quarterly: 15750, semi: 29400, annual: 47250 },
       savings: { monthly: null, quarterly: 1500, semi: 5000, annual: 21000 },
       features: ['Unlimited access to both floors', 'All disciplines, all classes', 'Valid school / college / university ID required', 'Age-appropriate classes — kids train with kids, adults with adults'],
     },
     {
       name: 'Gold',
-      tagline: 'Both floors · Most popular',
+      tagline: 'Both floors',
       popular: true,
+      story: 'The complete experience. Box in the morning, lift at lunch, flow in the evening.',
       prices: { monthly: 7875, quarterly: 21525, semi: 39900, annual: 63000 },
       savings: { monthly: null, quarterly: 2000, semi: 7000, annual: 30000 },
       features: ['Unlimited access to both floors', 'All disciplines, all classes', 'Animal Flow, HIIT, Olympic Lifting — all included', 'Quarterly re-assessment + goal recalibration'],
@@ -100,6 +103,7 @@ export function Memberships({ onCta }) {
     {
       name: 'Platinum',
       tagline: 'Everything + PT + guests',
+      story: 'Gold + 2 personal training sessions + 2 guest passes monthly.',
       prices: { monthly: 12600, quarterly: 34650, semi: 63000, annual: 105000 },
       savings: { monthly: null, quarterly: 3000, semi: 12000, annual: 44000 },
       features: ['Everything in Gold', '2 personal training sessions / month', '2 guest passes / month', 'Access to specialised sessions'],
@@ -107,6 +111,12 @@ export function Memberships({ onCta }) {
   ];
   const formatPrice = (p) => `₹${p.toLocaleString('en-IN')}`;
   const formatSave = (s) => s ? `Save ₹${s.toLocaleString('en-IN')}` : '';
+  const durationLabel = (key) => {
+    if (key === 'monthly') return 'month';
+    if (key === 'quarterly') return 'quarter';
+    if (key === 'semi') return '6 months';
+    return '12 months';
+  };
   return (
     <Section id="memberships" bg="var(--cream)">
       <Reveal><Eyebrow>Membership plans</Eyebrow><Heading>Find your fit.</Heading>
@@ -130,44 +140,85 @@ export function Memberships({ onCta }) {
           </div>
         </div>
       </Reveal>
-      <Reveal delay={0.1}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 0, marginBottom: 28, flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
-          {durations.map(d => (
-            <button key={d.key} onClick={() => setDuration(d.key)} style={{
-              fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: duration === d.key ? 700 : 500,
-              color: duration === d.key ? 'var(--text)' : 'var(--text-light)',
-              background: 'transparent', border: 'none', padding: '12px 20px', cursor: 'pointer',
-              borderBottom: duration === d.key ? '2px solid var(--gold)' : '2px solid transparent',
-              marginBottom: -1, transition: 'all 0.2s ease', textTransform: 'uppercase', letterSpacing: 0.8,
-            }}>{d.label}{d.note && <span style={{ fontSize: 10, color: 'var(--text-muted)', marginLeft: 6, textTransform: 'none', letterSpacing: 0 }}>({d.note})</span>}</button>
+
+      {/* DESKTOP: tabs + grid */}
+      <div className="nc-memberships-desktop">
+        <Reveal delay={0.1}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 0, marginBottom: 28, flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
+            {durations.map(d => (
+              <button key={d.key} onClick={() => setDuration(d.key)} style={{
+                fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: duration === d.key ? 700 : 500,
+                color: duration === d.key ? 'var(--text)' : 'var(--text-light)',
+                background: 'transparent', border: 'none', padding: '12px 20px', cursor: 'pointer',
+                borderBottom: duration === d.key ? '2px solid var(--gold)' : '2px solid transparent',
+                marginBottom: -1, transition: 'all 0.2s ease', textTransform: 'uppercase', letterSpacing: 0.8,
+              }}>{d.label}{d.note && <span style={{ fontSize: 10, color: 'var(--text-muted)', marginLeft: 6, textTransform: 'none', letterSpacing: 0 }}>({d.note})</span>}</button>
+            ))}
+          </div>
+        </Reveal>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+          {tiers.map((t, i) => (
+            <Reveal key={t.name} delay={0.1 + i * 0.05}>
+              <div style={{ borderRadius: 8, border: t.popular ? '2px solid var(--gold)' : '1px solid var(--border)', padding: '24px 20px', background: t.popular ? 'rgba(227,199,104,0.04)' : 'var(--warm)', position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                {t.popular && <span style={{ position: 'absolute', top: -12, left: 20, background: 'var(--gold)', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700, padding: '4px 12px', borderRadius: 4, letterSpacing: 0.8, textTransform: 'uppercase' }}>Most popular</span>}
+                {t.badge && <span style={{ position: 'absolute', top: -12, left: 20, background: 'var(--rust)', color: '#fff', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700, padding: '4px 12px', borderRadius: 4, letterSpacing: 0.8, textTransform: 'uppercase' }}>{t.badge}</span>}
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--text)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 1 }}>{t.name}</h3>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', margin: '0 0 16px' }}>{t.tagline}</p>
+                <div style={{ marginBottom: 18 }}>
+                  <p style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900, color: 'var(--text)', margin: 0, lineHeight: 1 }}>{formatPrice(t.prices[duration])}</p>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-muted)', margin: '4px 0 0' }}>{'/ ' + durationLabel(duration)}</p>
+                  {t.savings[duration] && <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--rust)', margin: '6px 0 0' }}>{formatSave(t.savings[duration])}</p>}
+                </div>
+                <div style={{ flex: 1 }}>
+                  {t.features.map((f, j) => (
+                    <p key={j} style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', lineHeight: 1.5, margin: '0 0 8px', paddingLeft: 18, position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: 0, color: 'var(--gold)', fontWeight: 700 }}>✓</span>{f}
+                    </p>
+                  ))}
+                </div>
+                <PrimaryBtn onClick={onCta} style={{ marginTop: 16, width: '100%', textAlign: 'center', fontSize: 13 }}>Enquire now</PrimaryBtn>
+              </div>
+            </Reveal>
           ))}
         </div>
-      </Reveal>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+      </div>
+
+      {/* MOBILE: editorial vertical stack */}
+      <div className="nc-memberships-mobile">
         {tiers.map((t, i) => (
           <Reveal key={t.name} delay={0.1 + i * 0.05}>
-            <div style={{ borderRadius: 8, border: t.popular ? '2px solid var(--gold)' : '1px solid var(--border)', padding: '24px 20px', background: t.popular ? 'rgba(227,199,104,0.04)' : 'var(--warm)', position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
-              {t.popular && <span style={{ position: 'absolute', top: -12, left: 20, background: 'var(--gold)', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700, padding: '4px 12px', borderRadius: 4, letterSpacing: 0.8, textTransform: 'uppercase' }}>Most popular</span>}
-              {t.badge && <span style={{ position: 'absolute', top: -12, left: 20, background: 'var(--rust)', color: '#fff', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700, padding: '4px 12px', borderRadius: 4, letterSpacing: 0.8, textTransform: 'uppercase' }}>{t.badge}</span>}
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--text)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 1 }}>{t.name}</h3>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', margin: '0 0 16px' }}>{t.tagline}</p>
-              <div style={{ marginBottom: 18 }}>
-                <p style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900, color: 'var(--text)', margin: 0, lineHeight: 1 }}>{formatPrice(t.prices[duration])}</p>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-muted)', margin: '4px 0 0' }}>{duration === 'monthly' ? '/ month' : duration === 'quarterly' ? '/ 3 months' : duration === 'semi' ? '/ 6 months' : '/ 12 months'}</p>
-                {t.savings[duration] && <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--rust)', margin: '6px 0 0' }}>{formatSave(t.savings[duration])}</p>}
+            <div style={{ padding: '28px 0', borderTop: i === 0 ? 'none' : '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, color: 'var(--text)', margin: 0, textTransform: 'uppercase', letterSpacing: 1 }}>{t.name}</h3>
+                {t.popular && <span style={{ background: 'var(--gold)', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 4, letterSpacing: 0.8, textTransform: 'uppercase' }}>Most popular</span>}
+                {t.badge && <span style={{ background: 'var(--rust)', color: '#fff', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 4, letterSpacing: 0.8, textTransform: 'uppercase' }}>{t.badge}</span>}
               </div>
-              <div style={{ flex: 1 }}>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', margin: '0 0 14px' }}>{t.tagline}</p>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text)', lineHeight: 1.55, margin: '0 0 18px', fontStyle: 'italic' }}>{t.story}</p>
+              <div style={{ marginBottom: 18, padding: '14px 16px', background: 'var(--warm)', borderRadius: 6 }}>
+                {durations.map(d => (
+                  <div key={d.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '6px 0', borderBottom: d.key !== 'annual' ? '1px solid rgba(224,214,200,0.5)' : 'none' }}>
+                    <div>
+                      <span style={{ fontFamily: 'var(--font-display)', fontSize: d.key === 'monthly' ? 18 : 15, fontWeight: 700, color: 'var(--text)' }}>{formatPrice(t.prices[d.key])}</span>
+                      <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-muted)', marginLeft: 6 }}>/ {durationLabel(d.key)}</span>
+                    </div>
+                    {t.savings[d.key] && <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 600, color: 'var(--rust)' }}>{formatSave(t.savings[d.key])}</span>}
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginBottom: 18 }}>
                 {t.features.map((f, j) => (
-                  <p key={j} style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', lineHeight: 1.5, margin: '0 0 8px', paddingLeft: 18, position: 'relative' }}>
+                  <p key={j} style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', lineHeight: 1.5, margin: '0 0 6px', paddingLeft: 18, position: 'relative' }}>
                     <span style={{ position: 'absolute', left: 0, color: 'var(--gold)', fontWeight: 700 }}>✓</span>{f}
                   </p>
                 ))}
               </div>
-              <PrimaryBtn onClick={onCta} style={{ marginTop: 16, width: '100%', textAlign: 'center', fontSize: 13 }}>Enquire now</PrimaryBtn>
+              <PrimaryBtn onClick={onCta} style={{ width: '100%', textAlign: 'center', fontSize: 13 }}>Enquire about {t.name}</PrimaryBtn>
             </div>
           </Reveal>
         ))}
       </div>
+
       <Reveal delay={0.3}>
         <div style={{ marginTop: 32, padding: '20px 28px', background: 'var(--warm)', borderLeft: '3px solid var(--gold)', borderRadius: 4, maxWidth: 780 }}>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text)', margin: 0, lineHeight: 1.6 }}>
@@ -183,6 +234,13 @@ export function Memberships({ onCta }) {
           </p>
         </div>
       </Reveal>
+      <style jsx global>{`
+        .nc-memberships-mobile { display: none; }
+        @media (max-width: 767px) {
+          .nc-memberships-desktop { display: none !important; }
+          .nc-memberships-mobile { display: block; }
+        }
+      `}</style>
     </Section>
   );
 }
