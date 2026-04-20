@@ -66,39 +66,104 @@ export function Team() {
 
 /* ═══ MEMBERSHIPS ═══ */
 export function Memberships({ onCta }) {
-  const tiers = [
-    { name: 'Silver', sub: 'The specialist', desc: 'One floor — your choice',
-      story: 'Unlimited access to every class on your chosen floor. For members who want combat OR strength, not both.',
-      features: ['The Arena (all combat sports) OR The Sanctuary (all S&C + Animal Flow)', 'Unlimited sessions — any class, any number of times a day', 'Postural assessment included', 'Structured beginner plan'] },
-    { name: 'Gold', sub: 'The athlete', desc: 'Both floors — zero limitations', popular: true,
-      story: 'Everything, any time. Box in the morning, lift at lunch, flow in the evening — unlimited, across both floors.',
-      features: ['Full access to both floors — every combat sport + every S&C program', 'Unlimited sessions — any class, any number of times a day', 'Animal Flow, HIIT, Olympic Lifting — all included', 'Open floor — Technogym equipment anytime', 'Postural assessment + quarterly progress reviews'] },
-    { name: 'Platinum', sub: 'The elite', desc: 'Gold + personal coaching + guests',
-      story: 'Dedicated 1-on-1 coaching on top of everything Gold offers. For those who want to accelerate.',
-      features: ['Everything in Gold', '2 personal training sessions per month', '2 guest passes per month (weekdays)', 'Specialised sessions — Yoga, Dance, or fight prep via PT', 'Personalised programming + quarterly reviews'] },
+  const [duration, setDuration] = useState('monthly');
+  const durations = [
+    { key: 'monthly', label: 'Monthly', note: '' },
+    { key: 'quarterly', label: 'Quarterly', note: '3 months' },
+    { key: 'semi', label: 'Semi-Annual', note: '6 months' },
+    { key: 'annual', label: 'Annual', note: '12 months' },
   ];
+  const tiers = [
+    {
+      name: 'Silver',
+      tagline: 'One floor',
+      prices: { monthly: 5775, quarterly: 15750, semi: 29400, annual: 47250 },
+      savings: { monthly: null, quarterly: 1500, semi: 5000, annual: 21000 },
+      features: ['Unlimited access to your chosen floor', 'All disciplines on that floor', 'Postural assessment included', 'Quarterly re-assessment'],
+    },
+    {
+      name: 'Student',
+      tagline: 'Both floors · Student pricing',
+      badge: 'Valid ID required',
+      prices: { monthly: 5775, quarterly: 15750, semi: 29400, annual: 47250 },
+      savings: { monthly: null, quarterly: 1500, semi: 5000, annual: 21000 },
+      features: ['Unlimited access to both floors', 'All disciplines, all classes', 'Valid school / college / university ID required', 'Age-appropriate classes — kids train with kids, adults with adults'],
+    },
+    {
+      name: 'Gold',
+      tagline: 'Both floors · Most popular',
+      popular: true,
+      prices: { monthly: 7875, quarterly: 21525, semi: 39900, annual: 63000 },
+      savings: { monthly: null, quarterly: 2000, semi: 7000, annual: 30000 },
+      features: ['Unlimited access to both floors', 'All disciplines, all classes', 'Animal Flow, HIIT, Olympic Lifting — all included', 'Quarterly re-assessment + goal recalibration'],
+    },
+    {
+      name: 'Platinum',
+      tagline: 'Everything + PT + guests',
+      prices: { monthly: 12600, quarterly: 34650, semi: 63000, annual: 105000 },
+      savings: { monthly: null, quarterly: 3000, semi: 12000, annual: 44000 },
+      features: ['Everything in Gold', '2 personal training sessions / month', '2 guest passes / month', 'Access to specialised sessions'],
+    },
+  ];
+  const formatPrice = (p) => `₹${p.toLocaleString('en-IN')}`;
+  const formatSave = (s) => s ? `Save ₹${s.toLocaleString('en-IN')}` : '';
   return (
     <Section id="memberships" bg="var(--cream)">
-      <Reveal><Eyebrow>Commitment to mastery</Eyebrow><Heading>Choose your path.</Heading>
-        <Body style={{ maxWidth: 580 }}>Every membership includes a comprehensive postural assessment, a structured beginner plan, and quarterly progress reviews. Monthly, quarterly, semi-annual, and annual packages available.</Body>
+      <Reveal><Eyebrow>Membership plans</Eyebrow><Heading>Find your fit.</Heading>
+        <Body style={{ maxWidth: 620 }}>Transparent pricing. Postural assessment (worth ₹7,000) included in every plan. All prices inclusive of 5% GST.</Body>
       </Reveal>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
+      <Reveal delay={0.05}>
+        <div style={{ marginBottom: 32, padding: '22px 26px', background: 'rgba(227,199,104,0.08)', borderLeft: '3px solid var(--gold)', borderRadius: 4 }}>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: 2, color: 'var(--rust)', textTransform: 'uppercase', fontWeight: 600, margin: '0 0 10px' }}>Every membership includes</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px 24px' }}>
+            {[
+              ['Postural assessment', 'Worth ₹7,000 · On joining'],
+              ['Quarterly re-assessment', 'Progress tracked, plan recalibrated'],
+              ['Goal-based programming', 'Not random workouts — built for you'],
+              ['Animal Flow — unlimited', 'Not a premium add-on. Included.'],
+            ].map(([t, d]) => (
+              <div key={t}>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: '0 0 2px' }}>✦ {t}</p>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', margin: 0, paddingLeft: 18 }}>{d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Reveal>
+      <Reveal delay={0.1}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 0, marginBottom: 28, flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
+          {durations.map(d => (
+            <button key={d.key} onClick={() => setDuration(d.key)} style={{
+              fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: duration === d.key ? 700 : 500,
+              color: duration === d.key ? 'var(--text)' : 'var(--text-light)',
+              background: 'transparent', border: 'none', padding: '12px 20px', cursor: 'pointer',
+              borderBottom: duration === d.key ? '2px solid var(--gold)' : '2px solid transparent',
+              marginBottom: -1, transition: 'all 0.2s ease', textTransform: 'uppercase', letterSpacing: 0.8,
+            }}>{d.label}{d.note && <span style={{ fontSize: 10, color: 'var(--text-muted)', marginLeft: 6, textTransform: 'none', letterSpacing: 0 }}>({d.note})</span>}</button>
+          ))}
+        </div>
+      </Reveal>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
         {tiers.map((t, i) => (
-          <Reveal key={t.name} delay={i * 0.1}>
-            <div style={{ borderRadius: 8, border: t.popular ? '2px solid var(--gold)' : '1px solid var(--border)', padding: '28px 24px', background: t.popular ? 'rgba(227,199,104,0.04)' : 'var(--warm)', position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
-              {t.popular && <span style={{ position: 'absolute', top: -12, left: 24, background: 'var(--gold)', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700, padding: '4px 14px', borderRadius: 4, letterSpacing: 0.8, textTransform: 'uppercase' }}>Most popular</span>}
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, color: 'var(--text)', margin: '0 0 2px', textTransform: 'uppercase', letterSpacing: 1 }}>{t.name}</h3>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--rust)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 1 }}>{t.sub}</p>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 500, color: 'var(--text)', margin: '0 0 12px' }}>{t.desc}</p>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', lineHeight: 1.65, margin: '0 0 18px', fontStyle: 'italic' }}>{t.story}</p>
+          <Reveal key={t.name} delay={0.1 + i * 0.05}>
+            <div style={{ borderRadius: 8, border: t.popular ? '2px solid var(--gold)' : '1px solid var(--border)', padding: '24px 20px', background: t.popular ? 'rgba(227,199,104,0.04)' : 'var(--warm)', position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
+              {t.popular && <span style={{ position: 'absolute', top: -12, left: 20, background: 'var(--gold)', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700, padding: '4px 12px', borderRadius: 4, letterSpacing: 0.8, textTransform: 'uppercase' }}>Most popular</span>}
+              {t.badge && <span style={{ position: 'absolute', top: -12, left: 20, background: 'var(--rust)', color: '#fff', fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700, padding: '4px 12px', borderRadius: 4, letterSpacing: 0.8, textTransform: 'uppercase' }}>{t.badge}</span>}
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--text)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 1 }}>{t.name}</h3>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', margin: '0 0 16px' }}>{t.tagline}</p>
+              <div style={{ marginBottom: 18 }}>
+                <p style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900, color: 'var(--text)', margin: 0, lineHeight: 1 }}>{formatPrice(t.prices[duration])}</p>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-muted)', margin: '4px 0 0' }}>{duration === 'monthly' ? '/ month' : duration === 'quarterly' ? '/ 3 months' : duration === 'semi' ? '/ 6 months' : '/ 12 months'}</p>
+                {t.savings[duration] && <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--rust)', margin: '6px 0 0' }}>{formatSave(t.savings[duration])}</p>}
+              </div>
               <div style={{ flex: 1 }}>
                 {t.features.map((f, j) => (
-                  <p key={j} style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', lineHeight: 1.5, margin: '0 0 8px', paddingLeft: 20, position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: 0, color: 'var(--rust)', fontWeight: 700 }}>✓</span>{f}
+                  <p key={j} style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', lineHeight: 1.5, margin: '0 0 8px', paddingLeft: 18, position: 'relative' }}>
+                    <span style={{ position: 'absolute', left: 0, color: 'var(--gold)', fontWeight: 700 }}>✓</span>{f}
                   </p>
                 ))}
               </div>
-              <PrimaryBtn onClick={onCta} style={{ marginTop: 20, width: '100%', textAlign: 'center' }}>Enquire now</PrimaryBtn>
+              <PrimaryBtn onClick={onCta} style={{ marginTop: 16, width: '100%', textAlign: 'center', fontSize: 13 }}>Enquire now</PrimaryBtn>
             </div>
           </Reveal>
         ))}
@@ -109,9 +174,14 @@ export function Memberships({ onCta }) {
             <strong>Saturdays: bring your friends and family.</strong> Every membership lets members bring guests on Saturdays. Three or more guests? Just give us advance notice.
           </p>
         </div>
-        <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginTop: 24 }}>
-          Monthly, quarterly, semi-annual, and annual packages available. Single class passes and personal training also available.
-        </p>
+        <div style={{ marginTop: 20, padding: '18px 22px', background: 'var(--cream)', borderRadius: 4, border: '1px solid var(--border)', maxWidth: 780 }}>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: 2, color: 'var(--rust)', textTransform: 'uppercase', fontWeight: 600, margin: '0 0 10px' }}>Also available</p>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', lineHeight: 1.7, margin: 0 }}>
+            <strong style={{ color: 'var(--text)' }}>Single class pass:</strong> Regular ₹788 · Elite 90-min ₹1,050<br/>
+            <strong style={{ color: 'var(--text)' }}>Personal training:</strong> ₹3,150 (1 person) · ₹4,200 (couple)<br/>
+            Bulk packages available on request.
+          </p>
+        </div>
       </Reveal>
     </Section>
   );
