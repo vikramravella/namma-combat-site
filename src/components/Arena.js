@@ -18,7 +18,7 @@ function DCard({ name, tagline, href, delay = 0 }) {
           <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 900, color: 'var(--text)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: 0.5 }}>{name}</h3>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-light)', lineHeight: 1.5, margin: 0 }}>{tagline}</p>
         </div>
-        <span style={{ position: 'absolute', top: 12, right: 14, fontSize: 18, color: 'var(--rust)', opacity: h ? 1 : 0, transform: h ? 'translateX(0)' : 'translateX(-6px)', transition: 'all 0.3s ease' }}>→</span>
+        <span style={{ position: 'absolute', top: 12, right: 14, fontSize: 18, color: 'var(--gold)', opacity: h ? 1 : 0, transform: h ? 'translateX(0)' : 'translateX(-6px)', transition: 'all 0.3s ease' }}>→</span>
       </a>
     </Reveal>
   );
