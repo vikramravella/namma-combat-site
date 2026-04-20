@@ -101,6 +101,9 @@ src/
     kids/page.js + KidsLanding.jsx
     trial/page.js + TrialLanding.jsx
 
+    # Information (split)
+    faq/page.js + FAQLanding.jsx
+
     # Legal (each split)
     privacy/page.js + PrivacyPolicyPage.jsx
     terms/page.js + TermsOfServicePage.jsx
@@ -195,6 +198,7 @@ Nav: Your Journey, The Arena, The Sanctuary, Team, Facility, Schedule, Membershi
 | Women's | /womens | — (user picks) |
 | Corporate | /corporate | — (user picks) |
 | Kids | /kids | Kids / Youth Program |
+| FAQ | /faq | (information) |
 | Privacy | /privacy | (legal) |
 | Terms | /terms | (legal) |
 | Refunds | /refunds | (legal) |
@@ -518,7 +522,18 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 - [x] Judo page rewritten from Boxing v2 template
 - [x] Rust-on-hover borders flipped to gold for consistency
 
-### Commits shipped today: 30+
+### FAQ page (late Apr 20)
+- [x] /faq standalone page with 25 Q&A across 6 categories
+- [x] Accordion UI with gold accent (open icon rotates + turns gold)
+- [x] Categories: Getting started, Pricing, Classes, Facility, Kids/Women/Corporate, Practical
+- [x] Footer CTA: WhatsApp us OR Book a free trial
+- [x] Added to sitemap at priority 0.7
+- [x] Linked from nav (desktop + mobile) between Contact and Book free trial CTA
+
+### Coach credential fix
+- [x] Kantharaj win count: 12 → 13 professional wins (fixed across 5 source files + README)
+
+### Commits shipped today: 40+
 
 ---
 
