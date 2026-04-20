@@ -11,7 +11,7 @@ export function Kids() {
         <Body style={{ maxWidth: 520 }}>Discipline, focus, and self-protection in a safe, supervised environment. BLS-trained coaches. Age-appropriate programs for 6 to 15.</Body>
       </Reveal>
       <Reveal delay={0.1}>
-        <a href="/kids" onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)} style={{ display: 'block', textDecoration: 'none', color: 'inherit', borderRadius: 8, overflow: 'hidden', border: h ? '1px solid var(--rust)' : '1px solid var(--border)', transition: 'all 0.25s ease', transform: h ? 'translateY(-2px)' : 'translateY(0)', boxShadow: h ? '0 8px 24px rgba(44,35,24,0.08)' : 'none' }}>
+        <a href="/kids" onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)} style={{ display: 'block', textDecoration: 'none', color: 'inherit', borderRadius: 8, overflow: 'hidden', border: h ? '1px solid var(--gold)' : '1px solid var(--border)', transition: 'all 0.25s ease', transform: h ? 'translateY(-2px)' : 'translateY(0)', boxShadow: h ? '0 8px 24px rgba(44,35,24,0.08)' : 'none' }}>
           <PhotoBox label="Next Generation" h={240} />
           <div style={{ padding: '20px 24px', background: 'var(--warm)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text-light)', margin: 0, letterSpacing: 0.3 }}>

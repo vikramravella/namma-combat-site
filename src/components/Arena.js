@@ -8,7 +8,7 @@ function DCard({ name, tagline, href, delay = 0 }) {
     <Reveal delay={delay}>
       <a href={href} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)} style={{
         display: 'block', textDecoration: 'none', color: 'inherit',
-        borderRadius: 8, overflow: 'hidden', border: h ? '1px solid var(--rust)' : '1px solid var(--border)', background: 'var(--cream)',
+        borderRadius: 8, overflow: 'hidden', border: h ? '1px solid var(--gold)' : '1px solid var(--border)', background: 'var(--cream)',
         cursor: 'pointer', transition: 'transform 0.3s, box-shadow 0.3s, border-color 0.3s',
         transform: h ? 'translateY(-3px)' : 'none', boxShadow: h ? '0 8px 24px rgba(44,35,24,0.08)' : 'none',
         position: 'relative',
