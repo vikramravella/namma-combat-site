@@ -104,7 +104,7 @@ export default function KickboxingLanding() {
               </div>
               <div style={{ marginTop: 16, padding: '18px 22px', background: T.warm, borderLeft: `3px solid ${T.rust}`, borderRadius: 4 }}>
                 <h3 style={{ fontFamily: T.fontDisplay, fontSize: 13, fontWeight: 900, color: T.text, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: 1 }}>Who teaches you</h3>
-                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}><strong style={{ color: T.text }}>Coach Kantharaj Agasa</strong> — Indian MMA Pioneer with 12 professional wins, national-level wrestler, NIS Patiala certified. Integrated striking expertise from years of professional combat.</p>
+                <p style={{ fontFamily: T.fontBody, fontSize: 13, color: T.textLight, lineHeight: 1.6, margin: 0 }}><strong style={{ color: T.text }}>Coach Kantharaj Agasa</strong> — Indian MMA Pioneer with 13 professional wins, national-level wrestler, NIS Patiala certified. Integrated striking expertise from years of professional combat.</p>
               </div>
             </div>
             <div style={{ padding: '20px 24px', background: T.warm, borderRadius: 8, border: `1px solid ${T.border}` }}>

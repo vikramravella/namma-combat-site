@@ -5,6 +5,7 @@ export default function sitemap() {
   const routes = [
     { path: '', priority: 1.0, changeFrequency: 'weekly' },
     { path: '/trial', priority: 0.95, changeFrequency: 'monthly' },
+    { path: '/faq', priority: 0.7, changeFrequency: 'monthly' },
     // Combat sports
     { path: '/boxing', priority: 0.9, changeFrequency: 'monthly' },
     { path: '/kickboxing', priority: 0.9, changeFrequency: 'monthly' },

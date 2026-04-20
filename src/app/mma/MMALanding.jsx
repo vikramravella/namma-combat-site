@@ -81,7 +81,7 @@ export default function MMALanding() {
           <div>
             <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 12px' }}>MMA training in Bangalore</p>
             <h1 style={{ fontFamily: T.fontDisplay, fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 900, color: T.text, lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 20px' }}>Train MMA with<br/>a pioneer.</h1>
-            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Learn mixed martial arts under Kantharaj Agasa — the man who took Indian MMA to the next level. 12 professional wins, national-level wrestler, NIS certified Judo coach.</p>
+            <p style={{ fontFamily: T.fontBody, fontSize: 16, color: T.textLight, lineHeight: 1.7, margin: '0 0 32px', maxWidth: 480 }}>Learn mixed martial arts under Kantharaj Agasa — the man who took Indian MMA to the next level. 13 professional wins, national-level wrestler, NIS certified Judo coach.</p>
             <div style={{ marginBottom: 36 }}>
               <p style={{ fontFamily: T.fontBody, fontSize: 11, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', fontWeight: 600, margin: '0 0 8px' }}>What you'll learn</p>
               <h2 style={{ fontFamily: T.fontDisplay, fontSize: 24, fontWeight: 900, color: T.text, margin: '0 0 24px', textTransform: 'uppercase', letterSpacing: 0.5 }}>MMA at every level.</h2>

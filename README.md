@@ -394,7 +394,7 @@ find src -type f -name "*.jsx" -exec sed -i '' "s|'xmIwtLD': '[a-f0-9]*'|'xmIwtL
 
 ## Coaches (current)
 
-1. **Kantharaj Agasa** — Co-founder & Head Coach (MMA, Judo, BJJ, Kickboxing, Jiu-Jitsu). Indian MMA Pioneer, 12 professional wins, NIS Patiala certified.
+1. **Kantharaj Agasa** — Co-founder & Head Coach (MMA, Judo, BJJ, Kickboxing, Jiu-Jitsu). Indian MMA Pioneer, 13 professional wins, NIS Patiala certified.
 2. **Mohammed Naeem** — Co-founder & Head of S&C. MSc Performance Coaching, Setanta College (institution behind Premier League + NBA practitioners).
 3. **Bhagyarajan** — Boxing Lead. NIS Patiala, national medalist, ex-army. (Sometimes referred to as Rajan for pronunciation on site copy.)
 4. **Venkatesh A** — Wrestling Coach. NIS Patiala, Master's in Sports Management.
