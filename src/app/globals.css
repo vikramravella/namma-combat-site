@@ -82,3 +82,19 @@ button:active, a.nc-btn:active { transform: scale(0.98); }
   .nc-card, .nc-disc-card, .nc-nav-link::after, .nc-gold-bar { transition: none !important; animation: none !important; }
   .nc-card:hover, .nc-disc-card:hover { transform: none !important; }
 }
+
+/* Gold focus glow for form inputs */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #E3C768 !important;
+  box-shadow: 0 0 0 3px rgba(227,199,104,0.2) !important;
+  outline: none !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input,
+select,
+textarea {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
