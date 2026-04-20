@@ -1,6 +1,6 @@
 # Namma Combat Website — Project Documentation
 
-**Last updated: April 18, 2026**
+**Last updated: April 20, 2026**
 
 Founded by Vinod Karuturi. Built solo after firing the previous dev team. All accounts under Vinod's control.
 
@@ -59,7 +59,7 @@ Harmless shell warnings to ignore:
 
 ## Tech Stack
 
-- **Framework:** Next.js (App Router), React
+- **Framework:** Next.js 14.2 (App Router), React
 - **Styling:** Inline styles + CSS variables in `src/app/globals.css` (no Tailwind)
 - **Font:** Materia Pro Bold (`public/fonts/MateriaPro-Bold.otf`)
 - **Fallback font:** Archivo Black
@@ -74,39 +74,94 @@ Harmless shell warnings to ignore:
 ```
 src/
   app/
-    page.js                 — Homepage (assembles all sections)
-    layout.js               — SEO meta, viewport, GA4, fonts
-    globals.css             — CSS variables + mobile CSS
-    trial/page.js           — General trial landing page
-    boxing/page.js          — Boxing landing page
-    kickboxing/page.js      — Kickboxing landing page
-    mma/page.js             — MMA landing page
-    wrestling/page.js       — Wrestling landing page
-    judo/page.js            — Judo landing page
-    strength/page.js        — S&C landing page
-    animal-flow/page.js     — Animal Flow landing page
-    womens/page.js          — Women's landing page
-    corporate/page.js       — Corporate wellness landing page
-    kids/page.js            — Kids & youth landing page
-    schedule/page.js        — Redirects to /#schedule
+    page.js                           — Homepage (assembles all sections)
+    layout.js                         — SEO meta, viewport, GA4, fonts, LocalBusiness JSON-LD
+    globals.css                       — CSS variables + mobile CSS + gold accent styles
+    loading.js                        — Gold page transition loader
+    robots.js                         — robots.txt generator (App Router pattern)
+    sitemap.js                        — sitemap.xml generator (19 URLs)
+
+    # Combat sports (each split into server + client for SEO metadata)
+    boxing/page.js + BoxingLanding.jsx
+    kickboxing/page.js + KickboxingLanding.jsx
+    mma/page.js + MMALanding.jsx
+    bjj/page.js + BJJLanding.jsx
+    wrestling/page.js + WrestlingLanding.jsx
+    judo/page.js + JudoLanding.jsx
+
+    # S&C specialties (each split)
+    strength/page.js + StrengthLanding.jsx
+    animal-flow/page.js + AnimalFlowLanding.jsx
+    hiit/page.js + HIITLanding.jsx
+    olympic-lifting/page.js + OlympicLiftingLanding.jsx
+
+    # Audience-specific (each split)
+    womens/page.js + WomensLanding.jsx
+    corporate/page.js + CorporateLanding.jsx
+    kids/page.js + KidsLanding.jsx
+    trial/page.js + TrialLanding.jsx
+
+    # Legal (each split)
+    privacy/page.js + PrivacyPolicyPage.jsx
+    terms/page.js + TermsOfServicePage.jsx
+    refunds/page.js + RefundPolicyPage.jsx
+    shipping/page.js + ShippingPolicyPage.jsx
+
+    schedule/page.js                  — Redirects to /#schedule
+
   components/
-    Nav.js                  — Sticky nav (desktop) + mobile menu with X icon
-    Hero.js                 — Hero with "Institute of Mastery" + CTA
-    Welcome.js              — "Your morning treadmill is boring"
-    Journey.js              — 5-step onboarding section
-    Arena.js                — Combat sports overview
-    Sanctuary.js            — S&C overview ("Build the Machine")
-    Schedule.js             — Arena + Sanctuary timetables with coaches
-    Sections.js             — Kids, Team, Memberships, Facility,
-                              Testimonials, Contact, LeadForm, Footer, FloatingWA
-    ui.js                   — Reveal, Section wrapper, Eyebrow, Heading,
-                              Body, PrimaryBtn, GhostBtn, PhotoBox, GoldBar
+    Nav.js            — Sticky nav, active-section gold highlight, mobile menu with X icon
+    Hero.js           — Hero with "Institute of Mastery" + CTA
+    Welcome.js        — "Your morning treadmill is boring"
+    Why.js            — Closer section ("India deserved better")
+    Journey.js        — 5-step onboarding section
+    Arena.js          — Combat sports overview (hover = gold border + gold arrow)
+    Sanctuary.js      — S&C overview ("Build the Machine")
+    Schedule.js       — Arena + Sanctuary timetables with coaches
+    Sections.js       — Kids, Team, Memberships (responsive split),
+                        Facility, Testimonials, Contact, LeadForm,
+                        Footer, FloatingWA, ReadingProgress, ScrollToTop
+    ui.js             — Reveal, Section wrapper, Eyebrow, Heading,
+                        Body, PrimaryBtn, GhostBtn, PhotoBox, GoldBar
+
 public/
-  logo.svg                  — Wordmark logo (nav)
-  seal.svg                  — Seal/monogram (footer, favicon)
-  favicon.svg               — Browser tab icon
-  og-image.png              — Social sharing preview (1200x630)
-  fonts/MateriaPro-Bold.otf — Brand display font
+  logo.svg                    — Wordmark logo (nav)
+  seal.svg                    — Seal/monogram (footer, favicon)
+  favicon.svg                 — Browser tab icon
+  og-image.png                — Social sharing preview (1200x630)
+  fonts/MateriaPro-Bold.otf   — Brand display font
+```
+
+### Server/Client split pattern (adopted Apr 20)
+
+Every page.js is now a server component that exports SEO metadata. The interactive client UI lives in a sibling `<Name>Landing.jsx` (or `<Name>Page.jsx` for legal pages).
+
+**Why:** Next.js App Router requires server components for per-page metadata. Pages with `'use client'` cannot export metadata directly. Splitting lets every page have unique SEO title/description/keywords while keeping all interactivity intact.
+
+**Template pattern for a new page:**
+```js
+// src/app/new-page/page.js (server component)
+import NewPageLanding from './NewPageLanding';
+
+export const metadata = {
+  title: 'Page title | Namma Combat',
+  description: '...',
+  keywords: '...',
+  openGraph: {
+    title: '...',
+    description: '...',
+    url: 'https://nammacombat.com/new-page',
+    type: 'website',
+    images: ['https://nammacombat.com/og-image.png'],
+  },
+  alternates: {
+    canonical: 'https://nammacombat.com/new-page',
+  },
+};
+
+export default function Page() {
+  return <NewPageLanding />;
+}
 ```
 
 ---
@@ -130,19 +185,27 @@ Nav: Your Journey, The Arena, The Sanctuary, Team, Facility, Schedule, Membershi
 | Boxing | /boxing | Boxing |
 | Kickboxing | /kickboxing | Kickboxing |
 | MMA | /mma | MMA - Mixed Martial Arts |
+| BJJ | /bjj | BJJ - Brazilian Jiu-Jitsu |
 | Wrestling | /wrestling | Wrestling |
 | Judo | /judo | Judo |
 | S&C | /strength | S&C - Strength & Conditioning |
 | Animal Flow | /animal-flow | Animal Flow |
+| HIIT | /hiit | S&C - Strength & Conditioning |
+| Olympic Lifting | /olympic-lifting | S&C - Strength & Conditioning |
 | Women's | /womens | — (user picks) |
 | Corporate | /corporate | — (user picks) |
 | Kids | /kids | Kids / Youth Program |
+| Privacy | /privacy | (legal) |
+| Terms | /terms | (legal) |
+| Refunds | /refunds | (legal) |
+| Shipping | /shipping | (legal) |
 | Schedule | /schedule | (redirects to /#schedule) |
 
 **Dropdown options** (MUST match exactly or will fall back to first item):
 - Boxing
 - Kickboxing
 - MMA - Mixed Martial Arts
+- BJJ - Brazilian Jiu-Jitsu
 - Wrestling
 - Judo
 - S&C - Strength & Conditioning
@@ -169,13 +232,13 @@ Two tables rendered on homepage + standalone `/schedule` redirects to section.
 - Elite S&C 9 AM + 8 PM
 
 **Coach assignments:**
-- Boxing → Coach Rajan
+- Boxing → Coach Bhagyarajan
 - Kickboxing → Coach Kantharaj
-- Jiu-Jitsu → Coach Kantharaj
+- BJJ / Jiu-Jitsu → Coach Kantharaj
 - Wrestling → Coach Venkatesh
 - Judo → Coach Kantharaj
 - MMA → Coach Kantharaj
-- Elite Combat/MMA → Kantharaj, Rajan & Venkatesh
+- Elite Combat/MMA → Kantharaj, Bhagyarajan & Venkatesh
 - All Sanctuary classes → Spoorthi or Manoj (either/or, not both)
 - Evening Elite S&C (8 PM) → Naeem, Spoorthi or Manoj
 
@@ -184,6 +247,118 @@ Two tables rendered on homepage + standalone `/schedule` redirects to section.
 - Saturday Elite classes held outdoors
 - Workshops not part of any membership
 - Schedule may adjust for holidays — WhatsApp to confirm
+
+---
+
+## SEO Infrastructure (shipped Apr 20)
+
+### Files
+- `src/app/robots.js` → generates /robots.txt (Next.js App Router pattern)
+- `src/app/sitemap.js` → generates /sitemap.xml (19 URLs with priority + changeFrequency)
+- `src/app/layout.js` → contains LocalBusiness / SportsActivityLocation / ExerciseGym JSON-LD schema
+
+### Per-page metadata (all 18 pages)
+Every page exports its own metadata object with:
+- Unique title: "[Sport] Classes in Koramangala, Bangalore | Namma Combat"
+- Unique description tailored to the page
+- Keywords targeting Bangalore + Koramangala local search
+- OpenGraph tags (for WhatsApp / LinkedIn sharing previews)
+- Canonical URL (prevents duplicate content penalties)
+
+### Sitemap priorities
+- Homepage: 1.0 (daily)
+- Combat sports: 0.9 (weekly)
+- S&C specialties: 0.85 (weekly)
+- Audience pages: 0.8 (weekly)
+- Legal pages: 0.3 (yearly)
+
+### Google Search Console
+- **Status:** Verified via domain method (DNS auto-verified through Google Workspace)
+- **Sitemap submitted:** https://nammacombat.com/sitemap.xml
+- **Discovered pages:** 19
+- **Access:** search.google.com/search-console (logged in as vi@nammacombat.com)
+
+---
+
+## Gold Accent System (shipped Apr 20)
+
+### Design language
+- **Rust (#9A3520)** = Primary structure. Headings, body copy anchors, CTA buttons, CTA button hover.
+- **Gold (#E3C768)** = Motion, activity, feedback. Appears only during interactions and state changes.
+
+### Where gold appears
+| Element | Behavior |
+|---|---|
+| Reading progress bar | 2px top bar, fills on scroll (all pages) |
+| Scroll-to-top button | Gold circle, appears after 500px scroll |
+| Form input focus | Gold border + soft shadow on focus |
+| Active nav link | Gold underline (desktop) / gold left-border (mobile) |
+| Page transition loader | Gold gradient bar (loading.js) |
+| Arena/Sanctuary card hover | Gold border + gold arrow slides in |
+| Curriculum bullets | Gold check marks on 12+ landing pages |
+| Kids card hover | Gold border |
+
+### Rule for future changes
+If it's a CTA or a permanent anchor → rust.
+If it's a transient feedback state → gold.
+
+---
+
+## Memberships (shipped Apr 20 — transparent pricing)
+
+Previously prices were hidden. Now fully transparent to filter price-sensitive leads pre-call.
+
+### Tiers (all inclusive of 5% GST)
+
+| Tier | Monthly | Quarterly | Semi-Annual | Annual |
+|---|---|---|---|---|
+| Silver (one floor) | ₹5,775 | ₹15,750 | ₹29,400 | ₹47,250 |
+| Student (both floors, valid ID) | ₹5,775 | ₹15,750 | ₹29,400 | ₹47,250 |
+| Gold (both floors, most popular) | ₹7,875 | ₹21,525 | ₹39,900 | ₹63,000 |
+| Platinum (+PT + guests) | ₹12,600 | ₹34,650 | ₹63,000 | ₹1,05,000 |
+
+### Also available
+- Single class pass: Regular ₹788 / Elite 90-min ₹1,050
+- Personal training: ₹3,150 (1 person) / ₹4,200 (couple)
+- Bulk packages available on request
+
+### Value anchors shown on site
+- Postural assessment worth ₹7,000 (included in every tier)
+- Quarterly re-assessments (progress tracked, plan recalibrated)
+- Goal-based programming
+- Animal Flow unlimited (key differentiator — not a premium add-on)
+
+### Responsive design (key architecture decision)
+- **Desktop (≥768px):** Tabs [Monthly / Quarterly / Semi-Annual / Annual] + 4-card grid. Prices update per tab.
+- **Mobile (<768px):** Editorial vertical stack. Each tier its own block with hairline divider, tier name + tagline + italic story + all 4 durations listed in warm-background box + features + tier-specific CTA ("Enquire about Gold" etc).
+- Implementation: `className="nc-memberships-desktop"` / `className="nc-memberships-mobile"` + CSS media query.
+
+### Student tier rules
+- No age cap
+- Valid school / college / university / institution ID required
+- "Age-appropriate classes — kids train with kids, adults with adults" noted on card
+- Same pricing across all durations as Silver
+
+---
+
+## Legal Pages (shipped Apr 20 — Razorpay + DPDP Act 2023)
+
+Required for Razorpay KYC and Indian Digital Personal Data Protection Act 2023 compliance.
+
+- `/privacy` — Privacy Policy (12 sections, DPDP Act compliant)
+- `/terms` — Terms of Service (health declaration not medical clearance, ₹10,000 liability cap, Karnataka jurisdiction)
+- `/refunds` — Refund & Cancellation Policy
+  - Non-refundable memberships
+  - Freeze matrix: 1mo → 7d / 3mo → 21d / 6mo → 28d / 12mo → 35d
+  - Medical pause up to 90 days (extendable with certificate)
+  - Credit/transfer in lieu of refund
+- `/shipping` — Shipping & Delivery Policy (service-only business, no physical shipping — Razorpay KYC requirement)
+
+### Contact for legal
+- Email: privacy@nammacombat.com (Vinod needs to create this alias in Google Workspace)
+- Title: "Grievance Officer, Namma Combat" (no personal name — Vinod's decision)
+- All 4 pages accessible via footer links on homepage and all landing pages
+- Last updated: 20 April 2026
 
 ---
 
@@ -200,10 +375,11 @@ Two tables rendered on homepage + standalone `/schedule` redirects to section.
 - `xnQsjsdp`: `7f86d216d021c558ef213f9f58487a514e5c706d4eaccbc094e22e3fc4da61d2`
 - `xmIwtLD`: `cca4493149c188cf2f9842a325ca8ef7dfc26845273560ab6e7d2278d5c513b5e7eb5e760e03184a103077105dc14280`
 
-### To update keys across all 11+ files:
+### To update keys across all files:
 ```bash
-find src -type f -name "*.js" -exec sed -i '' "s|'xnQsjsdp': '[a-f0-9]*'|'xnQsjsdp': 'NEW_KEY_HERE'|g" {} \;
-find src -type f -name "*.js" -exec sed -i '' "s|'xmIwtLD': '[a-f0-9]*'|'xmIwtLD': 'NEW_KEY_HERE'|g" {} \;
+# Note: after Apr 20 split, client forms are in .jsx files, not .js
+find src -type f -name "*.jsx" -exec sed -i '' "s|'xnQsjsdp': '[a-f0-9]*'|'xnQsjsdp': 'NEW_KEY_HERE'|g" {} \;
+find src -type f -name "*.jsx" -exec sed -i '' "s|'xmIwtLD': '[a-f0-9]*'|'xmIwtLD': 'NEW_KEY_HERE'|g" {} \;
 ```
 
 ---
@@ -211,6 +387,7 @@ find src -type f -name "*.js" -exec sed -i '' "s|'xmIwtLD': '[a-f0-9]*'|'xmIwtLD
 ## Analytics & Tracking
 
 - **Google Analytics GA4:** `G-WLF5WZ9HRS` (set in `src/app/layout.js`)
+- **Google Search Console:** Verified, sitemap submitted, 19 pages discovered
 - **Meta Pixel:** Pending (waiting on Facebook Business Manager access recovery)
 
 ---
@@ -219,14 +396,15 @@ find src -type f -name "*.js" -exec sed -i '' "s|'xmIwtLD': '[a-f0-9]*'|'xmIwtLD
 
 1. **Kantharaj Agasa** — Co-founder & Head Coach (MMA, Judo, BJJ, Kickboxing, Jiu-Jitsu). Indian MMA Pioneer, 12 professional wins, NIS Patiala certified.
 2. **Mohammed Naeem** — Co-founder & Head of S&C. MSc Performance Coaching, Setanta College (institution behind Premier League + NBA practitioners).
-3. **Rajan** — Boxing Lead. NIS Patiala, national medalist, ex-army.
+3. **Bhagyarajan** — Boxing Lead. NIS Patiala, national medalist, ex-army. (Sometimes referred to as Rajan for pronunciation on site copy.)
 4. **Venkatesh A** — Wrestling Coach. NIS Patiala, Master's in Sports Management.
 5. **Spoorthi Nagraj** — S&C & Women's Health. Animal Flow L1 certified.
-6. **Manoj Kumar** — S&C Coach. Skill India certified in Strength & Conditioning. Former state-level hockey athlete (Karnataka League winner, School Games winner, South Zone University finalist). Specialises in coaching beginners through fundamentals — patient, detail-oriented, teacher-focused.
+6. **Manoj Kumar** — S&C Coach. Skill India certified in Strength & Conditioning. Former state-level hockey athlete. Specialises in coaching beginners through fundamentals.
 
 **Not on the team:**
 - Coach Lal left the academy — do not reference.
-- BJJ is still offered, taught by Kantharaj.
+
+**Pending:** Role-based coach card redesign (Pattern B) — waiting for full bios + quotes from trainer interviews before implementing.
 
 ---
 
@@ -239,10 +417,13 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 - Boxing → Shubham
 - Kickboxing → Nitish R
 - MMA → Raktim Singha
+- BJJ → (generic — need specific)
 - Wrestling → Dhruv P
 - Judo → Gopinath Kannan
 - S&C → Hindesh Akash
 - Animal Flow → Hindesh Akash
+- HIIT → (need specific)
+- Olympic Lifting → (need specific)
 - Women's → Amrutha Gowda
 - Corporate → Yashwanth Kumar S
 - Kids → Karthik Eashwar
@@ -252,13 +433,12 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 
 ## Business Details
 
-- **Address:** 10, 80 Feet Road, 4th Block, Koramangala, Bangalore
+- **Address:** 10, 80 Feet Road, 4th Block, Koramangala, Bangalore 560034
 - **Phone / WhatsApp:** 77700 87700 (wa.me/917770087700)
-- **Hours:** Mon–Sat: 6 AM – 9 PM
+- **Hours:** Mon–Sat 6 AM – 9 PM
 - **Facility:** 4,200 sq ft, 2 floors (The Arena + The Sanctuary)
 - **Equipment:** Technogym Skill Row & Skill Ski, Hammer Strength air bikes, custom SS racks
-- **Memberships:** Silver (one floor) / Gold (both floors, recommended) / Platinum (Gold + 2 PT + 2 guest passes)
-- **NO prices on website** — forces enquiry, drives form submissions
+- **Memberships:** Silver / Student / Gold (popular) / Platinum — transparent pricing live on site (Apr 20, 2026)
 
 ---
 
@@ -266,18 +446,19 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 
 - NEVER use "gym" in visible copy — use academy / fitness centre / studio / institute / sanctuary / open floor
 - Exception: "Technogym" (brand name) is fine
-- Exception: Hidden SEO keyword "gym koramangala" in `layout.js` meta keywords (invisible to visitors)
+- Exception: Hidden SEO keyword "gym koramangala" in metadata (invisible to visitors)
 - "India's premier" in primary positioning (not "Bangalore's")
 - Landing page eyebrows keep "in Bangalore" for local SEO
-- Success message: "We'll call you soon" — NO postural assessment mention (that's post-membership only)
-- No prices anywhere
-- Founder (Vinod) never featured on site
+- Success message: "We'll call you soon" — NO postural assessment mention in the form confirmation
+- **Prices are now visible** (reversed Apr 20 — was "no prices anywhere" before)
+- Founder (Vinod) never featured on site or in copy
 - Journey + Welcome cover all skill levels (beginner → intermediate → competitive)
 - "Build the Machine" (not "Build the Engine") on Sanctuary
+- **Krav Maga Global partnership:** DO NOT mention on site until signed agreement in hand. Future announcement = big launch moment.
 
 ---
 
-## Mobile Optimizations (shipped Apr 18)
+## Mobile Optimizations
 
 - Viewport meta tag via Next.js viewport export
 - Tighter section padding: 36px mobile, 56px desktop
@@ -286,74 +467,94 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 - Clean ✕ icon when mobile menu is open (not rotated hamburger)
 - Phone inputs: `type="tel"` + `inputMode="tel"` + `autoComplete="tel"` → numeric keypad
 - Name inputs: `autoComplete="name"` → name autofill
-- Schedule swipe hint: "← Swipe to see all days →" shown on mobile only
+- Schedule swipe hint on mobile only
 - Smooth scroll offset: JS-based `-64px` to land heading directly below nav
-- Contact + Footer tightened to fit together in one viewport on desktop
+- **Memberships responsive split (Apr 20):** desktop = tabs + grid, mobile = editorial vertical stack
 
 ---
 
-## Completed (April 18, 2026 session)
+## Completed (April 20, 2026 session)
 
-- [x] Domain nammacombat.com recovered from old Vercel account
-- [x] nammacombat.com + www + academy subdomains all live
-- [x] Open Graph image created, deployed (WhatsApp preview confirmed)
-- [x] Twitter card metadata added
-- [x] Animal Flow landing page created (11th landing page)
-- [x] MMA + Strength pre-select fixed (were falling back to Boxing)
-- [x] All "gym" references removed from visible site
-- [x] Zoho keys regenerated + returnURL switched to nammacombat.com
-- [x] Journey + Welcome cover all skill levels
-- [x] "India's premier" positioning across SEO + hero + trial
-- [x] Naeem credentials updated: MSc Setanta College
-- [x] Schedule component built with both tables, embedded on homepage + /schedule redirect
-- [x] Coach assignments correct: "Spoorthi or Manoj" (not &), evening Elite S&C includes Naeem
-- [x] Section order: Team → Facility → Schedule → Memberships
-- [x] Sanctuary heading: "Build the Engine" → "Build the Machine"
-- [x] Mobile: viewport, nav CTA, clean X icon, tel keypad, swipe hint
-- [x] Spacing cleanup across all sections, landing pages, desktop + mobile
-- [x] Smooth scroll offset so nav links land at headings cleanly
-- [x] Contact + Footer fit together in viewport
-- [x] Packiarajan renamed to Rajan (pronunciation clarity)
-- [x] Sunday schedule merged into single WORKSHOP cell (both floors)
-- [x] GA4 lead tracking added (generate_lead event on all forms)
-- [x] Zoho CRM confirmed receiving leads in <20 seconds
-- [x] Manoj Kumar added to Team section
+### Legal & Compliance
+- [x] Privacy Policy (DPDP Act 2023 compliant, 12 sections)
+- [x] Terms of Service (₹10,000 liability cap, Karnataka jurisdiction)
+- [x] Refund & Cancellation Policy with freeze matrix
+- [x] Shipping & Delivery Policy (service-only, Razorpay KYC)
+- [x] Footer links on homepage + all landing pages
+
+### Gold Accent System
+- [x] Reading progress bar (2px gold, all pages)
+- [x] Scroll-to-top button (gold circle, appears after 500px scroll)
+- [x] Form input focus glow (gold border + soft shadow)
+- [x] Active nav highlighting (gold underline desktop, gold left-border mobile)
+- [x] Curriculum bullets → gold on 12+ pages
+- [x] Discipline card arrows → gold
+- [x] All card hover borders flipped rust → gold (Arena, Sanctuary, Kids, globals.css)
+- [x] Page transition loader → gold gradient bar
+
+### SEO Infrastructure
+- [x] robots.js + sitemap.js (App Router pattern)
+- [x] LocalBusiness JSON-LD schema on homepage
+- [x] Split Boxing as pilot (server metadata + client UI)
+- [x] Split 17 other pages into server+client via batch script
+- [x] All 18 pages have unique SEO title/description/keywords/OG/canonical
+- [x] Google Search Console verified (domain method)
+- [x] Sitemap submitted (19 pages discovered)
+
+### Memberships (major business decision)
+- [x] Transparent pricing live on website (previously hidden)
+- [x] 4 tiers: Silver / Student / Gold / Platinum
+- [x] All 4 durations per tier: Monthly / Quarterly / Semi-annual / Annual
+- [x] ₹7,000 postural assessment value callout
+- [x] Animal Flow positioned as differentiator
+- [x] Student tier with ID requirement + age-appropriate classes note
+- [x] Desktop: tabs + 4-card grid (active gold underline)
+- [x] Mobile: editorial vertical stack with tier-specific CTAs
+- [x] Single class + PT pricing in "Also available" box
+
+### Fixes
+- [x] Women's page rewritten from Boxing v2 template (was broken)
+- [x] BJJ added to CRM dropdown + BJJ landing page verified
+- [x] Judo page rewritten from Boxing v2 template
+- [x] Rust-on-hover borders flipped to gold for consistency
+
+### Commits shipped today: 30+
 
 ---
 
 ## Pending Items
 
-- [ ] **Photos** — swap PhotoBox placeholders (hero action shot, discipline cards, coach portraits with arms crossed on beige wall, facility wide shots, kids group, Journey sequence)
-- [ ] **Meta Pixel** when Facebook Business Manager access restored
-- [ ] **Gateway page** at nammacombat.com (Academy/Community switcher) — build when community app launches
-- [ ] **mail.nammacombat.com** redirect to Gmail (low priority)
+### Immediate
+- [ ] Set up privacy@nammacombat.com alias in Google Workspace (admin → Users → Add alternate email)
+- [ ] Collect detailed trainer bios / quotes from Kantharaj, Naeem, Bhagyarajan
+- [ ] Rework coach cards with role-based framing (Pattern B) once bios are in
+
+### This week
+- [ ] Photoshoot (Leica SL3) — see spec below
+- [ ] Replace all PhotoBox placeholders after photoshoot
+- [ ] Google reviews campaign — ask first 20 members (offer free PT for review)
+- [ ] Instagram training footage content
+
+### Medium-term
+- [ ] Create /coach/[name] individual pages (needs data + photos first)
+- [ ] Krav Maga Global workshops — announce ONLY after signed agreement
+- [ ] MMA v2 depth (cage cutting, sprawl-and-brawl, fence wrestling)
+- [ ] Judo v2 depth (IJF rules, gokyo no waza, tokui-waza)
+- [ ] Numbers / social proof section on homepage (wait for real data)
+- [ ] Meta Pixel (when Facebook Business Manager restored)
+
+### 90-day review point
+Review trial → member conversion rate after transparent pricing live.
+- <20% conversion = real pricing problem
+- 20–40% = consider entry tier
+- >40% = pricing is right
+
+### Low priority
+- [ ] Gateway page at nammacombat.com (when community app launches)
+- [ ] mail.nammacombat.com redirect to Gmail
+- [ ] BJJ / HIIT / Olympic Lifting page-specific testimonials
 
 ---
-
-
-## Pending Photoshoot Decisions (Apr 19 — revisit next week)
-
-When Vinod shoots photos for the site, the following layout decisions need to be made:
-
-- **Why section** (`src/components/Why.js`) — currently text-only, full-width. Layout was briefly made 2-column (text + photo box) but reverted because it broke consistency with other narrative sections (Welcome).
-  - **Decision needed:** Add visuals in one of two ways:
-    - **Option A:** Single wide horizontal photo below the closer line (facility interior, empty, architectural). Full-section width, matches Facility section pattern.
-    - **Option B:** Row of 3 small supporting images below the closer — one per differentiator (postural assessment / Animal Flow / group class). Matches Arena/Sanctuary card-grid pattern.
-  - **Recommendation on shot:** Empty facility interior — the Sanctuary floor with Technogym, or Arena with ring. No people. This section is about *the space*, not people using it (coaches are in Team, action is in Arena/Sanctuary).
-  - **Priority:** This section currently feels text-heavy without a visual. Photo unlocks it.
-
-- **Hero right side** (`src/components/Hero.js`) — currently a dark PhotoBox placeholder. Was debated: Option A (branded pattern + seal), Option B (silhouette), Option C (bold typography). Decided to wait until Vinod shoots.
-  - **Decision needed:** Replace with a striking action shot (someone mid-training, sweat, intensity). Hero photo should land in under 2 seconds and sell the brand before visitor reads anything.
-
-- **All PhotoBox placeholders across the site** need to be swapped for real photos:
-  - Hero action shot (right side)
-  - Journey step visuals (×5)
-  - Arena discipline cards (Boxing, Kickboxing, MMA, BJJ, Wrestling, Judo)
-  - Sanctuary discipline cards (S&C, Animal Flow, HIIT, Olympic Lifting)
-  - Coach portraits (×6 — Kantharaj, Naeem, Rajan, Venkatesh, Spoorthi, Manoj)
-  - Facility interior wide shot
-  - Kids group training photo
-
 
 ## Photo Specifications (for shoot day)
 
@@ -361,12 +562,12 @@ When Vinod shoots photos for the site, the following layout decisions need to be
 **Shoot in DNG (RAW)** — gives maximum flexibility in post for cropping + color grading.
 
 ### Shooting principles (Leica SL3-specific)
-- Use **electronic shutter for silent capture** — coaches and athletes won't flinch mid-movement
-- **ISO 100-800 ideal**; SL3 handles up to ISO 6400 cleanly if indoor lighting is mixed
-- Shoot **slightly overexposed** (+0.3 to +0.7 EV) for the warm cream / beige aesthetic — easier to preserve highlights in Leica DNG than recover shadows
-- Use **APO-Summicron 35mm f/2** or **50mm f/2 SL** for environmental shots
-- **90mm f/2 SL** or **75mm** for coach portraits (flattering compression)
-- Avoid overly wide lenses (21mm, 24mm) — distortion feels generic-fitness, not premium
+- Use electronic shutter for silent capture
+- ISO 100-800 ideal; SL3 handles up to ISO 6400 cleanly if indoor lighting is mixed
+- Shoot slightly overexposed (+0.3 to +0.7 EV) for the warm cream / beige aesthetic
+- Use APO-Summicron 35mm f/2 or 50mm f/2 SL for environmental shots
+- 90mm f/2 SL or 75mm for coach portraits
+- Avoid overly wide lenses (21mm, 24mm) — distortion feels generic
 
 ### Aspect ratios needed (shoot wider, crop in post)
 
@@ -380,67 +581,24 @@ When Vinod shoots photos for the site, the following layout decisions need to be
 | Facility wide shot | 16:7 panoramic | 1160×500px | 3500×1500px |
 | Kids group | 3:4 vertical | 230×300px | 1200×1600px |
 
-Leica SL3 native 6000×4000 RAW gives plenty of room to crop to any of these.
-
 ### Export settings for web
-- **Format:** JPEG, quality 85 (balances file size + sharpness)
-- **Color profile:** sRGB (not Adobe RGB) — web browsers render sRGB correctly
-- **Max longest edge:** 1920px (any bigger = bloat without visible gain on most screens)
-- **Target file size:** 200-400KB per image (keeps site fast-loading)
+- Format: JPEG, quality 85
+- Color profile: sRGB (not Adobe RGB)
+- Max longest edge: 1920px
+- Target file size: 200-400KB per image
 
-### Journey section (5 shots, horizontal 2.67:1)
-Rhythm across 5 steps — don't shoot 5 similar actions:
-1. **Trial** — architectural / entrance shot (empty, moody)
-2. **Assess** — close-up detail (hands on posture chart, tablet)
-3. **Plan** — planning moment (whiteboard, training plan being written)
-4. **Train** — wide group action shot (multiple people training)
-5. **Mastery** — signature hero moment (single fighter mid-technique, wide environmental)
+### Total minimum shoot list: 19 photos
 
-### Coach portraits (6 shots, square 1:1)
-Consistency is the key:
-- **Same warm beige wall** for all 6 portraits
-- **Same lighting direction** (one window source camera-left works well in SL3's natural rendering)
-- **Same pose language** — arms crossed OR standing relaxed, looking into lens
-- **Coaches to shoot:** Kantharaj, Naeem, Rajan, Venkatesh, Spoorthi, Manoj
-- **Leica note:** SL3's color science handles skin tones especially well — you may not need heavy grading
-
-### Hero image (1 shot, ~6:5)
-Right side of hero. Striking action moment — sweat, intensity, movement.
-Options: a fighter mid-punch on a bag, a wrestler mid-takedown, a coach on pads with an athlete.
-**Not a portrait** — this needs energy. Shoot at wider aspect and crop in.
-
-### Discipline cards (10 shots, 4:3)
-One signature visual per discipline:
-- **Boxing** — hand wraps + gloves, or a glove striking a pad
-- **Kickboxing** — kick mid-air
-- **MMA** — cage / mat grappling shot
-- **BJJ** — two athletes in a guard position, dark/moody
-- **Wrestling** — takedown moment
-- **Judo** — throw mid-air (dynamic)
-- **S&C** — athlete under a barbell or on Technogym equipment
-- **Animal Flow** — low ground-movement, athlete in a beast position
-- **HIIT** — athlete mid-burpee or on air bike (fast energy)
-- **Olympic Weightlifting** — snatch or clean catch moment
-
-### Facility wide shot (1 shot, 16:7)
-Empty or near-empty interior. Architectural. Shows premium equipment without people blocking it.
-**Best time to shoot:** early morning, before first class, with natural light through windows.
-
-### Kids group (1 shot, 3:4 vertical)
-Coached environment, kids in rows or a drill. **Parental consent required for every child visible.**
-
-### Total minimum shoot list: **19 photos**
-Budget: half-day shoot at the academy should cover this if well-planned.
-
-### Shot list priority (in case of time constraints)
-1. 6 coach portraits (highest priority — identity of the academy)
+### Shot priority (if time-constrained)
+1. 6 coach portraits (highest — identity of the academy)
 2. Hero image (first impression)
 3. Facility wide shot (quality of space)
-4. 6 Arena discipline cards (the product)
-5. 4 Sanctuary discipline cards (the product)
-6. 5 Journey horizontal shots (nice to have)
-7. Kids group shot (only if parental consent is fast)
+4. 6 Arena discipline cards
+5. 4 Sanctuary discipline cards
+6. 5 Journey horizontal shots
+7. Kids group shot (parental consent permitting)
 
+---
 
 ## Account Ownership (all under Vinod's control)
 
@@ -449,13 +607,14 @@ Budget: half-day shoot at the academy should cover this if well-planned.
 - Namecheap: vinodkaruturi
 - Google Workspace admin: Vinod
 - Google Analytics: Vinod
+- Google Search Console: Vinod (vi@nammacombat.com)
 - Zoho CRM: Vinod
 
 ---
 
 ## Separate Workstreams (not in this repo)
 
-- **Community app Phase 1** — Separate chat. React Native, phone OTP login, member feed, booking in 2 months. PRD: `NAMMA_COMBAT_APP_PRD_v1.2.pdf`.
+- **Community app Phase 1** — Separate chat. React Native, phone OTP login, member feed, booking in ~2 months. PRD: `NAMMA_COMBAT_APP_PRD_v1.2.pdf`.
 - **Brand ecosystem:** Academy (current) + Community (app, building) + Namma Fight league (future)
 
 ---
@@ -463,10 +622,23 @@ Budget: half-day shoot at the academy should cover this if well-planned.
 ## Notes for Future Chats
 
 - If context is lost, start a new chat and paste this README
-- Website is fully functional at nammacombat.com with Zoho + GA4 live
-- Next priorities: photos, Meta Pixel, Manoj bio, gateway page
-- Vinod is non-technical but comfortable with Terminal/Git after this project
-- Prefers `sed`/`python3` in-place edits over downloading whole files when possible
-- Form pre-select values MUST exactly match dropdown options or they fall back to first option
-- Zoho regenerates hidden keys on every form edit — must propagate across all 11+ files
-- `&` in sed replacements breaks regex — use python3 `.replace()` instead
+- Website is fully functional at nammacombat.com with Zoho + GA4 + Search Console live
+- Vinod is non-technical but fluent in Terminal / Git after this project
+- Prefers `python3` in-place edits via heredoc over downloading whole files
+
+### Gotchas (learned the hard way)
+- **Python regex `re.sub` breaks on `\u` escapes in template strings** — always use `.replace()` (string substitution), not `re.sub`, when the new content contains `\u20b9` (₹), `\u2014` (—), etc.
+- **zsh: command not found: #** — inline `#` comments fail in terminal paste, ignore or skip
+- **zsh: unknown file attribute: h** — from certain command flags, ignore
+- **zsh: ! in history expansion** — escape with `\` or wrap in single quotes
+- **Form pre-select values MUST exactly match dropdown options** or they fall back to first option
+- **Zoho regenerates hidden keys on every form edit** — must propagate across all client Landing files (now .jsx, not .js)
+- **`&` in sed replacements breaks regex** — use python3 `.replace()` instead
+- **Always `npm run build 2>&1 | tail -5` before pushing** — catches errors without printing thousands of lines
+- **For high-stakes changes (pricing, legal, irreversible UX), SHOW the code BEFORE running** — Vinod has strong design taste and catches issues pre-ship
+
+### Working pattern
+- ONE change at a time. Surgical, verified, committed.
+- Don't batch across multiple files if uncertain — scripts fail silently.
+- Use Boxing v2 as known-good template for new landing page rewrites.
+- When Vinod pushes back ("dumb!", "not accepted", "generic"), trust the pushback. He's been right every time.
