@@ -47,6 +47,7 @@ export default function Nav({ onCta }) {
             {links.map(([id, label]) => (
               <span key={id} onClick={() => go(id)} style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: active === id ? 'var(--text)' : 'var(--text-light)', cursor: 'pointer', fontWeight: active === id ? 600 : 400, position: 'relative', paddingBottom: 4, borderBottom: active === id ? '2px solid var(--gold)' : '2px solid transparent', transition: 'all 0.2s ease' }}>{label}</span>
             ))}
+            <a href="/faq" style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-light)', textDecoration: 'none', fontWeight: 400, paddingBottom: 4, borderBottom: '2px solid transparent', transition: 'all 0.2s ease' }}>FAQ</a>
             <PrimaryBtn onClick={onCta} style={{ padding: '10px 22px', fontSize: 12 }}>Book free trial</PrimaryBtn>
           </div>
           <div className="nc-mob-actions" style={{ display: 'none', alignItems: 'center', gap: 12 }}>
@@ -63,6 +64,7 @@ export default function Nav({ onCta }) {
             {links.map(([id, label]) => (
               <div key={id} onClick={() => go(id)} style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: active === id ? 'var(--text)' : 'var(--text)', fontWeight: active === id ? 600 : 400, padding: '10px 0', cursor: 'pointer', borderBottom: '0.5px solid var(--border)', borderLeft: active === id ? '3px solid var(--gold)' : '3px solid transparent', paddingLeft: active === id ? 10 : 0, transition: 'all 0.2s ease' }}>{label}</div>
             ))}
+            <a href="/faq" onClick={() => setMob(false)} style={{ display: 'block', fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--text)', fontWeight: 400, padding: '10px 0', cursor: 'pointer', borderBottom: '0.5px solid var(--border)', textDecoration: 'none', transition: 'all 0.2s ease' }}>FAQ</a>
             <PrimaryBtn onClick={() => { setMob(false); onCta(); }} style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>Book free trial</PrimaryBtn>
           </div>
         )}
