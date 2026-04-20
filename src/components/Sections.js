@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Reveal, Section, Eyebrow, Heading, Body, PrimaryBtn, PhotoBox } from './ui';
 
 /* ═══ KIDS ═══ */
@@ -332,6 +332,72 @@ export function Footer() {
       </div>
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-muted)', margin: 0 }}>© 2026 Namma Combat. All rights reserved.</p>
     </footer>
+  );
+}
+
+
+/* ═══ READING PROGRESS BAR ═══ */
+export function ReadingProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement;
+      const total = h.scrollHeight - h.clientHeight;
+      const pct = total > 0 ? (h.scrollTop / total) * 100 : 0;
+      setProgress(pct);
+    };
+    window.addEventListener('scroll', onScroll);
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 2, zIndex: 100, background: 'transparent', pointerEvents: 'none' }}>
+      <div style={{ height: '100%', width: `${progress}%`, background: 'var(--gold)', transition: 'width 0.1s linear', boxShadow: progress > 0 ? '0 0 8px rgba(227,199,104,0.5)' : 'none' }} />
+    </div>
+  );
+}
+
+/* ═══ SCROLL TO TOP ═══ */
+export function ScrollToTop() {
+  const [visible, setVisible] = useState(false);
+  const [h, setH] = useState(false);
+  useEffect(() => {
+    const toggle = () => setVisible(window.scrollY > 500);
+    window.addEventListener('scroll', toggle);
+    return () => window.removeEventListener('scroll', toggle);
+  }, []);
+  const scroll = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (!visible) return null;
+  return (
+    <button
+      onClick={scroll}
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+      aria-label="Scroll to top"
+      style={{
+        position: 'fixed',
+        bottom: 92,
+        right: 24,
+        zIndex: 89,
+        width: 44,
+        height: 44,
+        borderRadius: '50%',
+        background: h ? '#CFAE4D' : 'var(--gold)',
+        color: 'var(--text)',
+        border: 'none',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: '0 4px 16px rgba(227,199,104,0.35)',
+        transition: 'all 0.2s ease',
+        transform: h ? 'translateY(-2px)' : 'translateY(0)',
+      }}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </button>
   );
 }
 

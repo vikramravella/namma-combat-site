@@ -7,7 +7,7 @@ import Why from '@/components/Why';
 import Journey from '@/components/Journey';
 import Arena from '@/components/Arena';
 import Sanctuary from '@/components/Sanctuary';
-import { Kids, Team, Memberships, Facility, Testimonials, Contact, LeadForm, Footer, FloatingWA } from '@/components/Sections';
+import { Kids, Team, Memberships, Facility, Testimonials, Contact, LeadForm, Footer, FloatingWA, ScrollToTop, ReadingProgress } from '@/components/Sections';
 import Schedule from '@/components/Schedule';
 
 export default function Home() {
@@ -33,6 +33,8 @@ export default function Home() {
       <Contact onCta={open} />
       <Footer />
       <FloatingWA />
+      <ScrollToTop />
+      <ReadingProgress />
       <LeadForm isOpen={formOpen} onClose={close} />
     </main>
   );
