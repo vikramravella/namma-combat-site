@@ -68,7 +68,7 @@ function InlineForm() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         {[
           { k: 'name', l: 'Full name *', t: 'text', p: 'Your name' },
-          { k: 'phone', l: 'Phone number *', t: 'tel', p: '' },
+          { k: 'phone', l: 'Phone number *', t: 'tel', p: 'XXXXXXXXXX' },
         ].map(({ k, l, t, p }) => (
           <div key={k}>
             <label style={{ fontFamily: T.fontBody, fontSize: 12, fontWeight: 600, color: T.text, display: 'block', marginBottom: 4 }}>{l}</label>
