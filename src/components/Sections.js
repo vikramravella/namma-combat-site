@@ -369,9 +369,9 @@ export function LeadForm({ isOpen, onClose }) {
     form.acceptCharset = 'UTF-8';
 
     const fields = {
-      'xnQsjsdp': '7f86d216d021c558ef213f9f58487a514e5c706d4eaccbc094e22e3fc4da61d2',
+      'xnQsjsdp': '46046e1b1518a2e1c8335abc6c416cc060d54010509945e0354e8c12064719fe',
       'zc_gad': '',
-      'xmIwtLD': 'cca4493149c188cf2f9842a325ca8ef7dfc26845273560ab6e7d2278d5c513b5e7eb5e760e03184a103077105dc14280',
+      'xmIwtLD': 'a9a1d770007ff6c74947f678d63c2e80373d35aa1e34f909ded5b4cb6df9af52dcdb4166291a626a499d63089a7299d9',
       'actionType': 'TGVhZHM=',
       'returnURL': 'https://nammacombat.com/trial',
       'First Name': firstName,
