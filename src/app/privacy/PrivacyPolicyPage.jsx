@@ -89,7 +89,7 @@ export default function PrivacyPolicyPage() {
           <a href="/refunds" style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, textDecoration: 'none' }}>Refunds</a>
           <a href="/shipping" style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, textDecoration: 'none' }}>Shipping</a>
         </div>
-        <p style={{ fontFamily: T.fontBody, fontSize: 10, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', margin: '0 0 4px', fontWeight: 600 }}>Skill &middot; Strength &middot; Sanctuary</p>
+        <img src="/seal.svg" alt="Namma Combat" style={{ width: 56, height: 56, margin: '0 auto 12px', display: 'block' }} /><p style={{ fontFamily: T.fontBody, fontSize: 10, letterSpacing: 3, color: T.rust, textTransform: 'uppercase', margin: '0 0 4px', fontWeight: 600 }}>Skill &middot; Strength &middot; Sanctuary</p>
         <p style={{ fontFamily: T.fontBody, fontSize: 11, color: T.textMuted, margin: 0 }}>&copy; 2026 Namma Combat. All rights reserved.</p>
       </div>
     </div></>

@@ -376,7 +376,7 @@ export default function FAQLanding() {
           </div>
 
           {/* Footer */}
-          <footer style={{ marginTop: 64, paddingTop: 32, borderTop: `1px solid ${T.border}`, textAlign: 'center' }}>
+          <footer style={{ marginTop: 64, paddingTop: 32, borderTop: `1px solid ${T.border}`, textAlign: 'center' }}><img src="/seal.svg" alt="Namma Combat" style={{ width: 56, height: 56, margin: '0 auto 12px', display: 'block' }} />
             <p style={{ fontFamily: T.fontBody, fontSize: 12, color: T.textMuted, margin: '0 0 8px' }}>
               <a href="/privacy" style={{ color: T.textMuted, textDecoration: 'none', marginRight: 16 }}>Privacy</a>
               <a href="/terms" style={{ color: T.textMuted, textDecoration: 'none', marginRight: 16 }}>Terms</a>
