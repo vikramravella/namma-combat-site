@@ -376,8 +376,9 @@ Required for Razorpay KYC and Indian Digital Personal Data Protection Act 2023 c
 - **Form Location URL whitelist (in Zoho):** nammacombat.com, www.nammacombat.com, academy.nammacombat.com
 
 ### Current hidden keys (regenerate ALL files when form edited in Zoho)
-- `xnQsjsdp`: `7f86d216d021c558ef213f9f58487a514e5c706d4eaccbc094e22e3fc4da61d2`
-- `xmIwtLD`: `cca4493149c188cf2f9842a325ca8ef7dfc26845273560ab6e7d2278d5c513b5e7eb5e760e03184a103077105dc14280`
+- `xnQsjsdp`: `46046e1b1518a2e1c8335abc6c416cc060d54010509945e0354e8c12064719fe`
+- `xmIwtLD`: `a9a1d770007ff6c74947f678d63c2e80373d35aa1e34f909ded5b4cb6df9af52dcdb4166291a626a499d63089a7299d9`
+- **Last regenerated:** April 24, 2026
 
 ### To update keys across all files:
 ```bash
@@ -537,6 +538,29 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 
 ---
 
+## Completed (April 24, 2026 session)
+
+### Trial form cleanup (Zoho data integrity)
+- [x] Removed `+91...` placeholder from all 15 phone inputs
+- [x] Set placeholder to `XXXXXXXXXX` across all 15 trial forms (universally recognized pattern, no `+91` ambiguity, shows 10-digit format)
+- [x] Swept across: 14 Landing.jsx files (Boxing, Kickboxing, MMA, BJJ, Wrestling, Judo, Strength, Animal Flow, HIIT, Olympic Lifting, Womens, Corporate, Kids, Trial) + Sections.js homepage LeadForm
+
+### Zoho webform re-link (critical fix — lead pipeline restored)
+- [x] Diagnosed: leads had stopped reaching Zoho CRM after placeholder deploy. Email backup was still working, masking the issue.
+- [x] Root cause: Zoho keys had silently regenerated (reason unclear — possibly related to form state, not our deploy)
+- [x] Fix: re-saved form in Zoho to regenerate fresh `xnQsjsdp` + `xmIwtLD` keys
+- [x] Updated both keys across all 15 files via sed sweep
+- [x] Confirmed lead pipeline restored — test lead arrived in both Gmail AND Zoho CRM
+
+### Commits shipped today:
+- `05be8aa` — Remove +91 placeholder from trial forms — Zoho CRM data cleanup
+- `bb82148` — Update Zoho webform keys after re-link — restores lead pipeline
+
+### Known issue to investigate later (not critical)
+- [ ] Zoho Webforms analytics shows 0 submissions / 0 leads under "Website Lead Form" even though leads ARE landing in the Leads module. Likely a tracking script / scope issue, not functional. Leads are flowing correctly. Do NOT touch the working form to fix — diagnose separately.
+
+---
+
 ## Pending Items
 
 ### Immediate
@@ -651,6 +675,10 @@ Review trial → member conversion rate after transparent pricing live.
 - **`&` in sed replacements breaks regex** — use python3 `.replace()` instead
 - **Always `npm run build 2>&1 | tail -5` before pushing** — catches errors without printing thousands of lines
 - **For high-stakes changes (pricing, legal, irreversible UX), SHOW the code BEFORE running** — Vinod has strong design taste and catches issues pre-ship
+- **Zoho keys silently regenerate when the form is edited in Zoho** — or occasionally for reasons unclear. Symptom: form submits successfully, email notification arrives, but no lead appears in Zoho CRM. The hidden `xnQsjsdp` and `xmIwtLD` keys become invalid, so Zoho silently rejects the POST. Fix: edit form in Zoho (any minor change + save), grab fresh embed code, sweep both keys across all 15 files, deploy. Always check Zoho Leads module directly for verification — the Webforms analytics view is unreliable.
+- **Form field placeholders live in data objects, not JSX attributes** — trial forms use `{[{k,l,t,p}, ...]}` arrays with `placeholder={p}`. To find/replace placeholder text, search the single-quoted string inside the data object (`p: 'value'`), not `placeholder="value"`. Otherwise grep/sed will miss everything.
+- **Email notification vs Zoho lead is NOT the same thing.** If "Notify Leads Owner" is enabled in Zoho, you'll get an email for every submission even when the actual lead insertion fails. Never use "got an email" as proof that the lead landed in Zoho. Always verify via the Leads module.
+- **Test the full pipeline, not just the form submission.** After any change touching Zoho integration or trial forms: submit a test lead in incognito, confirm email arrived, AND confirm it appears in Zoho Leads module (filter by Created Date today). Don't rely on one signal.
 
 ### Working pattern
 - ONE change at a time. Surgical, verified, committed.
