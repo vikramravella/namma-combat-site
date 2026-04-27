@@ -1,6 +1,6 @@
 # Namma Combat Website — Project Documentation
 
-**Last updated: April 20, 2026**
+**Last updated: April 27, 2026**
 
 Founded by Vinod Karuturi. Built solo after firing the previous dev team. All accounts under Vinod's control.
 
@@ -558,6 +558,27 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 
 ### Known issue to investigate later (not critical)
 - [ ] Zoho Webforms analytics shows 0 submissions / 0 leads under "Website Lead Form" even though leads ARE landing in the Leads module. Likely a tracking script / scope issue, not functional. Leads are flowing correctly. Do NOT touch the working form to fix — diagnose separately.
+
+---
+
+## Completed (April 27, 2026 session)
+
+### Landing page navigation fix
+- [x] **Header logo → homepage.** Wrapped `<img src="/logo.svg">` in `<a href="/" style={{ display: 'inline-flex' }}>...</a>` on the 14 sport/audience landing pages that previously had no link (boxing, kickboxing, mma, bjj, wrestling, judo, strength, animal-flow, hiit, olympic-lifting, womens, corporate, kids, trial). The 5 other pages (faq, privacy, terms, refunds, shipping) already had this. Visitors no longer need the browser back button to return home.
+
+### NC seal in landing footers
+- [x] Added `<img src="/seal.svg" alt="Namma Combat" style={{ width: 56, height: 56, margin: '0 auto 12px', display: 'block' }} />` above the "Skill · Strength · Sanctuary" tagline in the footer of all 19 landing/legal/faq pages.
+- [x] Matches the homepage footer seal style (homepage uses 64×64 in `Sections.js`; landing footers use 56×56 to fit the tighter compact footer).
+- [x] FAQ has a unique footer structure — seal inserted as first child of the `<footer>` element rather than via the tagline anchor.
+
+### Convention going forward (for new landing pages)
+- Header: wrap logo in `<a href="/" style={{ display: 'inline-flex' }}>` so clicking returns to homepage.
+- Footer: include `<img src="/seal.svg" ... 56×56 ... />` above the tagline.
+- Both already present in every existing landing page — copy from any of them when adding a new one.
+
+### Commits shipped today:
+- `30d7e28` — Landing pages: clickable logo + NC seal in footer
+- `9807600` — README: document Apr 24 session — placeholder cleanup + Zoho key re-link
 
 ---
 
