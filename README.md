@@ -1,6 +1,6 @@
 # Namma Combat Website — Project Documentation
 
-**Last updated: April 27, 2026**
+**Last updated: April 28, 2026**
 
 Founded by Vinod Karuturi. Built solo after firing the previous dev team. All accounts under Vinod's control.
 
@@ -669,6 +669,45 @@ Review trial → member conversion rate after transparent pricing live.
 - Google Analytics: Vinod
 - Google Search Console: Vinod (vi@nammacombat.com)
 - Zoho CRM: Vinod
+
+---
+
+## Security Posture
+
+### Account 2FA — confirmed Apr 28, 2026
+All major accounts (GitHub, Vercel, Namecheap, Google Workspace, Zoho CRM) have 2FA enabled. Worth occasionally verifying that critical accounts (Namecheap, Vercel, GitHub) use authenticator app or hardware key, NOT SMS — SIM-swap attacks bypass SMS-based 2FA.
+
+### Email authentication — DMARC tightening in progress
+
+Current DNS state on nammacombat.com (as of Apr 28, 2026):
+
+| Record | Status | Value |
+|---|---|---|
+| MX | OK | Google Workspace (`smtp.google.com`) |
+| SPF | OK | `v=spf1 include:_spf.google.com ~all` |
+| DKIM | OK | Active (Google selector) |
+| DMARC | partial | `v=DMARC1; p=none; rua=mailto:combatnamma@gmail.com` — monitoring only, reports to personal Gmail |
+
+**Confirmed:** Google Workspace is the ONLY sender for `@nammacombat.com`. No Mailchimp, no Zoho campaigns, no Calendly, no other third-party senders. This means we can tighten DMARC aggressively without risk of breaking forgotten legit mail.
+
+**Resume here next session — two decisions pending:**
+1. Which `@nammacombat.com` address should receive DMARC reports? Options:
+   - (a) reuse an existing inbox Vinod checks daily
+   - (b) create `dmarc@nammacombat.com` Google Workspace alias (could create alongside still-pending `privacy@nammacombat.com`)
+2. Rollout pace:
+   - **Conservative (~6 weeks):** swap `rua` to `@nammacombat.com` address, keep `p=none` for 2 weeks, ramp to `p=quarantine; pct=10`, then `pct=100`, then `p=reject`. Watch reports each step.
+   - **Faster:** jump directly to `p=quarantine` today since single-sender setup is confirmed.
+
+Once a path is picked, the change is a single TXT record edit in Vercel DNS panel at host `_dmarc`.
+
+### Security roadmap (tiered by blast radius)
+1. **Done** — Account takeover prevention via 2FA on all critical accounts.
+2. **In progress** — Email spoofing prevention via DMARC tightening.
+3. **Pending** — Brand impersonation: trademark Namma Combat wordmark + seal in India (~₹4,500 govt fee + lawyer time). Legal protection against fake academies / impersonation pages.
+4. **Pending** — DPDP Act compliance: create `privacy@nammacombat.com` alias (already noted in main Pending), document Zoho lead retention policy, plan for breach response.
+5. **Pending** — Form spam: honeypot hidden field on all 15 trial forms; optional invisible hCaptcha if spam volume becomes real.
+6. **Pending** — HTTP security headers via `next.config.js` or Vercel: Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, Referrer-Policy. Defends against clickjacking + injection classes.
+7. **Pending (low priority)** — Asset hardening: largely unsolvable since browser must download fonts/SVGs to render. Real levers are font licensing audit (verify Materia Pro Bold web-embed license) + photo watermarking post-shoot. Hotlink protection blocks other domains from embedding `/public` assets — small win.
 
 ---
 
