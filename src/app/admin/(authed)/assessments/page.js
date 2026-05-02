@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 
+export const revalidate = 10;
 export default async function AssessmentsPage() {
   const rows = await db.assessment.findMany({
     orderBy: { assessedAt: 'desc' },

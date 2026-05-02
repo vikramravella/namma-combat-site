@@ -16,3 +16,7 @@ prisma/*.db-journal
 
 # Editor / backup
 README.md.backup
+.vercel
+.env*.local
+.env.production
+.env*

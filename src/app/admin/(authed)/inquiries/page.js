@@ -4,6 +4,7 @@ import { fullName, formatRelative, formatDate } from '@/lib/format';
 import { INQUIRY_STAGES, SOURCES, stageMeta } from '@/lib/constants';
 import { Filters } from './Filters';
 
+export const revalidate = 10;
 const STAGE_KEYS = INQUIRY_STAGES.map((s) => s.key);
 
 export default async function InquiriesPage({ searchParams }) {

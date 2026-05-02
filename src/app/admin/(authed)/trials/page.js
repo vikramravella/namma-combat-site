@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta } from '@/lib/constants';
 
+export const revalidate = 10;
 const STATUS_KEYS = TRIAL_STATUSES.map((s) => s.key);
 
 export default async function TrialsPage({ searchParams }) {

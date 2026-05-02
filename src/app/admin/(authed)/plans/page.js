@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { fullName, formatDate, formatRupees } from '@/lib/format';
 import { PLAN_STATUSES, TIERS, stageMeta } from '@/lib/constants';
 
+export const revalidate = 10;
 const STATUS_KEYS = PLAN_STATUSES.map((s) => s.key);
 
 export default async function PlansPage({ searchParams }) {

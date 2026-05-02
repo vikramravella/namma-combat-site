@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { formatDate, formatRupees } from '@/lib/format';
 import { RECEIPT_STATUSES, stageMeta } from '@/lib/constants';
 
+export const revalidate = 10;
 const STATUS_KEYS = RECEIPT_STATUSES.map((s) => s.key);
 
 export default async function ReceiptsPage({ searchParams }) {

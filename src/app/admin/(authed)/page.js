@@ -4,6 +4,10 @@ import { fullName, formatRupees, formatDate } from '@/lib/format';
 import { TIERS, DISCIPLINES_COMBAT, DISCIPLINES_SANCTUARY } from '@/lib/constants';
 import { DashFilters } from './DashFilters';
 
+// Cache the dashboard for 10 seconds — subsequent visits within window are instant.
+// Fresh enough for admin use; cuts perceived latency dramatically.
+export const revalidate = 10;
+
 const ALL_DISCIPLINES = [...DISCIPLINES_COMBAT.filter((d) => d !== 'Workshop'), ...DISCIPLINES_SANCTUARY.filter((d) => d !== 'Workshop')];
 const PERIOD_DAYS = { today: 1, week: 7, month: 30, quarter: 90, year: 365 };
 

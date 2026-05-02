@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { fullName, formatDate, formatRupees } from '@/lib/format';
 import { MEMBER_STATUSES, SKILL_LEVELS, stageMeta } from '@/lib/constants';
 
+export const revalidate = 10;
 const STATUS_KEYS = MEMBER_STATUSES.map((s) => s.key);
 const SKILL_KEYS = SKILL_LEVELS.map((s) => s.key);
 
