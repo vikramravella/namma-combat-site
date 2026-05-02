@@ -582,12 +582,63 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 
 ---
 
+## Completed (May 2, 2026 session)
+
+### Phone autofill fix (continuation of Apr 24 placeholder work)
+- [x] Diagnosed: browsers were autofilling `+91` prefix into the phone field even after the placeholder cleanup, because `autoComplete="tel"` asks browsers for the **international** format
+- [x] Fix: `autoComplete="tel"` → `autoComplete="tel-national"` across all 15 forms (14 Landing.jsx + `Sections.js` LeadForm). `tel-national` signals "national-only digits" so autofill returns just the 10 local digits
+- [x] No Zoho reconfig needed — data shape unchanged (10 digits, no prefix)
+
+### Coach profile pages — first 3 live
+- [x] New dynamic route `src/app/coaches/[slug]/` (server `page.js` + client `CoachClientPage.jsx`)
+- [x] Live: `/coaches/kantharaj`, `/coaches/bhagyarajan`, `/coaches/venkatesh`
+- [x] Each page: hero (role + name + textured PhotoBox placeholder + achievement subhead), bio paragraphs, **Coaching credentials**, **Competition record** (year-prefixed list with optional footer summary), **Professional experience**, **Train with [name]** chips linking to sport landing pages, embedded trial form on the right
+- [x] Trial form sets `Lead Source = "Coach Page - {Name}"` for Zoho attribution. No new Zoho field needed — easy to migrate to a dedicated `Coach_Source` custom field later
+- [x] Bhagyarajan record sourced from his sponsorship resume PDF (NIS Kolkata Diploma, 21-year Indian Army Subedar, 19 Gold + 9 Silver + 4 Bronze, 5 Best Boxer Awards, post-army coaching at TN Police / Northern Command / pro academies)
+- [x] Venkatesh record sourced from 38 pages of certificates (NIS Patiala Wrestling, 62nd Senior National Championship, twice All-India Inter-University, Indo-Bhutan international silver, MBA Sports Management)
+- [x] Kantharaj record sourced from his Brave CF sponsorship deck (Indian MMA Pioneer, most international pro fights by any Indian fighter, BJJ South-East Asia Gold, Judo National Gold, NIS Patiala Judo, 7 years coaching at SAI)
+- [x] Per Vinod: NIS batch years and exact scores **not** shown — "First Division" alone is enough in industry context, where most candidates just want the certificate
+
+### Team section on homepage — clickable swatches
+- [x] `CoachCard` component (in `Sections.js`) wraps card in `<a href="/coaches/{slug}">` if `slug` is set; adds "View profile →" arrow + hover lift
+- [x] Clickable: Kantharaj, Bhagyarajan, Venkatesh. Non-clickable (until profile content lands): Naeem, Spoorthi, Manoj
+- [x] Fixed an inherited error: Bhagyarajan was incorrectly shown as "NIS Patiala" — corrected to NIS Kolkata across both swatch and profile page
+- [x] Kantha + Venkatesh card copy refreshed (no batch year, "First Division" only)
+- [x] `firstName` field added to coach data so "D. Bhagyarajan" renders as "Bhagyarajan" in the PhotoBox label and "Train with [name]" form headline (was rendering as "D.")
+
+### SEO
+- [x] 3 coach routes added to `sitemap.js` at priority 0.85 / monthly
+- [x] Each coach page exports its own `metadata` (title, description, keywords, OG, canonical)
+
+### Brand-rule check
+- [x] Scanned all new content: no "gym" in visible copy (only "Technogym" — the allowed exception), no "Bangalore's" positioning, no "premier" misuse, no "engine", no Krav Maga mention, no Vinod/founder feature, no postural-assessment in form confirmation. Clean.
+- [x] Removed a "co-built the gym from the ground up" line from Kantha's bio — factually inaccurate per Vinod (Vinod's money + time built the place; Kantha's value-add is being the public face) and would have violated the no-gym rule anyway
+
+### Zoho API access (parallel work — not site-related, but unlocks future site/CRM integration)
+- [x] Self Client OAuth set up on `api-console.zoho.in` (India DC). Refresh token + client creds stored at `~/.zoho/credentials` (chmod 600). Refresh token doesn't expire
+- [x] Current scope: `ZohoCRM.modules.ALL ZohoCRM.settings.READ` — full read/write on records, read-only on settings
+- [x] Verified working: pulled 3 most recent Leads via `/crm/v6/Leads`. All entries clean — no `+91` prefixes in the most recent leads (consistent with Vinod's "1 in 15 leads" estimate of the autofill issue)
+- [x] CRM module map captured: `Leads`, `Contacts` (renamed display: "Members"), `Deals` (renamed display: "Memberships"), `Trials` (custom), `Membership` (custom). Assessments module yet to be created
+- [x] Books scopes errored during initial Self Client setup → deferred. Add later when needed for invoice/payment work
+
+### Commits shipped today
+- `843af95` — Phone autofill: switch tel → tel-national across 14 landing pages
+- `d6bd95a` — Coach profile pages + Team section refresh
+
+### Gotchas surfaced this session (worth knowing for future work)
+- **Zoho API Console + Safari:** the "Select Portal" step (where you pick which Zoho service the OAuth grant applies to) is **hidden in Safari**, visible in Chrome. If a Self Client grant fails with "Invalid scope" in Safari, switch to Chrome — the same scope works.
+- **Zoho region matters:** `api-console.zoho.in` for India DC accounts (NOT `.com`). Wrong region = `INVALID_TOKEN` errors that look mysterious.
+- **Self Client "Error occurred" toast:** sometimes appears alongside a successful code generation. The "Code copied successfully" line below it is the real signal.
+- **Books scopes:** stricter than CRM — if any single Books scope is invalid for your plan, the entire grant fails silently. Try CRM-only first, then add Books scopes one at a time.
+
+---
+
 ## Pending Items
 
 ### Immediate
 - [ ] Set up privacy@nammacombat.com alias in Google Workspace (admin → Users → Add alternate email)
-- [ ] Collect detailed trainer bios / quotes from Kantharaj, Naeem, Bhagyarajan
-- [ ] Rework coach cards with role-based framing (Pattern B) once bios are in
+- [ ] Collect remaining trainer bios from Naeem, Spoorthi, Manoj (Kantha / Bhagyarajan / Venkatesh shipped May 2)
+- [x] ~~Rework coach cards with role-based framing once bios are in~~ — shipped May 2 via clickable swatches + dedicated profile pages
 
 ### This week
 - [ ] Photoshoot (Leica SL3) — see spec below
@@ -596,7 +647,7 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 - [ ] Instagram training footage content
 
 ### Medium-term
-- [ ] Create /coach/[name] individual pages (needs data + photos first)
+- [x] ~~Create /coach/[name] individual pages~~ — shipped May 2 at `/coaches/[slug]` for 3 coaches; photos still placeholder; remaining 3 coaches pending bio data
 - [ ] Krav Maga Global workshops — announce ONLY after signed agreement
 - [ ] MMA v2 depth (cage cutting, sprawl-and-brawl, fence wrestling)
 - [ ] Judo v2 depth (IJF rules, gokyo no waza, tokui-waza)
