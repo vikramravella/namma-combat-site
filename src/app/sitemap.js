@@ -22,6 +22,10 @@ export default function sitemap() {
     { path: '/womens', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/corporate', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/kids', priority: 0.8, changeFrequency: 'monthly' },
+    // Coach profiles
+    { path: '/coaches/kantharaj', priority: 0.85, changeFrequency: 'monthly' },
+    { path: '/coaches/bhagyarajan', priority: 0.85, changeFrequency: 'monthly' },
+    { path: '/coaches/venkatesh', priority: 0.85, changeFrequency: 'monthly' },
     // Legal
     { path: '/privacy', priority: 0.3, changeFrequency: 'yearly' },
     { path: '/terms', priority: 0.3, changeFrequency: 'yearly' },

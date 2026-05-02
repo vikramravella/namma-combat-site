@@ -28,14 +28,39 @@ export function Kids() {
 }
 
 /* ═══ TEAM ═══ */
+function CoachCard({ coach }) {
+  const [h, setH] = useState(false);
+  const card = (
+    <div className="nc-card" style={{ borderRadius: 8, overflow: 'hidden', border: coach.slug && h ? '1px solid var(--gold)' : '1px solid var(--border)', background: 'var(--cream)', height: '100%', display: 'flex', flexDirection: 'column', transition: 'all 0.25s ease', transform: coach.slug && h ? 'translateY(-2px)' : 'translateY(0)', boxShadow: coach.slug && h ? '0 8px 24px rgba(44,35,24,0.08)' : 'none' }}>
+      <PhotoBox label={coach.firstName || coach.name.split(' ')[0]} h={210} style={{ borderRadius: 0, borderBottom: '1px solid rgba(224,214,200,0.3)' }} />
+      <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 900, color: 'var(--text)', margin: '0 0 3px', textTransform: 'uppercase', letterSpacing: 0.3 }}>{coach.name}</h3>
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--rust)', margin: '0 0 6px' }}>{coach.role}</p>
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-light)', lineHeight: 1.5, margin: 0, flex: 1 }}>{coach.creds}</p>
+        {coach.slug && (
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 600, color: 'var(--rust)', textTransform: 'uppercase', letterSpacing: 1.2, marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 4, transition: 'transform 0.25s ease', transform: h ? 'translateX(3px)' : 'translateX(0)' }}>
+            View profile <span>&rarr;</span>
+          </span>
+        )}
+      </div>
+    </div>
+  );
+  if (!coach.slug) return card;
+  return (
+    <a href={`/coaches/${coach.slug}`} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
+      {card}
+    </a>
+  );
+}
+
 export function Team() {
   const coaches = [
-    ['Kantharaj Agasa', 'Co-founder & Head Coach', 'Indian MMA Pioneer with 13 professional wins. National-level wrestler. NIS Patiala certified Judo coach. Gold medals in BJJ and Judo.'],
-    ['Mohammed Naeem', 'Co-founder & Head of S&C', 'Former professional Indian Hockey player. MSc in Performance Coaching (Setanta College). 8+ years building athletes. Known for sustainable, elite transformations.'],
-    ['Bhagyarajan', 'Boxing Lead', 'NIS Patiala certified Boxing Coach. Multiple national Gold + Best Boxer awards. Former international competitor with decades of ring experience.'],
-    ['Venkatesh A', 'Wrestling Coach', 'NIS Patiala certified Wrestling Coach. Master\'s in Sports Management. University-level coaching and certified wrestling official.'],
-    ['Spoorthi Nagraj', 'S&C & Women\'s Health', 'Certified S&C Coach specialising in women\'s health, functional movement, and running performance. Animal Flow Level 1 certified.'],
-    ['Manoj Kumar', 'S&C Coach', 'Skill India certified S&C Coach. Former state-level hockey athlete — Karnataka League winner, School Games winner, South Zone University finalist. Specialises in coaching beginners through the fundamentals.'],
+    { name: 'Kantharaj Agasa', role: 'Co-founder & Head Coach', creds: 'Indian MMA Pioneer. 13 professional wins. National-level wrestler. NIS Patiala Diploma in Sports Coaching (Judo) — First Division. Gold medals in BJJ and Judo.', slug: 'kantharaj' },
+    { name: 'Mohammed Naeem', role: 'Co-founder & Head of S&C', creds: 'Former professional Indian Hockey player. MSc in Performance Coaching (Setanta College). 8+ years building athletes. Known for sustainable, elite transformations.' },
+    { name: 'D. Bhagyarajan', firstName: 'Bhagyarajan', role: 'Boxing Lead', creds: 'NIS Kolkata Diploma in Boxing Coaching. Indian Army Subedar (21 years). 19 Gold + 9 Silver across 16 National + 17 International championships. 5 Best Boxer Awards. Coached Tamil Nadu Police, Northern Command, and pro academies.', slug: 'bhagyarajan' },
+    { name: 'Venkatesh A', role: 'Wrestling Coach', creds: 'NIS Patiala Diploma in Sports Coaching (Wrestling) — First Division. Senior national wrestler — 62nd Senior Nationals + All-India Inter-University. Indo-Bhutan international silver. MBA in Sports Management.', slug: 'venkatesh' },
+    { name: 'Spoorthi Nagraj', role: "S&C & Women's Health", creds: 'Certified S&C Coach specialising in women\'s health, functional movement, and running performance. Animal Flow Level 1 certified.' },
+    { name: 'Manoj Kumar', role: 'S&C Coach', creds: 'Skill India certified S&C Coach. Former state-level hockey athlete — Karnataka League winner, School Games winner, South Zone University finalist. Specialises in coaching beginners through the fundamentals.' },
   ];
   return (
     <Section id="team" bg="var(--warm)">
@@ -47,16 +72,9 @@ export function Team() {
         </Body>
       </Reveal>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 16 }}>
-        {coaches.map(([name, role, creds], i) => (
-          <Reveal key={name} delay={i * 0.04}>
-            <div className="nc-card" style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--cream)', height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <PhotoBox label={name.split(' ')[0]} h={210} style={{ borderRadius: 0, borderBottom: '1px solid rgba(224,214,200,0.3)' }} />
-              <div style={{ padding: '14px 16px' }}>
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 900, color: 'var(--text)', margin: '0 0 3px', textTransform: 'uppercase', letterSpacing: 0.3 }}>{name}</h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--rust)', margin: '0 0 6px' }}>{role}</p>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-light)', lineHeight: 1.5, margin: 0 }}>{creds}</p>
-              </div>
-            </div>
+        {coaches.map((coach, i) => (
+          <Reveal key={coach.name} delay={i * 0.04}>
+            <CoachCard coach={coach} />
           </Reveal>
         ))}
       </div>
@@ -421,7 +439,7 @@ export function LeadForm({ isOpen, onClose }) {
               {[{ k: 'name', l: 'Full name *', t: 'text', p: 'Your name' }, { k: 'phone', l: 'Phone number *', t: 'tel', p: 'XXXXXXXXXX' }].map(({ k, l, t, p }) => (
                 <div key={k}>
                   <label style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 4 }}>{l}</label>
-                  <input type={t} inputMode={t === 'tel' ? 'tel' : 'text'} autoComplete={t === 'tel' ? 'tel' : k === 'name' ? 'name' : 'off'} placeholder={p} value={fd[k]} onChange={e => setFd({ ...fd, [k]: e.target.value })}
+                  <input type={t} inputMode={t === 'tel' ? 'tel' : 'text'} autoComplete={t === 'tel' ? 'tel-national' : k === 'name' ? 'name' : 'off'} placeholder={p} value={fd[k]} onChange={e => setFd({ ...fd, [k]: e.target.value })}
                     style={{ width: '100%', padding: '12px 14px', fontFamily: 'var(--font-body)', fontSize: 14, border: '1px solid var(--border)', borderRadius: 6, background: '#fff', color: 'var(--text)', outline: 'none', boxSizing: 'border-box' }} />
                 </div>
               ))}
