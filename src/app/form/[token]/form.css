@@ -1,0 +1,157 @@
+/* Public health form — phone-first, scoped via .form-public-* prefix
+   to avoid colliding with marketing site styles. */
+
+.form-public-wrap {
+  min-height: 100vh;
+  background: var(--cream, #FEF8EE);
+  padding: 28px 16px 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.form-public-frame {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid var(--border, #E0D6C8);
+  border-radius: 16px;
+  padding: 28px 22px;
+  box-shadow: 0 18px 40px rgba(44, 35, 24, 0.08);
+  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
+  color: var(--text, #2C2318);
+  font-size: 14px;
+}
+
+.form-public-header { text-align: center; margin-bottom: 24px; }
+.form-public-seal { width: 44px; height: 44px; margin: 0 auto 12px; display: block; }
+.form-public-title {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0 0 6px;
+  color: var(--text);
+}
+.form-public-sub {
+  font-size: 13px;
+  color: var(--text-light, #6B5D4F);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.form-public-section { margin-bottom: 24px; }
+.form-public-section-label {
+  font-family: var(--font-display, 'Archivo Black', sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--rust, #9A3520);
+  margin: 0 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border, #E0D6C8);
+}
+.form-public-fields { display: flex; flex-direction: column; gap: 14px; }
+
+.form-public-read {
+  background: #fff;
+  border: 1px solid var(--border, #E0D6C8);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.form-public-read-locked { background: var(--warm-deep, #EDE5D8); }
+.form-public-read-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted, #9B8E7E);
+  margin-bottom: 2px;
+}
+.form-public-read-value {
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.form-public-lock { font-size: 12px; opacity: 0.5; }
+.form-public-read-hint { font-size: 11px; color: var(--text-muted, #9B8E7E); font-style: italic; margin-top: 2px; }
+
+.form-public-field { display: flex; flex-direction: column; gap: 5px; }
+.form-public-label { font-size: 12px; font-weight: 600; }
+.form-public-req { color: var(--rust, #9A3520); }
+.form-public-input {
+  background: #fff;
+  border: 1px solid var(--border, #E0D6C8);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 15px;
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+}
+.form-public-input:focus {
+  border-color: var(--rust, #9A3520);
+  box-shadow: 0 0 0 3px var(--gold-soft, rgba(227, 199, 104, 0.18));
+}
+textarea.form-public-input { min-height: 70px; resize: vertical; }
+
+.form-public-toggle-row { display: flex; gap: 6px; }
+.form-public-toggle {
+  flex: 1;
+  background: #fff;
+  border: 1px solid var(--border, #E0D6C8);
+  border-radius: 10px;
+  padding: 10px 6px;
+  font-size: 13px;
+  color: var(--text-light, #6B5D4F);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.form-public-toggle:hover { border-color: var(--rust, #9A3520); color: var(--rust, #9A3520); }
+.form-public-toggle-on { background: var(--rust, #9A3520); border-color: var(--rust, #9A3520); color: #fff; }
+
+.form-public-consent {
+  background: var(--warm, #F5F0E8);
+  border: 1px solid var(--border, #E0D6C8);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.form-public-consent p { font-size: 12px; color: var(--text-light, #6B5D4F); line-height: 1.55; margin: 0; }
+.form-public-meta { font-size: 11px; color: var(--text-muted, #9B8E7E); margin: 4px 0 0; font-style: italic; }
+
+.form-public-error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin: 12px 0;
+}
+
+.form-public-submit {
+  width: 100%;
+  background: var(--rust, #9A3520);
+  color: #fff;
+  border: 0;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 8px;
+  transition: background 0.15s;
+}
+.form-public-submit:hover:not(:disabled) { background: var(--rust-hover, #7D2A18); }
+.form-public-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.form-public-foot { text-align: center; font-size: 11px; color: var(--text-muted, #9B8E7E); margin: 12px 0 0; }
+
+.form-public-success { text-align: center; padding: 60px 20px; }
+.form-public-success .form-public-seal { width: 56px; height: 56px; }

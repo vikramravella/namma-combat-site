@@ -1,8 +1,56 @@
 # Namma Combat Website — Project Documentation
 
-**Last updated: April 28, 2026**
+**Last updated: May 3, 2026**
 
 Founded by Vinod Karuturi. Built solo after firing the previous dev team. All accounts under Vinod's control.
+
+---
+
+## ▶ TOMORROW MORNING — RESUME HERE (May 3, 2026 late night)
+
+**Big decision tonight:** building NCC's own admin platform to replace Zoho dependency. Zoho stays running untouched — we build in parallel and migrate piece by piece.
+
+### Why
+- Zoho is too confusing — 18 Deluge functions, 27 fields, v6/v8 endpoint inconsistency, function source not API-readable, 3-product UI sprawl (CRM/Books/Forms). Even with API access, key things require manual UI clicks
+- Monthly cost (~₹3-8k saved) recovered into our own infra
+- Vinod is going to build a member booking app eventually anyway — this platform IS that app's backend, no throwaway work
+- Vinod's quote: *"this zoho is too confusing... instead of being dependent on third party and pay them monthly this is the best way"*
+
+### Phase 1 MVP scope (THIS WEEK — 3-4 days focused build)
+**Admin-only back-office tool.** No member-facing stuff yet.
+- Vinod's login (1-2 staff later)
+- Add/edit member records (mirror Zoho Trials/Members fields)
+- Create memberships (tier, billing cycle, dates, payment status, freeze tracking — match Zoho Deals model)
+- Generate GST-compliant PDF invoices: CGST 2.5% + SGST 2.5%, SAC 999723, GSTIN 29AHXPV9545M2ZR, sequential numbering
+- Send invoice as link via email/WhatsApp (manual share initially)
+- Basic dashboard: today's revenue, active members, expiring this week
+
+### Architecture (locked in)
+- **Repo:** fold platform into existing `namma-combat-site` repo as `/admin` (staff) and later `/portal` (members) routes. Marketing site stays at root. One deploy, shared auth.
+- **Stack:** Next.js 14 + Postgres (Supabase or Vercel Postgres) + Tailwind/shadcn + Prisma + NextAuth (or similar) for staff
+- **Dual-write:** every action writes to BOTH new DB AND Zoho during transition (use existing Zoho API access at `~/.zoho/credentials`) so nothing breaks
+
+### Two unblocks needed from Vinod tomorrow morning (~15 min total)
+1. **Subdomain pick:** `app.nammacombat.com` / `portal.nammacombat.com` / `members.nammacombat.com` — or "you pick"
+2. **Database:** sign up free at supabase.com (Google login, 2 min) → create project `namma-combat` → paste connection string. OR say "you pick" → use Vercel Postgres (zero setup)
+
+Everything else (Razorpay, MSG91, Resend, WhatsApp via Meta) wired later as needed.
+
+### Phased roadmap (parallel-run with Zoho throughout)
+- **Week 1:** Phase 1 MVP above (admin login + member CRUD + invoicing)
+- **Weeks 3-5:** Phase 2 — Member portal (login, see status, freeze), public trial booking form replacing Zoho Forms
+- **Weeks 3-5:** Phase 3 — Membership lifecycle automation (renewal, freeze, expiry) + WhatsApp/SMS via Meta Business API + MSG91
+- **Weeks 6-8:** Phase 4 — Full Books replacement (parallel-run for 1 month, CA review, then cut over)
+- **Weeks 9+:** Phase 5 — Decommission Zoho CRM (optionally keep Books as 1-quarter safety net)
+
+### Lead form migration (free win during Phase 2)
+~18 lead forms across the site (homepage + 14 discipline landings + 3 coach pages) currently POST to Zoho. New API route `/api/leads` will dual-write. One PR switches them all over.
+
+### Cost while building
+₹0. Vercel free tier + Supabase free tier handles everything until ~50k members.
+
+### Vinod's schedule
+Committed (May 3) to 6 hrs sleep/day going forward. Default to "you pick" in choices, batch decisions, async-friendly handoffs.
 
 ---
 
@@ -633,9 +681,33 @@ Lochen Raj, Hindesh Akash, Raktim Singha, Sai Anjana G, Karthik Eashwar, Shubham
 
 ---
 
+## Completed (May 3, 2026 late-night session)
+
+### Decision: build NCC's own admin platform (replace Zoho dependency)
+- See **▶ TOMORROW MORNING — RESUME HERE** at top of this README for full context, asks, and roadmap
+- Zoho stays running untouched in parallel — no rip-and-replace risk
+- All Zoho extension/automation queue items (field typo, calculate_membership v0/v1 puzzle, Media_Consent wiring on form, Health/Consent dashboard) **PARKED** until further notice
+- Cost saved: ~₹3-8k/month + escape from 18-function / 27-field / v6-vs-v8 sprawl
+
+### Investigation done tonight (won't need to redo)
+- Confirmed Zoho Form's CRM card has no "Connected" badge — Health Declaration form uses Webhooks (→ Deluge `update_trial_from_form`), NOT native CRM integration
+- Confirmed `Media_Consent` field already exists on Trials module (`picklist`, label "OK to use photos/videos for marketing?") — was the missing wiring, not the missing field
+- Confirmed Zoho Deluge function source is **not API-readable** at any scope — UI-only (this was the final straw)
+- Confirmed function CREATE via API is blocked on `metadata` param — workaround was Python scripts for backfills, but it's friction we won't have on the new platform
+
+### What we DON'T need to build from scratch (already there in the marketing site repo)
+- Next.js 14 App Router project — `namma-combat-site` ready to extend
+- Brand styling (rust / gold / cream + Materia Pro Bold)
+- 18 lead forms with Zoho integration — migrate to dual-write `/api/leads` later
+- SEO infrastructure, sitemap, GA4
+- Vercel deploy pipeline + custom domain DNS
+
+---
+
 ## Pending Items
 
 ### Immediate
+- [ ] **Day 1 of platform build** — pick subdomain + database (see ▶ TOMORROW MORNING section at top)
 - [ ] Set up privacy@nammacombat.com alias in Google Workspace (admin → Users → Add alternate email)
 - [ ] Collect remaining trainer bios from Naeem, Spoorthi, Manoj (Kantha / Bhagyarajan / Venkatesh shipped May 2)
 - [x] ~~Rework coach cards with role-based framing once bios are in~~ — shipped May 2 via clickable swatches + dedicated profile pages

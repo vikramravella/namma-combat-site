@@ -1,0 +1,403 @@
+// Namma Combat Academy — full CRM schema.
+// SQLite for local dev; Postgres-portable (no SQLite-only features).
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Staff (admin users)
+// ─────────────────────────────────────────────────────────────
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  auditLogs    AuditLog[]
+}
+
+// ─────────────────────────────────────────────────────────────
+// Coach — academy coaches (referenced by Trials and Assessments)
+// ─────────────────────────────────────────────────────────────
+model Coach {
+  id           String       @id @default(cuid())
+  name         String
+  primaryArea  String?      // "Combat" | "S&C" | "Both"
+  disciplines  String?      // comma-list e.g. "Boxing, MMA"
+  active       Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  trials       Trial[]
+  assessments  Assessment[]
+}
+
+// ─────────────────────────────────────────────────────────────
+// Inquiry — anyone who reached out, hasn't trialed yet
+// Stages: new, following_up, trial_booked, not_interested, not_responding
+// ─────────────────────────────────────────────────────────────
+model Inquiry {
+  id              String   @id @default(cuid())
+  designation     String?  // Mr | Mrs | Ms | Master | Miss | Dr
+  firstName       String
+  lastName        String
+  phone           String   @unique
+  area            String?
+  interestedIn    String?  // Boxing, MMA, BJJ, etc.
+  primaryGoal     String?  // "Fitness/Weight Loss" | "Skill/Self-defense" | "Competition" | "Stress Relief"
+  experience      String?  // "Beginner" | "Novice" | "Intermediate" | "Advanced"
+  preferredTime   String?  // "Morning" | "Mid-day" | "Evening" | "Anytime"
+  source          String?  // "website" | "walk_in" | "referral" | "instagram" | "google" | "coach_page" | "other"
+  sourceDetails   String?
+  stage           String   @default("new")
+  notes           String?
+  // Follow-up workflow
+  nextFollowUpAt    DateTime? // when to next reach out — drives the "Follow-ups due" queue
+  followUpAttempts  Int       @default(0) // increments on each logged call/WhatsApp; auto-suggests "Not responding" at 3+
+  lastContactedAt   DateTime? // last time anyone touched this inquiry
+  // Zoho archive — original record id + full payload
+  zohoId            String?   @unique
+  zohoRaw           String?
+  // Set if the inquiry resulted in a member (after conversion)
+  convertedMemberId String? @unique
+  convertedMember   Member? @relation("MemberFromInquiry", fields: [convertedMemberId], references: [id])
+  trials          Trial[]
+  events          InquiryEvent[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([stage])
+  @@index([phone])
+  @@index([source])
+  @@index([nextFollowUpAt])
+}
+
+// Inquiry-level events (calls, notes, stage changes) — drives the journey timeline.
+// Use `outcome` for call results to power follow-up auto-suggestions.
+model InquiryEvent {
+  id        String   @id @default(cuid())
+  inquiryId String
+  inquiry   Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  type      String   // "created" | "stage" | "note" | "called" | "whatsapp" | "in_person" | "follow_up_set"
+  label     String
+  detail    String?
+  outcome   String?  // for "called"/"whatsapp": "got_through" | "no_answer" | "busy" | "wrong_number" | "responded"
+  scheduledFor DateTime? // for "follow_up_set" events: the date that was set
+  actorUserId String?
+  createdAt DateTime @default(now())
+
+  @@index([inquiryId])
+  @@index([type])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Trial — scheduled trial session
+// Status: booked | confirmed | rescheduled | showed_up | no_show
+// Outcome (post-attendance): joined | considering | didnt_join | lost_touch
+// ─────────────────────────────────────────────────────────────
+model Trial {
+  id              String              @id @default(cuid())
+  inquiryId       String
+  inquiry         Inquiry             @relation(fields: [inquiryId], references: [id])
+  // Schedule
+  scheduledDate   DateTime
+  scheduledTime   String              // "06:00" | "07:00" etc — references the timetable slot
+  day             String              // "Mon" | "Tue" etc — derived but stored for filtering
+  area            String              // "Arena" | "Sanctuary"
+  discipline      String              // "Boxing" | "BJJ" | "S&C" etc — matches the timetable cell
+  coachId         String?
+  coach           Coach?              @relation(fields: [coachId], references: [id])
+  status          String              @default("booked")
+  outcome         String?             // set after attendance
+  attendanceNotes String?             // coach observations after the session
+  notes           String?
+  rescheduleCount Int                 @default(0)
+  // Follow-up — drives the "trial follow-ups due" queue
+  nextFollowUpAt    DateTime?
+  followUpAttempts  Int      @default(0)
+  lastContactedAt   DateTime?
+  // Zoho archive
+  zohoId            String?  @unique
+  zohoRaw           String?
+  // Health declaration (1:1)
+  healthDecl      HealthDeclaration?
+  formToken       HealthFormToken?
+  // Set when this trial promoted to a member
+  convertedMemberId String?           @unique
+  convertedMember   Member?           @relation("MemberFromTrial", fields: [convertedMemberId], references: [id])
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([inquiryId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@index([nextFollowUpAt])
+}
+
+// Health declaration submitted by the trialee via /form/[token]
+model HealthDeclaration {
+  id                 String   @id @default(cuid())
+  trialId            String   @unique
+  trial              Trial    @relation(fields: [trialId], references: [id], onDelete: Cascade)
+  dob                DateTime?
+  gender             String?
+  emergencyName      String?
+  emergencyPhone     String?
+  emergencyRelation  String?
+  medicalConditions  String?
+  injuries           String?
+  medications        String?
+  smoking            String?  // "no" | "occasionally" | "yes"
+  alcohol            String?  // "no" | "socially" | "regularly"
+  consentSignedName  String
+  consentSignedAt    DateTime @default(now())
+  submittedFromIp    String?
+  createdAt          DateTime @default(now())
+}
+
+// One-time public token to access the health form for a specific trial
+model HealthFormToken {
+  id        String   @id @default(cuid())
+  trialId   String   @unique
+  trial     Trial    @relation(fields: [trialId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Member — paying client (created on trial conversion)
+// Status: active | on_freeze | lapsed | left
+// ─────────────────────────────────────────────────────────────
+model Member {
+  id                  String       @id @default(cuid())
+  designation         String?
+  firstName           String
+  lastName            String
+  phone               String       @unique
+  dob                 DateTime?
+  gender              String?
+  primaryDiscipline   String?
+  disciplines         String?      // comma-list e.g. "Boxing, BJJ, S&C" — sports they currently train
+  skillLevel          String       @default("Beginner") // Beginner | Intermediate | Advanced | Professional
+  status              String       @default("active")
+  joinedAt            DateTime     @default(now())
+  // Inherited from health declaration on conversion
+  emergencyName       String?
+  emergencyPhone      String?
+  emergencyRelation   String?
+  medicalNotes        String?
+  // Alert flags (drive dashboard alerts)
+  criticalHealthFlag  Boolean      @default(false) // serious condition / injury — coach attention
+  smokes              Boolean      @default(false) // copied from health declaration on convert
+  mediaConsent        Boolean?     // null = unknown, true = OK to use photos/video, false = no
+  // Origin tracing (each side owns the ↔ relation)
+  fromInquiry         Inquiry?     @relation("MemberFromInquiry")
+  fromTrial           Trial?       @relation("MemberFromTrial")
+  // Zoho archive
+  zohoId              String?      @unique
+  zohoRaw             String?
+  // Children
+  plans               Plan[]
+  assessments         Assessment[]
+  notes               String?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@index([status])
+  @@index([phone])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Plan — a purchased membership period
+// Status: running | on_freeze | ended | cancelled
+// ─────────────────────────────────────────────────────────────
+model Plan {
+  id                  String    @id @default(cuid())
+  memberId            String
+  member              Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  tier                String    // "Silver" | "Student" | "Gold" | "Platinum"
+  cycle               String    // "Monthly" | "Quarterly" | "Semi-Annual" | "Annual"
+  floorAccess         String    // "1 floor" | "Both floors" | "Both + PT"
+  // Dates
+  startDate           DateTime
+  endDate             DateTime
+  durationDays        Int
+  bonusDays           Int       @default(0)
+  freezeDaysAllowed   Int
+  freezeDaysUsed      Int       @default(0)
+  // Money (in paise)
+  basePricePaise      Int       // catalog price for this tier+cycle
+  agreedFinalPaise    Int       // what Vinod agreed to take, incl GST
+  // Freeze tracking
+  freezeStart         DateTime?
+  freezeEnd           DateTime?
+  freezeReason        String?
+  status              String    @default("running")
+  // GSTIN (only for B2B plans)
+  customerGstin       String?
+  // Optional billing override (B2B legal name on invoice, when GSTIN present)
+  billingNameOverride String?
+  notes               String?
+  // Zoho archive
+  zohoId              String?   @unique
+  zohoRaw             String?
+  // Receipt — auto-created on plan create
+  receipt             Receipt?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([memberId])
+  @@index([status])
+  @@index([endDate])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Receipt — GST tax invoice for a Plan
+// Status: issued | partial | paid | void
+// Numbering: NCA/{fiscalYear}/{seq:0000} (e.g. NCA/2526/0042)
+// ─────────────────────────────────────────────────────────────
+model Receipt {
+  id                  String    @id @default(cuid())
+  planId              String    @unique
+  plan                Plan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  invoiceNumber       String    @unique
+  fiscalYear          String    // "2526" = FY 25-26
+  sequence            Int
+  issueDate           DateTime  @default(now())
+  // Snapshots at issue time (legal record — doesn't change if member edits later)
+  customerNameSnapshot   String
+  customerPhoneSnapshot  String
+  customerGstinSnapshot  String?
+  // Money breakdown (paise)
+  grossTaxablePaise   Int
+  discountFinalPaise  Int       @default(0)
+  discountPreTaxPaise Int       @default(0)
+  netTaxablePaise     Int
+  cgstPaise           Int
+  sgstPaise           Int
+  igstPaise           Int       @default(0)
+  totalPaise          Int
+  // Vendor (snapshot)
+  vendorGstin         String    @default("29AHXPV9545M2ZR")
+  vendorSac           String    @default("999723")
+  status              String    @default("issued")
+  payments            Payment[]
+  // Revision tracking — corrections to source (Member, Plan) auto-update snapshots
+  revisionCount       Int       @default(0)
+  lastRevisedAt       DateTime?
+  // Next agreed date (for partial)
+  nextAgreedDate      DateTime?
+  nextAgreedNote      String?
+  notes               String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@unique([fiscalYear, sequence])
+  @@index([status])
+  @@index([issueDate])
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  receiptId   String
+  receipt     Receipt  @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  method      String   // "cash" | "upi" | "card" | "bank_transfer" | "razorpay"
+  reference   String?
+  amountPaise Int
+  receivedAt  DateTime @default(now())
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@index([receiptId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Assessment — posture (mirrors PDF form 1:1)
+// ─────────────────────────────────────────────────────────────
+model Assessment {
+  id                       String   @id @default(cuid())
+  memberId                 String
+  member                   Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  coachId                  String?
+  coach                    Coach?   @relation(fields: [coachId], references: [id])
+  assessedAt               DateTime @default(now())
+  ageAtTime                Int?
+  genderAtTime             String?
+  hasMedicalCondition      Boolean  @default(false)
+  medicalConditionList     String?
+  // 1) Ankle & Foot
+  ankleDorsiflexionCm      Float?
+  ankleArch                String?  // Normal | Pronated | Supinated
+  ankleStability           String?  // Very Good | Good | Poor
+  ankleNotes               String?
+  // 2) Knee
+  kneeAlignment            String?  // Neutral | Valgus | Varus
+  kneeNotes                String?
+  // 3) Pelvis
+  pelvisTilt               String?  // Neutral | APT | PPT
+  pelvisAsisPsis           String?
+  pelvisNotes              String?
+  // 4) Hip
+  hipPosture               String?  // Neutral | Piked | Hiked
+  hipRotation              String?
+  hipNotes                 String?
+  // 5) Spine — multi-select stored as comma-list
+  spinePosture             String?  // "Neutral,Scoliosis" etc
+  spineRibFlare            Boolean? @default(false)
+  spineNotes               String?
+  // 6) Scapula — multi-select
+  scapulaPosition          String?
+  scapulaSymmetryLR        String?
+  scapulaNotes             String?
+  // 7) Shoulders
+  shouldersRotation        String?  // Neutral | IR | ER
+  shouldersHeightSymmetry  String?
+  shouldersNotes           String?
+  // 8) Head/Neck — multi-select
+  headNeckPosition         String?
+  headNeckNotes            String?
+  // Summary
+  keyFindings              String?
+  priorityFocus            String?
+  // Recommended exercises — free-text for now; will structure once Vinod + Naeem agree on the menu
+  exercisesAdvised         String?
+  // Sign-off
+  coachSignedName          String?
+  coachSignedAt            DateTime?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  @@index([memberId])
+  @@index([assessedAt])
+}
+
+// ─────────────────────────────────────────────────────────────
+// AuditLog — append-only record of every mutation
+// ─────────────────────────────────────────────────────────────
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  actor       User?    @relation(fields: [actorUserId], references: [id])
+  action      String   // "create" | "update" | "delete" | "convert" | "schedule" | "freeze" | etc
+  entity      String   // "Inquiry" | "Trial" | "Member" | "Plan" | "Receipt" | "Payment" | "Assessment"
+  entityId    String
+  before      String?  // JSON snapshot (TEXT in SQLite)
+  after       String?  // JSON snapshot
+  ip          String?
+  createdAt   DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([actorUserId])
+  @@index([createdAt])
+}

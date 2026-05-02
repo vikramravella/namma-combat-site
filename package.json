@@ -4,12 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "build": "prisma generate && prisma db push --accept-data-loss --skip-generate && next build",
+    "start": "next start",
+    "postinstall": "prisma generate",
+    "db:seed": "node prisma/seed.js",
+    "db:import-zoho": "node scripts/import-zoho.js"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.11.2",
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3",
     "next": "^14.2.0",
+    "next-auth": "^4.24.14",
+    "prisma": "^6.19.3",
     "react": "^18.3.0",
-    "react-dom": "^18.3.0"
+    "react-dom": "^18.3.0",
+    "zod": "^4.4.2"
   }
 }
