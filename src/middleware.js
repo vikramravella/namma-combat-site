@@ -6,7 +6,7 @@
 
 import { NextResponse } from 'next/server';
 
-const ADMIN_HOSTS = ['database.nammacombat.com', 'database.localhost', 'database.localhost:3000'];
+const ADMIN_HOSTS = ['academy.nammacombat.com', 'database.nammacombat.com', 'academy.localhost', 'database.localhost', 'academy.localhost:3000', 'database.localhost:3000'];
 
 export function middleware(request) {
   const host = (request.headers.get('host') || '').toLowerCase();
