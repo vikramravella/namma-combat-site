@@ -93,7 +93,7 @@ export async function scheduleTrial(formData) {
         events: {
           create: {
             type: 'stage',
-            label: 'Stage → Trial booked',
+            label: 'Stage → Interested in trial',
             detail: `${discipline} · ${day} ${time} (${formatDate(scheduledDate)})${coachName ? ' · ' + coachName : ''}`,
             actorUserId: session.user.id,
           },

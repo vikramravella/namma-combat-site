@@ -50,7 +50,7 @@ export const OFFERINGS = [
 export const INQUIRY_STAGES = [
   { key: 'new', label: 'New', tone: 'blue' },
   { key: 'following_up', label: 'Following up', tone: 'gold' },
-  { key: 'trial_booked', label: 'Trial booked', tone: 'green' },
+  { key: 'trial_booked', label: 'Interested in trial', tone: 'green' },
   { key: 'not_interested', label: 'Not interested', tone: 'gray' },
   { key: 'not_responding', label: 'Not responding', tone: 'gray' },
 ];
