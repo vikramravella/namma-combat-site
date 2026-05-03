@@ -2602,6 +2602,189 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 .adm-row { display: flex; gap: 12px; align-items: center; }
 .adm-spacer { flex: 1; }
 
+/* ─── Dashboard cards ─── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.dash-card {
+  background: var(--cream, #FEF8EE);
+  border: 1px solid var(--border, #E0D6C8);
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.dash-card:hover {
+  border-color: var(--gold, #E3C768);
+  box-shadow: 0 4px 14px rgba(44, 35, 24, 0.04);
+}
+.dash-card-rust { border-left: 3px solid var(--rust, #9A3520); }
+.dash-card-gold { border-left: 3px solid var(--gold, #E3C768); }
+.dash-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dash-card-title {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text, #2C2318);
+  font-weight: 700;
+}
+.dash-card-count {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--rust, #9A3520);
+  background: rgba(154, 53, 32, 0.08);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.dash-card-empty {
+  font-size: 13px;
+  color: var(--text-muted, #9B8E7E);
+  font-style: italic;
+  margin: 0;
+}
+.dash-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dash-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  margin: 0 -10px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+.dash-row:hover { background: var(--warm, #F5F0E8); }
+.dash-row-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text, #2C2318);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dash-row-sub {
+  font-size: 12px;
+  color: var(--text-light, #6B5D4F);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dash-row-meta {
+  font-size: 11px;
+  color: var(--text-muted, #9B8E7E);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+.dash-row-meta-confirmed { color: #2E7D32; }
+.dash-row-meta-no_show { color: var(--rust, #9A3520); }
+.dash-row-meta-booked { color: var(--text-light); }
+.dash-icon { margin-right: 4px; }
+.dash-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+.dash-pill-warn { color: var(--rust, #9A3520); background: rgba(154, 53, 32, 0.1); }
+
+/* ─── Recent-activity feed ─── */
+.dash-feed {
+  margin-bottom: 28px;
+  background: var(--cream, #FEF8EE);
+  border: 1px solid var(--border, #E0D6C8);
+  border-radius: 10px;
+  padding: 18px;
+}
+.dash-feed-title {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text, #2C2318);
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.dash-feed-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.dash-feed-item { border-top: 1px solid rgba(224, 214, 200, 0.5); }
+.dash-feed-item:first-child { border-top: none; }
+.dash-feed-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 4px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease;
+  margin: 0 -4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+}
+.dash-feed-link:hover { background: var(--warm, #F5F0E8); }
+.dash-feed-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex: 0 0 auto;
+}
+.dash-feed-dot-inquiry { background: var(--rust, #9A3520); }
+.dash-feed-dot-trial { background: var(--gold, #E3C768); }
+.dash-feed-body { flex: 1; min-width: 0; }
+.dash-feed-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.dash-feed-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text, #2C2318);
+}
+.dash-feed-time {
+  font-size: 11px;
+  color: var(--text-muted, #9B8E7E);
+  flex: 0 0 auto;
+}
+.dash-feed-meta {
+  font-size: 12px;
+  color: var(--text-light, #6B5D4F);
+  margin-top: 2px;
+}
+.dash-feed-who { font-weight: 500; color: var(--text, #2C2318); }
+.dash-feed-detail { color: var(--text-light); }
+
 /* Reschedule chip — sits in the trial status row but visually it's an action,
    not a state. Gold accent + arrow icon set it apart from the status pills. */
 .prv-chip-action {
