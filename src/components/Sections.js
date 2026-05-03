@@ -366,10 +366,15 @@ export function LeadForm({ isOpen, onClose }) {
   const submit = async () => {
     if (!fd.name || !fd.phone) return;
     setLoading(true);
-    await submitMarketingLead(fd);
-    if (typeof window !== 'undefined' && window.gtag) { window.gtag('event', 'generate_lead', { 'source': window.location.pathname, 'interest': fd.interest || 'general' }); }
-    setDone(true);
-    setLoading(false);
+    try {
+      await submitMarketingLead(fd);
+      if (typeof window !== 'undefined' && window.gtag) { window.gtag('event', 'generate_lead', { 'source': window.location.pathname, 'interest': fd.interest || 'general' }); }
+      setDone(true);
+    } catch (err) {
+      alert(err?.message || 'Could not submit — please try again or WhatsApp us at 77700 87700.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
