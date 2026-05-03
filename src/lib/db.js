@@ -1,4 +1,4 @@
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 
 // Cache the PrismaClient on globalThis in EVERY environment, including
 // production. On Vercel, a single warm Lambda may handle multiple concurrent

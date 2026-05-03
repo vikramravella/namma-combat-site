@@ -2,7 +2,7 @@
 // Run with: node --env-file=.env prisma/seed.js
 // Re-runnable: upserts everywhere, won't duplicate.
 
-import { PrismaClient } from '../src/generated/prisma/index.js';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();

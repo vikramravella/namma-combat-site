@@ -6,8 +6,6 @@ out/
 .env
 .env.local
 
-/src/generated/prisma
-
 # SQLite dev database (per-developer, never commit)
 prisma/dev.db
 prisma/dev.db-journal
