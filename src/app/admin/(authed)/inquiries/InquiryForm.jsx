@@ -2,7 +2,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { DESIGNATIONS, INQUIRY_STAGES, SOURCES, PRIMARY_GOALS, EXPERIENCE_LEVELS, PREFERRED_TIMES } from '@/lib/constants';
+import { DESIGNATIONS, INQUIRY_STAGES, SOURCES, PRIMARY_GOALS, EXPERIENCE_LEVELS, OFFERINGS } from '@/lib/constants';
 
 export function InquiryForm({ inquiry, action, deleteAction, mode }) {
   const router = useRouter();
@@ -49,14 +49,10 @@ export function InquiryForm({ inquiry, action, deleteAction, mode }) {
       <div className="adm-card">
         <h2 className="adm-card-title">What they want</h2>
         <div className="adm-form">
-          <Field label="Interested in" name="interestedIn" defaultValue={i.interestedIn} placeholder="e.g. Boxing, BJJ, Kids MMA" />
+          <CheckboxGroup label="Interested in" name="interestedIn" options={OFFERINGS} defaultValues={Array.isArray(i.interestedIn) ? i.interestedIn : []} />
           <div className="adm-form-row">
             <Select label="Primary goal" name="primaryGoal" defaultValue={i.primaryGoal || ''} options={[['', '—'], ...PRIMARY_GOALS.map((g) => [g, g])]} />
             <Select label="Experience" name="experience" defaultValue={i.experience || ''} options={[['', '—'], ...EXPERIENCE_LEVELS.map((e) => [e, e])]} />
-          </div>
-          <div className="adm-form-row">
-            <Select label="Preferred time" name="preferredTime" defaultValue={i.preferredTime || ''} options={[['', '—'], ...PREFERRED_TIMES.map((t) => [t, t])]} />
-            <Field label="Area" name="area" defaultValue={i.area} placeholder="e.g. Koramangala, HSR" />
           </div>
         </div>
       </div>
@@ -118,6 +114,23 @@ function Select({ label, name, defaultValue, options }) {
       <select id={name} name={name} defaultValue={defaultValue} className="adm-select">
         {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
       </select>
+    </div>
+  );
+}
+
+function CheckboxGroup({ label, name, options, defaultValues }) {
+  const set = new Set(defaultValues || []);
+  return (
+    <div className="adm-field">
+      <label className="adm-label">{label}</label>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
+        {options.map((opt) => (
+          <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, padding: '6px 10px', border: '1px solid var(--border, #E0D6C8)', borderRadius: 6, cursor: 'pointer', background: set.has(opt) ? 'rgba(154,53,32,0.06)' : 'transparent' }}>
+            <input type="checkbox" name={name} value={opt} defaultChecked={set.has(opt)} style={{ margin: 0 }} />
+            <span>{opt}</span>
+          </label>
+        ))}
+      </div>
     </div>
   );
 }

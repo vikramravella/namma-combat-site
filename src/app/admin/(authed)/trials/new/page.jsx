@@ -38,7 +38,7 @@ export default async function NewTrialPage({ searchParams }) {
                   <tr key={i.id}>
                     <td>{fullName(i)}</td>
                     <td className="adm-mono">{i.phone}</td>
-                    <td>{i.interestedIn || <span className="adm-muted">—</span>}</td>
+                    <td>{Array.isArray(i.interestedIn) && i.interestedIn.length > 0 ? i.interestedIn.join(', ') : <span className="adm-muted">—</span>}</td>
                     <td><Link href={`/admin/trials/new?inquiryId=${i.id}`} className="adm-btn adm-btn-secondary adm-btn-sm">Pick →</Link></td>
                   </tr>
                 ))}

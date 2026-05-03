@@ -31,7 +31,20 @@ export const SKILL_LEVELS = [
   { key: 'Advanced', label: 'Advanced', tone: 'gold' },
   { key: 'Professional', label: 'Professional', tone: 'green' },
 ];
-export const PREFERRED_TIMES = ['Morning', 'Mid-day', 'Evening', 'Anytime'];
+
+// Offerings — what an inquirer can express interest in. Multi-select.
+export const OFFERINGS = [
+  'Boxing',
+  'Kickboxing',
+  'Jiu-Jitsu',
+  'Wrestling',
+  'Judo',
+  'MMA',
+  'S&C',
+  'Animal Flow',
+  'Personal Training',
+  'Not sure — help me decide',
+];
 
 // ─── Stages ────────────────────────────────────────────────────────────
 export const INQUIRY_STAGES = [

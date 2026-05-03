@@ -49,11 +49,9 @@ model Inquiry {
   firstName       String
   lastName        String
   phone           String   @unique
-  area            String?
-  interestedIn    String?  // Boxing, MMA, BJJ, etc.
+  interestedIn    String[] // multi-select from OFFERINGS in src/lib/constants.js
   primaryGoal     String?  // "Fitness/Weight Loss" | "Skill/Self-defense" | "Competition" | "Stress Relief"
   experience      String?  // "Beginner" | "Novice" | "Intermediate" | "Advanced"
-  preferredTime   String?  // "Morning" | "Mid-day" | "Evening" | "Anytime"
   source          String?  // "website" | "walk_in" | "referral" | "instagram" | "google" | "coach_page" | "other"
   sourceDetails   String?
   stage           String   @default("new")

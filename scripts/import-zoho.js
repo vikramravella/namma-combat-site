@@ -214,6 +214,43 @@ function multiToCsv(v) {
   return v || null;
 }
 
+// Map Zoho "Interested In" raw values onto our canonical OFFERINGS keys.
+// Zoho values often have descriptive suffixes (e.g. "MMA - Mixed Martial Arts");
+// keep the prefix only. Unknown values are dropped (and logged once at end).
+const OFFERING_MAP = {
+  'mma': 'MMA',
+  'boxing': 'Boxing',
+  'kickboxing': 'Kickboxing',
+  's&c': 'S&C',
+  'strength & conditioning': 'S&C',
+  'wrestling': 'Wrestling',
+  'judo': 'Judo',
+  'animal flow': 'Animal Flow',
+  'jiu-jitsu': 'Jiu-Jitsu',
+  'jiu jitsu': 'Jiu-Jitsu',
+  'bjj': 'Jiu-Jitsu',
+  'brazilian jiu-jitsu': 'Jiu-Jitsu',
+  'personal training': 'Personal Training',
+  'pt': 'Personal Training',
+  'not sure': 'Not sure — help me decide',
+  'not sure — help me decide': 'Not sure — help me decide',
+  'not sure - help me decide': 'Not sure — help me decide',
+};
+const _unmappedOfferings = new Set();
+function mapOfferings(v) {
+  const items = Array.isArray(v)
+    ? v
+    : v ? String(v).split(/[,;|]/).map((s) => s.trim()).filter(Boolean) : [];
+  const out = new Set();
+  for (const raw of items) {
+    const head = String(raw).split(/\s[-—]\s/)[0].trim().toLowerCase();
+    const mapped = OFFERING_MAP[head] || OFFERING_MAP[String(raw).trim().toLowerCase()];
+    if (mapped) out.add(mapped);
+    else _unmappedOfferings.add(raw);
+  }
+  return [...out];
+}
+
 // ─── Trackers — Zoho ID → NCA ID ──────────────────────────────────────
 const leadIdToInquiryId = new Map();
 const contactIdToMemberId = new Map();
@@ -233,11 +270,9 @@ async function syncLeads() {
       firstName: (r.First_Name || '').trim() || '—',
       lastName: (r.Last_Name || '').trim() || '—',
       phone,
-      area: r.Area_Location || null,
-      interestedIn: multiToCsv(r.Interested_In1),
+      interestedIn: mapOfferings(r.Interested_In1),
       primaryGoal: r.Primary_Goal || null,
       experience: r.Experience_Level || null,
-      preferredTime: r.Logistic || null,
       source: mapLeadSource(r.Lead_Source),
       sourceDetails: null,
       stage: mapLeadStage(r.Lead_Status),

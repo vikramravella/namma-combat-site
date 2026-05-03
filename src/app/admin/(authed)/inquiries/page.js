@@ -92,8 +92,8 @@ export default async function InquiriesPage({ searchParams }) {
                 <th>Name</th>
                 <th>Stage</th>
                 <th>Interested in</th>
+                <th>Goal</th>
                 <th>Source</th>
-                <th>Area</th>
                 <th>Last touch</th>
                 <th>Next follow-up</th>
               </tr>
@@ -108,9 +108,9 @@ export default async function InquiriesPage({ searchParams }) {
                       <div className="prv-sub">{r.phone}</div>
                     </td>
                     <td><StageChip stage={r.stage} /></td>
-                    <td>{r.interestedIn || <span className="adm-muted">—</span>}</td>
+                    <td>{Array.isArray(r.interestedIn) && r.interestedIn.length > 0 ? r.interestedIn.join(', ') : <span className="adm-muted">—</span>}</td>
+                    <td className="prv-muted">{r.primaryGoal || '—'}</td>
                     <td className="prv-muted">{r.source ? formatSource(r.source) : '—'}</td>
-                    <td className="prv-muted">{r.area || '—'}</td>
                     <td className="prv-muted">{r.lastContactedAt ? formatRelative(r.lastContactedAt) : '—'}</td>
                     <td className={isDue ? 'inq-due-cell' : 'prv-muted'}>
                       {r.nextFollowUpAt ? formatDate(r.nextFollowUpAt) : '—'}

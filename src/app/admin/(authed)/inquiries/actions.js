@@ -7,22 +7,20 @@ import { getServerSession } from 'next-auth';
 import { db } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
-import { DESIGNATIONS, INQUIRY_STAGES, SOURCES, PRIMARY_GOALS, EXPERIENCE_LEVELS, PREFERRED_TIMES } from '@/lib/constants';
+import { DESIGNATIONS, INQUIRY_STAGES, SOURCES, PRIMARY_GOALS, EXPERIENCE_LEVELS, OFFERINGS } from '@/lib/constants';
 import { normalizePhone } from '@/lib/phone';
 
 const stageKeys = INQUIRY_STAGES.map((s) => s.key);
 const sourceKeys = SOURCES.map((s) => s.key);
+const offeringSet = new Set(OFFERINGS);
 
 const inquirySchema = z.object({
   designation: z.enum([...DESIGNATIONS, '']).optional(),
   firstName: z.string().trim().min(1, 'First name required').max(80),
   lastName: z.string().trim().min(1, 'Last name required').max(80),
   phone: z.string().trim().regex(/^[0-9+\- ]{7,20}$/, 'Phone looks invalid'),
-  area: z.string().trim().max(120).optional().or(z.literal('')),
-  interestedIn: z.string().trim().max(200).optional().or(z.literal('')),
   primaryGoal: z.string().trim().max(120).optional().or(z.literal('')),
   experience: z.string().trim().max(40).optional().or(z.literal('')),
-  preferredTime: z.string().trim().max(40).optional().or(z.literal('')),
   source: z.enum([...sourceKeys, '']).optional(),
   sourceDetails: z.string().trim().max(200).optional().or(z.literal('')),
   stage: z.enum(stageKeys).optional(),
@@ -52,6 +50,7 @@ export async function createInquiry(formData) {
   const normalizedPhone = normalizePhone(data.phone);
   if (!normalizedPhone) return { ok: false, error: 'Phone number looks invalid.' };
   data.phone = normalizedPhone;
+  const interestedIn = formData.getAll('interestedIn').filter((v) => offeringSet.has(v));
   try {
     const created = await db.inquiry.create({
       data: {
@@ -59,11 +58,9 @@ export async function createInquiry(formData) {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
-        area: data.area,
-        interestedIn: data.interestedIn,
+        interestedIn,
         primaryGoal: data.primaryGoal,
         experience: data.experience,
-        preferredTime: data.preferredTime,
         source: data.source,
         sourceDetails: data.sourceDetails,
         stage: data.stage || 'new',
@@ -99,6 +96,7 @@ export async function updateInquiry(id, formData) {
   const normalizedPhone = normalizePhone(data.phone);
   if (!normalizedPhone) return { ok: false, error: 'Phone number looks invalid.' };
   data.phone = normalizedPhone;
+  const interestedIn = formData.getAll('interestedIn').filter((v) => offeringSet.has(v));
   try {
     const before = await db.inquiry.findUnique({ where: { id } });
     const updated = await db.inquiry.update({
@@ -108,11 +106,9 @@ export async function updateInquiry(id, formData) {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
-        area: data.area,
-        interestedIn: data.interestedIn,
+        interestedIn,
         primaryGoal: data.primaryGoal,
         experience: data.experience,
-        preferredTime: data.preferredTime,
         source: data.source,
         sourceDetails: data.sourceDetails,
         stage: data.stage || before.stage,

@@ -14,7 +14,8 @@ export function Booker({ inquiry }) {
   const [error, setError] = useState('');
 
   const schedule = tab === 'Arena' ? ARENA_SCHEDULE : SANCTUARY_SCHEDULE;
-  const highlight = inquiry.interestedIn || '';
+  const interests = Array.isArray(inquiry.interestedIn) ? inquiry.interestedIn : [];
+  const highlight = interests.map((s) => s.toLowerCase());
 
   function handleClick(discipline, time, dayIndex) {
     if (!discipline.trim()) return;
@@ -47,10 +48,10 @@ export function Booker({ inquiry }) {
           <strong>{fullName(inquiry)}</strong>
           <span className="prv-divider">·</span>
           <span className="adm-mono">{inquiry.phone}</span>
-          {inquiry.interestedIn && (
+          {interests.length > 0 && (
             <>
               <span className="prv-divider">·</span>
-              <span>Interested in <strong>{inquiry.interestedIn}</strong></span>
+              <span>Interested in <strong>{interests.join(', ')}</strong></span>
             </>
           )}
         </div>
@@ -131,7 +132,8 @@ function Row({ time, cells, highlight, selected, area, onClick }) {
         const empty = !cell.trim();
         if (empty) return <td key={i} className="sch-empty">—</td>;
         const isSelected = selected && selected.area === area && selected.discipline === cell && selected.time === time && selected.dayIndex === i;
-        const isMatch = highlight && cell.toLowerCase().includes(highlight.toLowerCase().split(',')[0].trim());
+        const cellLower = cell.toLowerCase();
+        const isMatch = highlight.some((h) => cellLower.includes(h));
         const elite = cell.toLowerCase().includes('elite');
         const coach = coachFor(area, cell, time);
         return (

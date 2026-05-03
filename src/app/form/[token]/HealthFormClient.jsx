@@ -48,8 +48,7 @@ export function HealthFormClient({ inquiry, trial, action }) {
       <Section label="Confirm">
         <ReadField label="Name" value={fullName(inquiry)} hint="Tell us if there's a typo" />
         <ReadField label="Phone" value={inquiry.phone} locked hint="Locked — this is the link you came from" />
-        {inquiry.interestedIn && <ReadField label="Interested in" value={inquiry.interestedIn} />}
-        {inquiry.area && <ReadField label="Area" value={inquiry.area} />}
+        {Array.isArray(inquiry.interestedIn) && inquiry.interestedIn.length > 0 && <ReadField label="Interested in" value={inquiry.interestedIn.join(', ')} />}
         <ReadField label="Trial" value={`${trial.discipline} · ${trialDate} ${trial.scheduledTime}`} />
       </Section>
 

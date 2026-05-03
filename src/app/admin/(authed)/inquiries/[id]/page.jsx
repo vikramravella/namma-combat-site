@@ -99,7 +99,6 @@ export default async function InquiryDetailPage({ params, searchParams }) {
             <h2 className="adm-card-title">Contact</h2>
             <dl className="prv-defs">
               <DefRow label="Phone" value={<span className="adm-mono">{inquiry.phone}</span>} />
-              <DefRow label="Area" value={inquiry.area} />
               <DefRow label="Follow-up attempts" value={String(inquiry.followUpAttempts || 0)} />
               <DefRow label="Last contacted" value={inquiry.lastContactedAt ? formatRelative(inquiry.lastContactedAt) : '—'} />
             </dl>
@@ -108,10 +107,9 @@ export default async function InquiryDetailPage({ params, searchParams }) {
           <div className="adm-card">
             <h2 className="adm-card-title">What they want</h2>
             <dl className="prv-defs">
-              <DefRow label="Interested in" value={inquiry.interestedIn} />
+              <DefRow label="Interested in" value={Array.isArray(inquiry.interestedIn) && inquiry.interestedIn.length > 0 ? inquiry.interestedIn.join(', ') : null} />
               <DefRow label="Primary goal" value={inquiry.primaryGoal} />
               <DefRow label="Experience" value={inquiry.experience} />
-              <DefRow label="Preferred time" value={inquiry.preferredTime} />
             </dl>
           </div>
 

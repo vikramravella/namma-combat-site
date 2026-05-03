@@ -37,7 +37,8 @@ export default async function MemberDetailPage({ params }) {
   // Build the unified journey timeline
   const events = [];
   if (member.fromInquiry) {
-    events.push({ when: member.fromInquiry.createdAt, type: 'inquiry', label: 'Inquiry created', detail: `Source: ${member.fromInquiry.source || '—'} · Interested in ${member.fromInquiry.interestedIn || '—'}` });
+    const interestedLabel = Array.isArray(member.fromInquiry.interestedIn) && member.fromInquiry.interestedIn.length > 0 ? member.fromInquiry.interestedIn.join(', ') : '—';
+    events.push({ when: member.fromInquiry.createdAt, type: 'inquiry', label: 'Inquiry created', detail: `Source: ${member.fromInquiry.source || '—'} · Interested in ${interestedLabel}` });
     for (const e of member.fromInquiry.events) {
       events.push({ when: e.createdAt, type: e.type, label: e.label, detail: e.detail });
     }
