@@ -80,6 +80,7 @@ export async function submitInquiry(formData) {
   } catch (err) {
     console.error('submitInquiry failed', err);
     Sentry.captureException(err, { tags: { source: 'submitInquiry', stage: 'db' }, extra: { raw } });
-    return { ok: false, error: 'Something went wrong — please WhatsApp us.' };
+    // TEMP: surface the real exception text so we can debug; will revert.
+    return { ok: false, error: `DB error: ${err?.code || ''} ${err?.message?.slice(0, 240) || String(err)}` };
   }
 }
