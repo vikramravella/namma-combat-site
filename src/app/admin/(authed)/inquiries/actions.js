@@ -119,10 +119,12 @@ export async function updateInquiry(id, formData) {
     revalidatePath('/admin/inquiries');
     revalidatePath(`/admin/inquiries/${id}`);
     // If the user moved this inquiry to "trial_booked" and there's no trial
-    // yet, jump straight to the scheduler — that's where they need to be.
+    // yet, hand back a redirect target — the client will router.push so the
+    // navigation works reliably from inside startTransition (where a thrown
+    // server-side redirect() doesn't always propagate cleanly).
     const justMovedToTrial = data.stage === 'trial_booked' && before.stage !== 'trial_booked';
     if (justMovedToTrial && before.trials.length === 0) {
-      redirect(`/admin/trials/new?inquiryId=${id}`);
+      return { ok: true, redirectTo: `/admin/trials/new?inquiryId=${id}` };
     }
     return { ok: true };
   } catch (err) {

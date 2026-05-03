@@ -15,7 +15,10 @@ export function InquiryForm({ inquiry, action, deleteAction, mode }) {
     startTransition(async () => {
       const r = mode === 'create' ? await action(formData) : await action(inquiry.id, formData);
       if (r?.ok === false) setError(r.error);
-      else if (r?.ok === true) { setSuccess('Saved.'); router.refresh(); }
+      else if (r?.ok === true) {
+        if (r.redirectTo) router.push(r.redirectTo);
+        else { setSuccess('Saved.'); router.refresh(); }
+      }
     });
   }
 
