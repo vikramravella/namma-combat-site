@@ -3,6 +3,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { logEvent, changeStage } from '../actions';
 import { INQUIRY_STAGES } from '@/lib/constants';
+import { DatePicker } from '@/components/DatePicker';
 
 const TYPES = [
   { key: 'called', label: 'Called', needsOutcome: true },
@@ -85,7 +86,7 @@ export function EventLog({ inquiryId, currentStage }) {
       <div className="adm-form-row">
         <div className="adm-field">
           <label className="adm-label">Next follow-up</label>
-          <input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} className="adm-input" />
+          <DatePicker value={nextDate} onChange={setNextDate} />
           <span className="adm-help">Leave blank if no next contact planned.</span>
         </div>
         <div className="adm-field" style={{ justifyContent: 'flex-end' }}>

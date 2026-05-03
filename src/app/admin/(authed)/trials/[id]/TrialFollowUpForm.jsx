@@ -2,6 +2,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { logTrialFollowUp } from '../actions';
+import { DatePicker } from '@/components/DatePicker';
 
 export function TrialFollowUpForm({ trialId }) {
   const router = useRouter();
@@ -44,7 +45,7 @@ export function TrialFollowUpForm({ trialId }) {
       </div>
       <div className="adm-field">
         <label className="adm-label">Next follow-up (optional)</label>
-        <input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} className="adm-input" />
+        <DatePicker value={nextDate} onChange={setNextDate} />
       </div>
       <div className="adm-form-actions">
         <button type="submit" disabled={isPending} className="adm-btn">{isPending ? 'Logging…' : 'Log event'}</button>

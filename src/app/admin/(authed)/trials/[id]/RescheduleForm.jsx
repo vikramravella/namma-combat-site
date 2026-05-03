@@ -2,6 +2,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { rescheduleTrial } from '../actions';
+import { DatePicker } from '@/components/DatePicker';
 
 const DAYS = [['Mon', 0], ['Tue', 1], ['Wed', 2], ['Thu', 3], ['Fri', 4], ['Sat', 5], ['Sun', 6]];
 
@@ -62,7 +63,7 @@ export function RescheduleForm({ trialId, currentArea, currentDiscipline, curren
         </div>
         <div className="adm-field">
           <label className="adm-label">Specific date (optional)</label>
-          <input type="date" value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} className="adm-input" />
+          <DatePicker value={scheduledDate} onChange={setScheduledDate} />
           <span className="adm-help">Blank = next occurrence of the chosen day.</span>
         </div>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useTransition } from 'react';
 import { fullName } from '@/lib/format';
+import { DatePicker } from '@/components/DatePicker';
 
 export function HealthFormClient({ inquiry, trial, action }) {
   const [isPending, startTransition] = useTransition();
@@ -10,11 +11,14 @@ export function HealthFormClient({ inquiry, trial, action }) {
   const [smoking, setSmoking] = useState('no');
   const [alcohol, setAlcohol] = useState('no');
   const [mediaConsent, setMediaConsent] = useState('yes');
+  const [dob, setDob] = useState('');
 
   function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    if (!dob) { setError('Date of birth is required.'); return; }
     const fd = new FormData(e.target);
+    fd.set('dob', dob);
     fd.set('smoking', smoking);
     fd.set('alcohol', alcohol);
     fd.set('mediaConsent', mediaConsent);
@@ -64,7 +68,10 @@ export function HealthFormClient({ inquiry, trial, action }) {
       </Section>
 
       <Section label="A few quick details">
-        <Field name="dob" label="Date of birth" type="date" required />
+        <div className="form-public-field">
+          <label className="form-public-label">Date of birth <span className="form-public-req">*</span></label>
+          <DatePicker value={dob} onChange={setDob} className="form-public-input" placeholder="Pick your date of birth" required />
+        </div>
         <SelectField name="gender" label="Gender" options={['Male', 'Female', 'Prefer not to say']} required />
       </Section>
 

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { reverseCalc } from '@/lib/calc';
 import { fullName, formatRupees, formatDate, rupeesInputToPaise } from '@/lib/format';
 import { createPlan } from '../actions';
+import { DatePicker } from '@/components/DatePicker';
 
 export function PlanForm({ member, types }) {
   const [isPending, startTransition] = useTransition();
@@ -112,7 +113,10 @@ export function PlanForm({ member, types }) {
             </div>
           )}
           <div className="adm-form-row">
-            <Field label="Start date" name="startDate" type="date" value={startDate} onChange={setStartDate} required />
+            <div className="adm-field">
+              <label className="adm-label">Start date *</label>
+              <DatePicker value={startDate} onChange={setStartDate} required />
+            </div>
             <Field label="Bonus days" name="bonusDays" type="number" value={bonusDays} onChange={(v) => setBonusDays(v)} />
           </div>
           {endDate && <p className="adm-help">End date: <strong>{formatDate(endDate)}</strong></p>}
