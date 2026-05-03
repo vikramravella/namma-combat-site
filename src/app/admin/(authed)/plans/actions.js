@@ -69,6 +69,26 @@ export async function createPlan(formData) {
   end.setDate(end.getDate() + type.durationDays + bonusDays);
   const fiscalYear = fiscalYearOf(new Date());
 
+  // Prevent overlapping memberships. A renewal is fine — its start date must
+  // sit strictly AFTER the current active/on_freeze plan's end date. Without
+  // this guard the system was happily creating two simultaneous active plans
+  // for the same member.
+  const liveOverlap = await db.plan.findFirst({
+    where: {
+      memberId,
+      status: { in: ['active', 'on_freeze'] },
+      endDate: { gte: start },
+    },
+    orderBy: { endDate: 'desc' },
+  });
+  if (liveOverlap) {
+    const existingEnd = new Date(liveOverlap.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    return {
+      ok: false,
+      error: `Member already has an active membership running until ${existingEnd}. Set the new start date to after that.`,
+    };
+  }
+
   try {
     const result = await db.$transaction(async (tx) => {
       const seq = await nextSequenceForFY(tx, fiscalYear);
