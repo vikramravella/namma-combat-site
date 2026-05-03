@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
-import { DashFolder } from './DashFolder';
 
 export const revalidate = 30;
 
 const MODULES = [
-  { href: '/admin/inquiries',   label: 'Inquiries',   sub: 'Leads & follow-ups',     tone: 'rust',     emoji: '✦' },
-  { href: '/admin/trials',      label: 'Trials',      sub: 'Bookings & outcomes',    tone: 'gold',     emoji: '◇' },
+  { href: '/admin/alerts',      label: 'Alerts',      sub: 'Calls · Trials · Health', tone: 'rust',     emoji: '⏻' },
+  { href: '/admin/inquiries',   label: 'Inquiries',   sub: 'Leads & follow-ups',     tone: 'gold',     emoji: '✦' },
+  { href: '/admin/trials',      label: 'Trials',      sub: 'Bookings & outcomes',    tone: 'rust-light', emoji: '◇' },
   { href: '/admin/members',     label: 'Members',     sub: 'The roster',             tone: 'cream',    emoji: '◯' },
   { href: '/admin/receipts',    label: 'Receipts',    sub: 'Invoices & payments',    tone: 'warm',     emoji: '✧' },
   { href: '/admin/assessments', label: 'Assessments', sub: 'Posture & progress',     tone: 'gold',     emoji: '△' },
@@ -143,7 +143,16 @@ export default async function HomePage() {
     }),
   ]);
 
+  const totalAlerts =
+    callsToday.length +
+    todaysTrials.length +
+    conversionFollowUps.length +
+    healthAlertsFiltered.length +
+    smokers.length +
+    noMediaConsent.length;
+
   const moduleCounts = {
+    '/admin/alerts': totalAlerts,
     '/admin/inquiries': countNewInquiries,
     '/admin/trials': countUpcomingTrials,
     '/admin/members': countExpiringMembers,
@@ -192,14 +201,6 @@ export default async function HomePage() {
 
       <div className="home-rule" />
 
-      <DashFolder data={{
-        callsToday,
-        todaysTrials,
-        conversionFollowUps,
-        healthAlerts: healthAlertsFiltered,
-        smokers,
-        noMediaConsent,
-      }} />
 
       {feed.length > 0 && (
         <div className="dash-feed">
