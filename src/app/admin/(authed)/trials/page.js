@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta } from '@/lib/constants';
+import { SortChips, sortToOrderBy } from '@/components/SortChips';
 
 export const revalidate = 10;
 const STATUS_KEYS = TRIAL_STATUSES.map((s) => s.key);
@@ -31,7 +32,7 @@ export default async function TrialsPage({ searchParams }) {
     [rows, allCount, byStatus] = await Promise.all([
       db.trial.findMany({
         where,
-        orderBy: { scheduledDate: 'desc' },
+        orderBy: sortToOrderBy(sp?.sort),
         take: 200,
         include: { inquiry: true, coach: true, healthDecl: true },
       }),
@@ -78,6 +79,7 @@ export default async function TrialsPage({ searchParams }) {
           <ChipLink key={s.key} href={`?status=${s.key}`} on={status === s.key} label={s.label} count={counts[s.key] ?? 0} />
         ))}
       </div>
+      <SortChips sort={sp?.sort || 'modified'} sp={sp} />
 
       <div className="prv-table-wrap">
         {rows.length === 0 ? (

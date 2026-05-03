@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRupees } from '@/lib/format';
 import { PLAN_STATUSES, TIERS, stageMeta } from '@/lib/constants';
+import { SortChips, sortToOrderBy } from '@/components/SortChips';
 
 export const revalidate = 10;
 const STATUS_KEYS = PLAN_STATUSES.map((s) => s.key);
@@ -18,7 +19,7 @@ export default async function PlansPage({ searchParams }) {
   const [rows, allCount, byStatus] = await Promise.all([
     db.plan.findMany({
       where,
-      orderBy: { startDate: 'desc' },
+      orderBy: sortToOrderBy(sp?.sort),
       take: 200,
       include: { member: true, receipt: true },
     }),
@@ -46,6 +47,7 @@ export default async function PlansPage({ searchParams }) {
         ))}
       </div>
 
+      <SortChips sort={sp?.sort || 'modified'} sp={sp} />
       <div className="prv-table-wrap">
         {rows.length === 0 ? (
           <div className="prv-empty"><p>No memberships yet.</p></div>

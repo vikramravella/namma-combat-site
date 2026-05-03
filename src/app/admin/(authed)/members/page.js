@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRupees } from '@/lib/format';
 import { MEMBER_STATUSES, SKILL_LEVELS, TIERS, CYCLES, stageMeta } from '@/lib/constants';
+import { SortChips, sortToOrderBy } from '@/components/SortChips';
 
 export const revalidate = 10;
 const STATUS_KEYS = MEMBER_STATUSES.map((s) => s.key);
@@ -56,7 +57,7 @@ export default async function MembersPage({ searchParams }) {
   const [rows, allCount] = await Promise.all([
     db.member.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: sortToOrderBy(sp?.sort),
       take: 200,
       include: { plans: { where: { status: { in: ['active', 'on_freeze'] } }, take: 1, orderBy: { endDate: 'desc' } } },
     }),
@@ -72,6 +73,7 @@ export default async function MembersPage({ searchParams }) {
         </div>
       </div>
 
+      <SortChips sort={sp?.sort || 'modified'} sp={sp} />
       <div className="prv-table-wrap">
         {rows.length === 0 ? (
           <div className="prv-empty"><p>{allCount === 0 ? 'No members yet — they appear after a trial converts.' : 'No members match these filters.'}</p></div>

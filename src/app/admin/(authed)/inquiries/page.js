@@ -4,6 +4,7 @@ import { fullName, formatRelative, formatDate } from '@/lib/format';
 import { INQUIRY_STAGES, SOURCES, stageMeta } from '@/lib/constants';
 import { Filters } from './Filters';
 import { MarkSeenOnMount } from './MarkSeenOnMount';
+import { SortChips, sortToOrderBy } from '@/components/SortChips';
 
 export const revalidate = 10;
 const STAGE_KEYS = INQUIRY_STAGES.map((s) => s.key);
@@ -37,9 +38,7 @@ export default async function InquiriesPage({ searchParams }) {
   const [rows, allCount, byStage, dueCount] = await Promise.all([
     db.inquiry.findMany({
       where,
-      orderBy: queue === 'due'
-        ? [{ nextFollowUpAt: 'asc' }]
-        : [{ createdAt: 'desc' }],
+      orderBy: queue === 'due' ? [{ nextFollowUpAt: 'asc' }] : [sortToOrderBy(sp?.sort)],
       take: 200,
     }),
     db.inquiry.count({ where: baseFilter }),
@@ -80,6 +79,7 @@ export default async function InquiriesPage({ searchParams }) {
       </div>
 
       <Filters counts={counts} />
+      <SortChips sort={sp?.sort || 'modified'} sp={sp} />
 
       <div className="prv-table-wrap">
         {rows.length === 0 ? (

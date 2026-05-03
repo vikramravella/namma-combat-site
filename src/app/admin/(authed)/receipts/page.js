@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { formatDate, formatRupees } from '@/lib/format';
 import { RECEIPT_STATUSES, stageMeta } from '@/lib/constants';
+import { SortChips, sortToOrderBy } from '@/components/SortChips';
 import { FyFilter } from './FyFilter';
 
 export const revalidate = 10;
@@ -19,7 +20,7 @@ export default async function ReceiptsPage({ searchParams }) {
   const [rows, allCount, byStatus, fys] = await Promise.all([
     db.receipt.findMany({
       where,
-      orderBy: { issueDate: 'desc' },
+      orderBy: sortToOrderBy(sp?.sort),
       take: 200,
       include: { payments: true },
     }),
@@ -53,6 +54,7 @@ export default async function ReceiptsPage({ searchParams }) {
         ))}
       </div>
 
+      <SortChips sort={sp?.sort || 'modified'} sp={sp} />
       <div className="prv-table-wrap">
         {rows.length === 0 ? (
           <div className="prv-empty"><p>No receipts yet.</p></div>
