@@ -53,8 +53,7 @@ export default async function MembersPage({ searchParams }) {
     where: { plans: { some: { status: { in: ['active', 'on_freeze'] }, endDate: { gte: _now, lte: _in14 } } } },
   });
 
-  // Counts by tier and cycle: groupBy on Plan with current-plan filter
-  const [rows, allCount, byStatus, planTierCounts, planCycleCounts] = await Promise.all([
+  const [rows, allCount] = await Promise.all([
     db.member.findMany({
       where,
       orderBy: { createdAt: 'desc' },
@@ -62,18 +61,7 @@ export default async function MembersPage({ searchParams }) {
       include: { plans: { where: { status: { in: ['active', 'on_freeze'] } }, take: 1, orderBy: { endDate: 'desc' } } },
     }),
     db.member.count(),
-    db.member.groupBy({ by: ['status'], _count: { _all: true } }),
-    db.plan.groupBy({ by: ['tier'], where: { status: { in: ['active', 'on_freeze'] } }, _count: { _all: true } }),
-    db.plan.groupBy({ by: ['cycle'], where: { status: { in: ['active', 'on_freeze'] } }, _count: { _all: true } }),
   ]);
-
-  const counts = { '': allCount };
-  for (const r of byStatus) counts[r.status] = r._count._all;
-  const tierCounts = {};
-  for (const r of planTierCounts) tierCounts[r.tier] = r._count._all;
-  const cycleCounts = {};
-  for (const r of planCycleCounts) cycleCounts[r.cycle] = r._count._all;
-  const totalActivePlans = Object.values(tierCounts).reduce((s, n) => s + n, 0);
 
   return (
     <>
@@ -82,32 +70,6 @@ export default async function MembersPage({ searchParams }) {
           <h1 className="adm-page-title">Members</h1>
           <p className="adm-page-subtitle">{rows.length === allCount ? `${allCount} ${allCount === 1 ? 'member' : 'members'}` : `${rows.length} of ${allCount} matching`}</p>
         </div>
-      </div>
-
-      <div className="prv-chips">
-        <ChipLink href="?" on={!status && !skill && !tier && !cycle && !expiring} label="All" count={counts['']} />
-        {MEMBER_STATUSES.map((s) => (
-          <ChipLink key={s.key} href={hrefFor(sp, { status: s.key, tier: '', cycle: '', expiring: '' })} on={status === s.key && !expiring} label={s.label} count={counts[s.key] ?? 0} />
-        ))}
-        {expiringCount > 0 && (
-          <ChipLink href={hrefFor(sp, { expiring: '1', status: '' })} on={expiring} label="Expiring ≤ 14d" count={expiringCount} />
-        )}
-      </div>
-
-      <div className="prv-chips" style={{ marginTop: 8 }}>
-        <span style={{ fontSize: 12, color: 'var(--text-muted)', alignSelf: 'center', marginRight: 4 }}>Plan tier:</span>
-        <ChipLink href={hrefFor(sp, { tier: '' })} on={!tier} label="Any" count={totalActivePlans} />
-        {TIERS.map((t) => (
-          <ChipLink key={t.key} href={hrefFor(sp, { tier: t.key })} on={tier === t.key} label={t.label} count={tierCounts[t.key] ?? 0} />
-        ))}
-      </div>
-
-      <div className="prv-chips" style={{ marginTop: 4 }}>
-        <span style={{ fontSize: 12, color: 'var(--text-muted)', alignSelf: 'center', marginRight: 4 }}>Cycle:</span>
-        <ChipLink href={hrefFor(sp, { cycle: '' })} on={!cycle} label="Any" count={totalActivePlans} />
-        {CYCLES.map((c) => (
-          <ChipLink key={c.key} href={hrefFor(sp, { cycle: c.key })} on={cycle === c.key} label={c.label} count={cycleCounts[c.key] ?? 0} />
-        ))}
       </div>
 
       <div className="prv-table-wrap">
@@ -150,28 +112,7 @@ export default async function MembersPage({ searchParams }) {
   );
 }
 
-function ChipLink({ href, on, label, count }) {
-  return (
-    <Link href={href} className={`prv-chip ${on ? 'prv-chip-on' : ''}`} scroll={false}>
-      <span>{label}</span>
-      {count !== undefined && <span className="prv-chip-count">{count}</span>}
-    </Link>
-  );
-}
-
 function StatusChip({ value }) {
   const meta = stageMeta(MEMBER_STATUSES, value);
   return <span className={`prv-stage prv-stage-${meta.tone}`}><span className="prv-stage-dot" />{meta.label}</span>;
-}
-
-function hrefFor(sp, overrides) {
-  const next = new URLSearchParams();
-  for (const [k, v] of Object.entries(sp || {})) {
-    if (v && typeof v === 'string') next.set(k, v);
-  }
-  for (const [k, v] of Object.entries(overrides)) {
-    if (v) next.set(k, v); else next.delete(k);
-  }
-  const s = next.toString();
-  return s ? `?${s}` : '?';
 }
