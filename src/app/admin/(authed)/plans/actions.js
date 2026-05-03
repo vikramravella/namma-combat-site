@@ -7,18 +7,14 @@ import { getServerSession } from 'next-auth';
 import { db } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
-import { TIERS, CYCLES, FREEZE_POLICY, PLAN_STATUSES } from '@/lib/constants';
-import { reverseCalc, basePricePaise, cycleMeta, computeEndDate, fiscalYearOf, formatInvoiceNumber } from '@/lib/calc';
+import { FREEZE_POLICY, PLAN_STATUSES } from '@/lib/constants';
+import { reverseCalc, fiscalYearOf, formatInvoiceNumber } from '@/lib/calc';
 import { rupeesInputToPaise, fullName } from '@/lib/format';
 import { syncMemberStatusFromPlans } from '@/lib/member-status';
 
-const tierKeys = TIERS.map((t) => t.key);
-const cycleKeys = CYCLES.map((c) => c.key);
-
 const planSchema = z.object({
   memberId: z.string().min(1),
-  tier: z.enum(tierKeys),
-  cycle: z.enum(cycleKeys),
+  membershipTypeId: z.string().min(1, 'Membership type required'),
   startDate: z.string().min(1, 'Start date required'),
   bonusDays: z.coerce.number().int().min(0).max(180).default(0),
   agreedFinal: z.string().optional().or(z.literal('')),
@@ -45,15 +41,19 @@ export async function createPlan(formData) {
   const raw = Object.fromEntries(formData);
   const parsed = planSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
-  const { memberId, tier, cycle, startDate, bonusDays, agreedFinal, customerGstin, notes } = parsed.data;
+  const { memberId, membershipTypeId, startDate, bonusDays, agreedFinal, customerGstin, notes } = parsed.data;
 
-  const member = await db.member.findUnique({ where: { id: memberId } });
+  const [member, type] = await Promise.all([
+    db.member.findUnique({ where: { id: memberId } }),
+    db.membershipType.findUnique({ where: { id: membershipTypeId } }),
+  ]);
   if (!member) return { ok: false, error: 'Member not found' };
+  if (!type) return { ok: false, error: 'Membership type not found' };
+  if (!type.active) return { ok: false, error: 'That membership type is no longer active. Pick another.' };
 
-  const meta = cycleMeta(cycle);
-  if (!meta) return { ok: false, error: 'Invalid cycle' };
-
-  const basePaise = basePricePaise(tier, cycle);
+  const tier = type.tier;
+  const cycle = type.cycle;
+  const basePaise = type.basePriceRupees * 100;
   const agreedPaise = rupeesInputToPaise(agreedFinal); // null if blank → full price
   const calc = reverseCalc(basePaise, agreedPaise);
   if (calc.discountFinalPaise < 0) {
@@ -61,7 +61,8 @@ export async function createPlan(formData) {
   }
 
   const start = new Date(startDate);
-  const end = computeEndDate(start, cycle, bonusDays);
+  const end = new Date(start);
+  end.setDate(end.getDate() + type.durationDays + bonusDays);
   const fiscalYear = fiscalYearOf(new Date());
 
   try {
@@ -74,12 +75,12 @@ export async function createPlan(formData) {
           memberId,
           tier,
           cycle,
-          floorAccess: TIERS.find((t) => t.key === tier).floor,
+          floorAccess: type.floorAccess || '',
           startDate: start,
           endDate: end,
-          durationDays: meta.days + bonusDays,
+          durationDays: type.durationDays + bonusDays,
           bonusDays,
-          freezeDaysAllowed: meta.freezeDays,
+          freezeDaysAllowed: type.freezeDaysAllowed,
           basePricePaise: basePaise,
           agreedFinalPaise: calc.totalPaise,
           customerGstin: customerGstin || null,

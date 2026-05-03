@@ -217,8 +217,31 @@ model Member {
 }
 
 // ─────────────────────────────────────────────────────────────
+// MembershipType — admin-managed catalog of plan templates.
+// Each row is one purchasable plan (e.g. "Gold Quarterly") with the
+// duration / freeze-allowance / base price / floor access. Plan creation
+// flow picks one of these and copies the snapshot fields onto the Plan.
+// ─────────────────────────────────────────────────────────────
+model MembershipType {
+  id                String   @id @default(cuid())
+  name              String   @unique // "Gold Quarterly"
+  tier              String   // "Silver" | "Student" | "Gold" | "Platinum" | (custom)
+  cycle             String   // "Monthly" | "Quarterly" | "Semi-Annual" | "Annual" | (custom)
+  durationDays      Int
+  freezeDaysAllowed Int
+  basePriceRupees   Int      // pre-GST
+  floorAccess       String?  // "1 floor" | "Both floors" | "Both + PT"
+  notes             String?
+  active            Boolean  @default(true)
+  sortOrder         Int      @default(100)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  @@index([active, sortOrder])
+}
+
+// ─────────────────────────────────────────────────────────────
 // Plan — a purchased membership period
-// Status: running | on_freeze | ended | cancelled
+// Status: active | on_freeze | ended | cancelled
 // ─────────────────────────────────────────────────────────────
 model Plan {
   id                  String    @id @default(cuid())

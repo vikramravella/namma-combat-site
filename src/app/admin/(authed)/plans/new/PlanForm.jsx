@@ -1,41 +1,52 @@
 'use client';
 import { useState, useTransition, useMemo } from 'react';
 import Link from 'next/link';
-import { TIERS, CYCLES, PRICE_TABLE } from '@/lib/constants';
-import { reverseCalc, basePricePaise, computeEndDate, cycleMeta } from '@/lib/calc';
+import { reverseCalc } from '@/lib/calc';
 import { fullName, formatRupees, formatDate, rupeesInputToPaise } from '@/lib/format';
 import { createPlan } from '../actions';
 
-export function PlanForm({ member }) {
+export function PlanForm({ member, types }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
 
-  const [tier, setTier] = useState('Gold');
-  const [cycle, setCycle] = useState('Quarterly');
+  const defaultType = types.find((t) => /Gold Quarterly/i.test(t.name)) || types[0];
+  const [typeId, setTypeId] = useState(defaultType.id);
   const [startDate, setStartDate] = useState(today());
   const [bonusDays, setBonusDays] = useState(0);
   const [agreedRupees, setAgreedRupees] = useState('');
   const [gstin, setGstin] = useState('');
   const [notes, setNotes] = useState('');
 
-  const meta = cycleMeta(cycle);
-  const baseRup = PRICE_TABLE[tier]?.[cycle] ?? 0;
-  const basePaise = basePricePaise(tier, cycle);
+  const selected = types.find((t) => t.id === typeId) || types[0];
+  const baseRup = selected.basePriceRupees;
+  const basePaise = baseRup * 100;
   const agreedPaise = rupeesInputToPaise(agreedRupees);
   const calc = useMemo(() => reverseCalc(basePaise, agreedPaise), [basePaise, agreedPaise]);
   const endDate = useMemo(() => {
-    try { return computeEndDate(startDate, cycle, Number(bonusDays) || 0); } catch { return null; }
-  }, [startDate, cycle, bonusDays]);
+    try {
+      const start = new Date(startDate);
+      const end = new Date(start);
+      end.setDate(end.getDate() + selected.durationDays + (Number(bonusDays) || 0));
+      return end;
+    } catch { return null; }
+  }, [startDate, selected, bonusDays]);
 
-  const tierMeta = TIERS.find((t) => t.key === tier);
+  // Group types by tier for the dropdown
+  const grouped = useMemo(() => {
+    const m = new Map();
+    for (const t of types) {
+      if (!m.has(t.tier)) m.set(t.tier, []);
+      m.get(t.tier).push(t);
+    }
+    return [...m.entries()];
+  }, [types]);
 
   function handleSubmit(e) {
     e.preventDefault();
     setError('');
     const fd = new FormData();
     fd.set('memberId', member.id);
-    fd.set('tier', tier);
-    fd.set('cycle', cycle);
+    fd.set('membershipTypeId', selected.id);
     fd.set('startDate', startDate);
     fd.set('bonusDays', String(bonusDays || 0));
     if (agreedRupees) fd.set('agreedFinal', agreedRupees);
@@ -61,38 +72,29 @@ export function PlanForm({ member }) {
       </div>
 
       <div className="adm-card">
-        <h2 className="adm-card-title">Plan</h2>
+        <h2 className="adm-card-title">Membership type</h2>
         <div className="adm-form">
           <div className="adm-field">
-            <label className="adm-label">Tier</label>
-            <div className="prv-chips">
-              {TIERS.map((t) => (
-                <button key={t.key} type="button" onClick={() => setTier(t.key)} className={`prv-chip ${tier === t.key ? 'prv-chip-on' : ''}`}>
-                  {t.label}
-                </button>
+            <label className="adm-label" htmlFor="typeId">Type</label>
+            <select id="typeId" value={typeId} onChange={(e) => setTypeId(e.target.value)} className="adm-select">
+              {grouped.map(([tier, list]) => (
+                <optgroup key={tier} label={tier}>
+                  {list.map((t) => (
+                    <option key={t.id} value={t.id}>{t.cycle} · ₹{t.basePriceRupees.toLocaleString('en-IN')} pre-GST</option>
+                  ))}
+                </optgroup>
               ))}
-            </div>
-            <span className="adm-help">{tierMeta?.notes}</span>
-          </div>
-          <div className="adm-field">
-            <label className="adm-label">Billing cycle</label>
-            <div className="prv-chips">
-              {CYCLES.map((c) => (
-                <button key={c.key} type="button" onClick={() => setCycle(c.key)} className={`prv-chip ${cycle === c.key ? 'prv-chip-on' : ''}`}>
-                  {c.label}
-                  <span className="prv-chip-count">₹{(PRICE_TABLE[tier]?.[c.key] || 0).toLocaleString('en-IN')}</span>
-                </button>
-              ))}
-            </div>
-            <span className="adm-help">{meta?.days} days · {meta?.freezeDays} days freeze allowance</span>
+            </select>
+            <span className="adm-help">
+              {selected.durationDays} days · {selected.freezeDaysAllowed}d freeze
+              {selected.floorAccess ? ` · ${selected.floorAccess}` : ''}
+            </span>
           </div>
           <div className="adm-form-row">
             <Field label="Start date" name="startDate" type="date" value={startDate} onChange={setStartDate} required />
             <Field label="Bonus days" name="bonusDays" type="number" value={bonusDays} onChange={(v) => setBonusDays(v)} />
           </div>
-          {endDate && (
-            <p className="adm-help">End date: <strong>{formatDate(endDate)}</strong></p>
-          )}
+          {endDate && <p className="adm-help">End date: <strong>{formatDate(endDate)}</strong></p>}
         </div>
       </div>
 

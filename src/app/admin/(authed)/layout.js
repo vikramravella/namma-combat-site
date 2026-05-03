@@ -25,6 +25,7 @@ export default async function AuthedLayout({ children }) {
               <Link href="/admin/plans">Plans</Link>
               <Link href="/admin/receipts">Receipts</Link>
               <Link href="/admin/assessments">Assessments</Link>
+              <Link href="/admin/settings/memberships">Settings</Link>
             </nav>
           </div>
           <div className="adm-header-right">

@@ -45,9 +45,13 @@ export default async function NewPlanPage({ searchParams }) {
     );
   }
 
-  const member = await db.member.findUnique({ where: { id: memberId } });
-  if (!member) {
-    return <p>Member not found.</p>;
+  const [member, types] = await Promise.all([
+    db.member.findUnique({ where: { id: memberId } }),
+    db.membershipType.findMany({ where: { active: true }, orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] }),
+  ]);
+  if (!member) return <p>Member not found.</p>;
+  if (types.length === 0) {
+    return <p>No active membership types. <Link href="/admin/settings/memberships/new">Create one →</Link></p>;
   }
 
   return (
@@ -56,11 +60,11 @@ export default async function NewPlanPage({ searchParams }) {
         <div>
           <p className="prv-eyebrow"><Link href={`/admin/members/${member.id}`} className="prv-back">← {fullName(member)}</Link></p>
           <h1 className="adm-page-title">New plan</h1>
-          <p className="adm-page-subtitle">Pick tier + cycle, then either accept the full price or enter the agreed final amount.</p>
+          <p className="adm-page-subtitle">Pick a membership type, then accept the full price or enter the agreed final amount.</p>
         </div>
       </div>
 
-      <PlanForm member={member} />
+      <PlanForm member={member} types={types} />
     </>
   );
 }
