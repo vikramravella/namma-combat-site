@@ -124,6 +124,24 @@ export async function updateMember(id, formData) {
   }
 }
 
+export async function setSkillLevel(id, newLevel) {
+  const session = await requireSession();
+  if (!skillKeys.includes(newLevel)) return { ok: false, error: 'Invalid skill level' };
+  try {
+    const before = await db.member.findUnique({ where: { id } });
+    if (!before) return { ok: false, error: 'Member not found' };
+    if (before.skillLevel === newLevel) return { ok: true };
+    await db.member.update({ where: { id }, data: { skillLevel: newLevel } });
+    await logAudit({ actorUserId: session.user.id, action: 'skill_change', entity: 'Member', entityId: id, before: { skillLevel: before.skillLevel }, after: { skillLevel: newLevel } });
+    revalidatePath('/admin/members');
+    revalidatePath(`/admin/members/${id}`);
+    return { ok: true };
+  } catch (err) {
+    console.error('setSkillLevel failed', err);
+    return { ok: false, error: 'Could not update skill level.' };
+  }
+}
+
 export async function deleteMember(id) {
   const session = await requireSession();
   try {

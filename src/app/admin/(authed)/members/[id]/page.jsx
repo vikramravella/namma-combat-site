@@ -5,6 +5,7 @@ import { fullName, formatDate, formatRelative, formatRupees } from '@/lib/format
 import { MEMBER_STATUSES, SKILL_LEVELS, stageMeta } from '@/lib/constants';
 import { MemberForm } from '../MemberForm';
 import { updateMember, deleteMember } from '../actions';
+import { SkillLevelEditor } from './SkillLevelEditor';
 
 export default async function MemberDetailPage({ params }) {
   const { id } = await params;
@@ -64,7 +65,7 @@ export default async function MemberDetailPage({ params }) {
           <p className="adm-page-subtitle">
             <span className={`prv-stage prv-stage-${status.tone}`}><span className="prv-stage-dot" />{status.label}</span>
             <span className="prv-divider">·</span>
-            <span className={`prv-stage prv-stage-${skill.tone}`}><span className="prv-stage-dot" />{skill.label}</span>
+            <SkillLevelEditor memberId={member.id} current={member.skillLevel} />
             <span className="prv-divider">·</span>
             <span>Joined {formatDate(member.joinedAt)}</span>
             <span className="prv-divider">·</span>
