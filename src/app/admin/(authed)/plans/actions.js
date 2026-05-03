@@ -20,6 +20,7 @@ const planSchema = z.object({
   agreedFinal: z.string().optional().or(z.literal('')),
   customerGstin: z.string().trim().regex(/^[0-9A-Z]{15}$/, 'GSTIN must be 15 chars').optional().or(z.literal('')),
   notes: z.string().trim().max(2000).optional().or(z.literal('')),
+  floorChoice: z.enum(['Arena', 'Sanctuary']).optional(),
 });
 
 async function requireSession() {
@@ -41,7 +42,7 @@ export async function createPlan(formData) {
   const raw = Object.fromEntries(formData);
   const parsed = planSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
-  const { memberId, membershipTypeId, startDate, bonusDays, agreedFinal, customerGstin, notes } = parsed.data;
+  const { memberId, membershipTypeId, startDate, bonusDays, agreedFinal, customerGstin, notes, floorChoice } = parsed.data;
 
   const [member, type] = await Promise.all([
     db.member.findUnique({ where: { id: memberId } }),
@@ -50,6 +51,9 @@ export async function createPlan(formData) {
   if (!member) return { ok: false, error: 'Member not found' };
   if (!type) return { ok: false, error: 'Membership type not found' };
   if (!type.active) return { ok: false, error: 'That membership type is no longer active. Pick another.' };
+  // Single-floor tiers (e.g. Silver) require an explicit floor pick.
+  const requiresFloorChoice = type.tier === 'Silver' || /\bOR\b/.test(type.floorAccess || '');
+  if (requiresFloorChoice && !floorChoice) return { ok: false, error: 'Pick which floor: Arena or Sanctuary.' };
 
   const tier = type.tier;
   const cycle = type.cycle;
@@ -70,12 +74,15 @@ export async function createPlan(formData) {
       const seq = await nextSequenceForFY(tx, fiscalYear);
       const invoiceNumber = formatInvoiceNumber(fiscalYear, seq);
 
+      const finalFloorAccess = requiresFloorChoice
+        ? `${floorChoice} only`
+        : (type.floorAccess || '');
       const plan = await tx.plan.create({
         data: {
           memberId,
           tier,
           cycle,
-          floorAccess: type.floorAccess || '',
+          floorAccess: finalFloorAccess,
           startDate: start,
           endDate: end,
           durationDays: type.durationDays + bonusDays,

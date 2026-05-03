@@ -16,8 +16,11 @@ export function PlanForm({ member, types }) {
   const [agreedRupees, setAgreedRupees] = useState('');
   const [gstin, setGstin] = useState('');
   const [notes, setNotes] = useState('');
+  const [floorChoice, setFloorChoice] = useState('');
 
   const selected = types.find((t) => t.id === typeId) || types[0];
+  // Single-floor tiers (e.g. Silver) need an explicit Arena/Sanctuary pick.
+  const requiresFloorChoice = selected.tier === 'Silver' || /\bOR\b/.test(selected.floorAccess || '');
   const baseRup = selected.basePriceRupees;
   const basePaise = baseRup * 100;
   const agreedPaise = rupeesInputToPaise(agreedRupees);
@@ -44,6 +47,10 @@ export function PlanForm({ member, types }) {
   function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    if (requiresFloorChoice && !floorChoice) {
+      setError('Pick which floor: Arena or Sanctuary.');
+      return;
+    }
     const fd = new FormData();
     fd.set('memberId', member.id);
     fd.set('membershipTypeId', selected.id);
@@ -52,6 +59,7 @@ export function PlanForm({ member, types }) {
     if (agreedRupees) fd.set('agreedFinal', agreedRupees);
     if (gstin) fd.set('customerGstin', gstin.toUpperCase());
     if (notes) fd.set('notes', notes);
+    if (requiresFloorChoice && floorChoice) fd.set('floorChoice', floorChoice);
     startTransition(async () => {
       const r = await createPlan(fd);
       if (r?.ok === false) setError(r.error);
@@ -90,6 +98,19 @@ export function PlanForm({ member, types }) {
               {selected.floorAccess ? ` · ${selected.floorAccess}` : ''}
             </span>
           </div>
+          {requiresFloorChoice && (
+            <div className="adm-field">
+              <label className="adm-label">Floor *</label>
+              <div className="prv-chips">
+                {['Arena', 'Sanctuary'].map((f) => (
+                  <button key={f} type="button" onClick={() => setFloorChoice(f)} className={`prv-chip ${floorChoice === f ? 'prv-chip-on' : ''}`}>
+                    {f}
+                  </button>
+                ))}
+              </div>
+              <span className="adm-help">This tier covers one floor only — pick which one.</span>
+            </div>
+          )}
           <div className="adm-form-row">
             <Field label="Start date" name="startDate" type="date" value={startDate} onChange={setStartDate} required />
             <Field label="Bonus days" name="bonusDays" type="number" value={bonusDays} onChange={(v) => setBonusDays(v)} />

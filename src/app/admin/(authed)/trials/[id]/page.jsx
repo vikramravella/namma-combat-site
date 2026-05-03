@@ -5,6 +5,7 @@ import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta, VENDOR } from '@/lib/constants';
 import { StatusControls, ConvertControl } from './StatusControls';
 import { TrialFollowUpForm } from './TrialFollowUpForm';
+import { RescheduleForm } from './RescheduleForm';
 
 export default async function TrialDetailPage({ params, searchParams }) {
   const { id } = await params;
@@ -107,6 +108,22 @@ export default async function TrialDetailPage({ params, searchParams }) {
             <h2 className="adm-card-title">Coach notes</h2>
             <p className="adm-muted">{trial.attendanceNotes || 'Not recorded yet.'}</p>
           </div>
+
+          {(trial.status === 'no_show' || trial.status === 'rescheduled') && !trial.convertedMember && (
+            <div className="adm-card" style={{ borderLeft: '4px solid var(--gold, #C99419)' }}>
+              <h2 className="adm-card-title">Reschedule</h2>
+              <p className="adm-help" style={{ marginBottom: 12 }}>Pick a new slot — same trial record, history preserved.</p>
+              <RescheduleForm trialId={trial.id} currentArea={trial.area} currentDiscipline={trial.discipline} currentDay={trial.day} currentTime={trial.scheduledTime} />
+            </div>
+          )}
+
+          {(trial.outcome === 'didnt_join' || trial.outcome === 'lost_touch') && (
+            <div className="adm-card">
+              <h2 className="adm-card-title">Try again?</h2>
+              <p className="adm-muted" style={{ marginBottom: 12 }}>If they want a second shot, schedule a fresh trial.</p>
+              <Link href={`/admin/trials/new?inquiryId=${trial.inquiryId}`} className="adm-btn adm-btn-secondary">+ Schedule another trial</Link>
+            </div>
+          )}
 
           <div className="adm-card">
             <h2 className="adm-card-title">Log a follow-up</h2>
