@@ -2,9 +2,6 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 
-// Cache the dashboard for 30s — Vinod refreshes the page often, but the
-// data shape doesn't change minute-to-minute. Inquiry/trial creates revalidate
-// on the relevant routes anyway.
 export const revalidate = 30;
 
 const MODULES = [
@@ -21,7 +18,17 @@ export default async function HomePage() {
   const todayStart = new Date(now); todayStart.setHours(0, 0, 0, 0);
   const todayEnd = new Date(now); todayEnd.setHours(23, 59, 59, 999);
 
-  const [inquiryFollowUps, trialFollowUps, todaysTrials, healthAlerts, mediaFlags, recentInquiryEvents, recentTrialEvents] = await Promise.all([
+  const [
+    callsToday,
+    todaysTrials,
+    conversionFollowUps,
+    healthAlerts,
+    smokers,
+    noMediaConsent,
+    recentInquiryEvents,
+    recentTrialEvents,
+  ] = await Promise.all([
+    // 1. Calls to make today — leads with overdue follow-ups
     db.inquiry.findMany({
       where: {
         nextFollowUpAt: { lte: now },
@@ -30,24 +37,10 @@ export default async function HomePage() {
         trials: { none: {} },
       },
       orderBy: { nextFollowUpAt: 'asc' },
-      take: 8,
-      select: { id: true, firstName: true, lastName: true, phone: true, nextFollowUpAt: true, stage: true },
+      take: 10,
+      select: { id: true, firstName: true, lastName: true, phone: true, nextFollowUpAt: true, stage: true, followUpAttempts: true },
     }),
-    db.trial.findMany({
-      where: {
-        nextFollowUpAt: { lte: now },
-        convertedMemberId: null,
-        status: { in: ['no_show', 'booked'] },
-      },
-      orderBy: { nextFollowUpAt: 'asc' },
-      take: 6,
-      select: {
-        id: true,
-        nextFollowUpAt: true,
-        status: true,
-        inquiry: { select: { firstName: true, lastName: true, phone: true } },
-      },
-    }),
+    // 2. Trials scheduled for today
     db.trial.findMany({
       where: { scheduledDate: { gte: todayStart, lte: todayEnd } },
       orderBy: { scheduledTime: 'asc' },
@@ -61,6 +54,26 @@ export default async function HomePage() {
         healthDecl: { select: { id: true } },
       },
     }),
+    // 3. Trials past their date that haven't converted yet — chase for conversion
+    db.trial.findMany({
+      where: {
+        scheduledDate: { lt: todayStart },
+        convertedMemberId: null,
+        status: { in: ['confirmed', 'showed_up'] },
+        outcome: { not: 'didnt_join' },
+      },
+      orderBy: { scheduledDate: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        scheduledDate: true,
+        status: true,
+        outcome: true,
+        discipline: true,
+        inquiry: { select: { firstName: true, lastName: true, phone: true } },
+      },
+    }),
+    // 4. Members with critical health flag or medical notes
     db.member.findMany({
       where: {
         OR: [
@@ -69,39 +82,43 @@ export default async function HomePage() {
         ],
       },
       orderBy: { joinedAt: 'desc' },
-      take: 8,
+      take: 10,
       select: { id: true, firstName: true, lastName: true, criticalHealthFlag: true, medicalNotes: true },
     }),
+    // 5. Smoker members — coach attention for cardio plan
+    db.member.findMany({
+      where: { smokes: true },
+      orderBy: { joinedAt: 'desc' },
+      take: 10,
+      select: { id: true, firstName: true, lastName: true },
+    }),
+    // 6. Members who declined photo / video consent
     db.member.findMany({
       where: { mediaConsent: false },
       orderBy: { joinedAt: 'desc' },
-      take: 8,
+      take: 10,
       select: { id: true, firstName: true, lastName: true },
     }),
     db.inquiryEvent.findMany({
       orderBy: { createdAt: 'desc' },
-      take: 12,
+      take: 10,
       include: { inquiry: { select: { id: true, firstName: true, lastName: true } } },
     }),
     db.trialEvent.findMany({
       orderBy: { createdAt: 'desc' },
-      take: 12,
+      take: 10,
       include: { trial: { select: { id: true, inquiry: { select: { firstName: true, lastName: true } } } } },
     }),
   ]);
 
-  // Filter out medical notes that are blank strings (Prisma's not:null doesn't
-  // exclude empty strings).
   const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || (m.medicalNotes && m.medicalNotes.trim()));
 
-  // Merge + sort the two event streams into one feed.
   const feed = [
     ...recentInquiryEvents.map((e) => ({
       id: 'i' + e.id,
       when: e.createdAt,
       label: e.label,
       detail: e.detail,
-      type: e.type,
       who: `${e.inquiry.firstName} ${e.inquiry.lastName}`,
       href: `/admin/inquiries/${e.inquiryId}`,
       kind: 'inquiry',
@@ -111,7 +128,6 @@ export default async function HomePage() {
       when: e.createdAt,
       label: e.label,
       detail: e.detail,
-      type: e.type,
       who: `${e.trial.inquiry.firstName} ${e.trial.inquiry.lastName}`,
       href: `/admin/trials/${e.trialId}`,
       kind: 'trial',
@@ -137,80 +153,87 @@ export default async function HomePage() {
       <div className="home-rule" />
 
       <div className="dash-grid">
-        <DashCard
-          title="Follow-ups due"
-          accent="rust"
-          empty="Inbox zero — no follow-ups due."
-          items={[...inquiryFollowUps, ...trialFollowUps]}
-          render={(it) => {
-            const isTrial = 'inquiry' in it;
-            const person = isTrial ? it.inquiry : it;
-            const href = isTrial ? `/admin/trials/${it.id}` : `/admin/inquiries/${it.id}`;
-            return (
-              <Link key={(isTrial ? 't' : 'i') + it.id} href={href} className="dash-row">
-                <div>
-                  <div className="dash-row-name">{person.firstName} {person.lastName}</div>
-                  <div className="dash-row-sub">{isTrial ? `Trial · ${it.status}` : `Inquiry · ${it.stage.replace('_', ' ')}`}</div>
-                </div>
-                <div className="dash-row-meta">{formatRelative(it.nextFollowUpAt)}</div>
-              </Link>
-            );
-          }}
-        />
 
-        <DashCard
-          title={`Today · ${todaysTrials.length} trial${todaysTrials.length === 1 ? '' : 's'}`}
-          accent="gold"
-          empty="No trials scheduled today."
-          items={todaysTrials}
-          render={(t) => (
+        <DashCard title="Calls today" icon="☎" accent="rust" empty="Nobody to chase right now." count={callsToday.length}>
+          {callsToday.map((i) => (
+            <Link key={i.id} href={`/admin/inquiries/${i.id}`} className="dash-row">
+              <div>
+                <div className="dash-row-name">{i.firstName} {i.lastName}</div>
+                <div className="dash-row-sub adm-mono">{i.phone}</div>
+              </div>
+              <div className="dash-row-meta">
+                {i.followUpAttempts > 0 ? `${i.followUpAttempts} prev` : 'first'}
+              </div>
+            </Link>
+          ))}
+        </DashCard>
+
+        <DashCard title="Trials today" icon="◇" accent="gold" empty="No trials on the floor today." count={todaysTrials.length}>
+          {todaysTrials.map((t) => (
             <Link key={t.id} href={`/admin/trials/${t.id}`} className="dash-row">
               <div>
                 <div className="dash-row-name">{t.inquiry.firstName} {t.inquiry.lastName}</div>
                 <div className="dash-row-sub">
-                  {t.discipline} · {t.scheduledTime} ({t.area})
+                  {t.scheduledTime} · {t.discipline} ({t.area})
                   {!t.healthDecl && <span className="dash-pill dash-pill-warn"> form pending</span>}
                 </div>
               </div>
-              <div className={`dash-row-meta dash-row-meta-${t.status}`}>{t.status}</div>
+              <div className={`dash-row-meta dash-row-meta-${t.status}`}>{t.status.replace('_', ' ')}</div>
             </Link>
-          )}
-        />
+          ))}
+        </DashCard>
 
-        <DashCard
-          title="Health alerts"
-          accent="rust"
-          empty="No health flags."
-          items={healthAlertsFiltered}
-          render={(m) => (
+        <DashCard title="Convert from trial" icon="↗" accent="rust" empty="No trials waiting to convert." count={conversionFollowUps.length}>
+          {conversionFollowUps.map((t) => (
+            <Link key={t.id} href={`/admin/trials/${t.id}`} className="dash-row">
+              <div>
+                <div className="dash-row-name">{t.inquiry.firstName} {t.inquiry.lastName}</div>
+                <div className="dash-row-sub">
+                  {t.discipline} · {formatDate(t.scheduledDate)}
+                  {t.outcome && <span> · {t.outcome.replace('_', ' ')}</span>}
+                </div>
+              </div>
+              <div className="dash-row-meta">{formatRelative(t.scheduledDate)}</div>
+            </Link>
+          ))}
+        </DashCard>
+
+        <DashCard title="Health alerts" icon="⚠" accent="rust" empty="No critical health flags." count={healthAlertsFiltered.length}>
+          {healthAlertsFiltered.map((m) => (
             <Link key={m.id} href={`/admin/members/${m.id}`} className="dash-row">
               <div>
                 <div className="dash-row-name">
-                  {m.criticalHealthFlag && <span className="dash-icon" aria-hidden>⚠</span>}
+                  {m.criticalHealthFlag && <span className="dash-icon" aria-hidden style={{ color: 'var(--rust)' }}>⚠</span>}
                   {m.firstName} {m.lastName}
                 </div>
                 {m.medicalNotes && <div className="dash-row-sub" style={{ whiteSpace: 'normal' }}>{m.medicalNotes}</div>}
               </div>
             </Link>
-          )}
-        />
+          ))}
+        </DashCard>
 
-        <DashCard
-          title="No media consent"
-          accent="gold"
-          empty="All members OK with photos / video."
-          items={mediaFlags}
-          render={(m) => (
+        <DashCard title="Smokers" icon="◌" accent="gold" empty="No smokers on the roster." count={smokers.length}>
+          {smokers.map((m) => (
             <Link key={m.id} href={`/admin/members/${m.id}`} className="dash-row">
               <div>
-                <div className="dash-row-name">
-                  <span className="dash-icon" aria-hidden>📷</span>{m.firstName} {m.lastName}
-                </div>
+                <div className="dash-row-name">{m.firstName} {m.lastName}</div>
+                <div className="dash-row-sub">Adjust cardio expectations</div>
+              </div>
+            </Link>
+          ))}
+        </DashCard>
+
+        <DashCard title="No media consent" icon="✕" accent="gold" empty="All members OK with photos / video." count={noMediaConsent.length}>
+          {noMediaConsent.map((m) => (
+            <Link key={m.id} href={`/admin/members/${m.id}`} className="dash-row">
+              <div>
+                <div className="dash-row-name">{m.firstName} {m.lastName}</div>
                 <div className="dash-row-sub">Do not photograph or feature</div>
               </div>
             </Link>
-          )}
-        />
+          ))}
+        </DashCard>
+
       </div>
 
       {feed.length > 0 && (
@@ -256,17 +279,20 @@ export default async function HomePage() {
   );
 }
 
-function DashCard({ title, accent, items, render, empty }) {
+function DashCard({ title, icon, accent, count, children, empty }) {
   return (
     <div className={`dash-card dash-card-${accent}`}>
       <div className="dash-card-head">
-        <span className="dash-card-title">{title}</span>
-        <span className="dash-card-count">{items.length}</span>
+        <span className="dash-card-title">
+          <span className="dash-card-icon" aria-hidden>{icon}</span>
+          {title}
+        </span>
+        <span className="dash-card-count">{count}</span>
       </div>
-      {items.length === 0 ? (
+      {count === 0 ? (
         <p className="dash-card-empty">{empty}</p>
       ) : (
-        <div className="dash-card-list">{items.map(render)}</div>
+        <div className="dash-card-list">{children}</div>
       )}
     </div>
   );
