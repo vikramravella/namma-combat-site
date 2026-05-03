@@ -19,6 +19,10 @@ export default async function HomePage() {
   const todayStart = new Date(now); todayStart.setHours(0, 0, 0, 0);
   const todayEnd = new Date(now); todayEnd.setHours(23, 59, 59, 999);
 
+  // Notification counts for the module tiles — same idea as iOS app badges.
+  const in14 = new Date(); in14.setDate(in14.getDate() + 14);
+  const in90 = new Date(); in90.setDate(in90.getDate() - 90);
+
   const [
     callsToday,
     todaysTrials,
@@ -28,6 +32,11 @@ export default async function HomePage() {
     noMediaConsent,
     recentInquiryEvents,
     recentTrialEvents,
+    countNewInquiries,
+    countUpcomingTrials,
+    countExpiringMembers,
+    countUnpaidReceipts,
+    countPendingAssessments,
   ] = await Promise.all([
     // 1. Calls to make today — leads with overdue follow-ups
     db.inquiry.findMany({
@@ -110,7 +119,37 @@ export default async function HomePage() {
       take: 10,
       include: { trial: { select: { id: true, inquiry: { select: { firstName: true, lastName: true } } } } },
     }),
+    // Module-tile notification counts
+    db.inquiry.count({
+      where: { stage: 'new', convertedMemberId: null, trials: { none: {} } },
+    }),
+    db.trial.count({
+      where: {
+        scheduledDate: { gte: todayStart },
+        status: { in: ['booked', 'confirmed'] },
+        convertedMemberId: null,
+      },
+    }),
+    db.member.count({
+      where: {
+        plans: { some: { status: { in: ['active', 'on_freeze'] }, endDate: { gte: now, lte: in14 } } },
+      },
+    }),
+    db.receipt.count({
+      where: { status: { in: ['issued', 'partial'] } },
+    }),
+    db.assessmentBooking.count({
+      where: { status: 'booked', scheduledDate: { gte: todayStart } },
+    }),
   ]);
+
+  const moduleCounts = {
+    '/admin/inquiries': countNewInquiries,
+    '/admin/trials': countUpcomingTrials,
+    '/admin/members': countExpiringMembers,
+    '/admin/receipts': countUnpaidReceipts,
+    '/admin/assessments': countPendingAssessments,
+  };
 
   const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || (m.medicalNotes && m.medicalNotes.trim()));
 
@@ -188,13 +227,17 @@ export default async function HomePage() {
       )}
 
       <div className="home-grid">
-        {MODULES.map((m, i) => (
-          <Link key={m.href} href={m.href} className={`home-tile home-tile-${m.tone}`} style={{ animationDelay: `${i * 40}ms` }}>
-            <span className="home-tile-mark">{m.emoji}</span>
-            <span className="home-tile-name">{m.label}</span>
-            <span className="home-tile-sub">{m.sub}</span>
-          </Link>
-        ))}
+        {MODULES.map((m, i) => {
+          const count = moduleCounts[m.href] || 0;
+          return (
+            <Link key={m.href} href={m.href} className={`home-tile home-tile-${m.tone}`} style={{ animationDelay: `${i * 40}ms` }}>
+              <span className="home-tile-mark">{m.emoji}</span>
+              {count > 0 && <span className="home-tile-badge">{count}</span>}
+              <span className="home-tile-name">{m.label}</span>
+              <span className="home-tile-sub">{m.sub}</span>
+            </Link>
+          );
+        })}
       </div>
 
       <div className="home-foot">

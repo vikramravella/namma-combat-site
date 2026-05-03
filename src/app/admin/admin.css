@@ -2602,6 +2602,28 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 .adm-row { display: flex; gap: 12px; align-items: center; }
 .adm-spacer { flex: 1; }
 
+/* iOS-style notification badge sitting top-right inside each module tile. */
+.home-tile { position: relative; }
+.home-tile-badge {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--rust, #9A3520);
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(154, 53, 32, 0.3);
+  letter-spacing: 0;
+}
+
 /* ─── Dashboard folder (one card, multiple tabs) ─── */
 .dash-folder {
   background: var(--cream, #FEF8EE);
