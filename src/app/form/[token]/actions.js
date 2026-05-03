@@ -5,17 +5,18 @@ import { headers } from 'next/headers';
 import { db } from '@/lib/db';
 
 const formSchema = z.object({
-  dob: z.string().optional().or(z.literal('')),
-  gender: z.string().trim().max(20).optional().or(z.literal('')),
-  emergencyName: z.string().trim().max(120).optional().or(z.literal('')),
-  emergencyPhone: z.string().trim().max(20).optional().or(z.literal('')),
-  emergencyRelation: z.string().trim().max(60).optional().or(z.literal('')),
+  dob: z.string().min(1, 'Date of birth required'),
+  gender: z.string().trim().min(1, 'Gender required').max(20),
+  emergencyName: z.string().trim().min(1, 'Emergency contact name required').max(120),
+  emergencyPhone: z.string().trim().min(1, 'Emergency contact phone required').max(20),
+  emergencyRelation: z.string().trim().min(1, 'Emergency contact relation required').max(60),
+  // Health fields stay optional — leave blank if none
   medicalConditions: z.string().trim().max(1000).optional().or(z.literal('')),
   injuries: z.string().trim().max(1000).optional().or(z.literal('')),
   medications: z.string().trim().max(1000).optional().or(z.literal('')),
-  smoking: z.enum(['no', 'occasionally', 'yes', '']).optional(),
-  alcohol: z.enum(['no', 'socially', 'regularly', '']).optional(),
-  mediaConsent: z.enum(['yes', 'no']).optional(),
+  smoking: z.enum(['no', 'occasionally', 'yes']),
+  alcohol: z.enum(['no', 'socially', 'regularly']),
+  mediaConsent: z.enum(['yes', 'no']),
   consentSignedName: z.string().trim().min(1, 'Please type your full name to sign').max(120),
 });
 

@@ -64,7 +64,7 @@ export function HealthFormClient({ inquiry, trial, action }) {
       </Section>
 
       <Section label="A few quick details">
-        <Field name="dob" label="Date of birth" type="date" />
+        <Field name="dob" label="Date of birth" type="date" required />
         <SelectField name="gender" label="Gender" options={['Male', 'Female', 'Prefer not to say']} required />
       </Section>
 
