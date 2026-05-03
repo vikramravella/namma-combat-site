@@ -81,6 +81,7 @@ export async function submitInquiry(formData) {
     console.error('submitInquiry failed', err);
     Sentry.captureException(err, { tags: { source: 'submitInquiry', stage: 'db' }, extra: { raw } });
     try { await Sentry.flush(2000); } catch {}
-    return { ok: false, error: 'Something went wrong — please WhatsApp us.' };
+    const msg = (err?.message || String(err)).split('\n').filter(Boolean).slice(0, 4).join(' | ').slice(0, 500);
+    return { ok: false, error: `[${err?.code || 'unknown'}] ${msg}` };
   }
 }
