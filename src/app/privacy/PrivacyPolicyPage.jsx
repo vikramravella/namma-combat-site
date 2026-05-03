@@ -46,7 +46,7 @@ export default function PrivacyPolicyPage() {
           <h2>5. Who we share information with</h2>
           <p>We share limited information only with:</p>
           <ul>
-            <li><strong>Zoho CRM</strong> (Zoho Corporation, India) &mdash; we use Zoho to store and manage lead information submitted through our forms. Zoho acts as our data processor and is bound by its own data protection standards.</li>
+            <li><strong>Hosting and infrastructure providers</strong> (Vercel Inc., Supabase Inc.) &mdash; our website and database run on these platforms; they process your information solely to keep our services operating.</li>
             <li><strong>Google Analytics 4</strong> (Google LLC) &mdash; we use Google Analytics to understand website traffic. Google may process this data outside India.</li>
             <li><strong>Service providers and authorities</strong> &mdash; if required by law, court order, or government regulation.</li>
           </ul>

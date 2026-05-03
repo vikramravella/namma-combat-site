@@ -64,9 +64,6 @@ model Inquiry {
   nextFollowUpAt    DateTime? // when to next reach out — drives the "Follow-ups due" queue
   followUpAttempts  Int       @default(0) // increments on each logged call/WhatsApp; auto-suggests "Not responding" at 3+
   lastContactedAt   DateTime? // last time anyone touched this inquiry
-  // Zoho archive — original record id + full payload
-  zohoId            String?   @unique
-  zohoRaw           String?
   // Set if the inquiry resulted in a member (after conversion)
   convertedMemberId String? @unique
   convertedMember   Member? @relation("MemberFromInquiry", fields: [convertedMemberId], references: [id])
@@ -125,9 +122,6 @@ model Trial {
   nextFollowUpAt    DateTime?
   followUpAttempts  Int      @default(0)
   lastContactedAt   DateTime?
-  // Zoho archive
-  zohoId            String?  @unique
-  zohoRaw           String?
   // Health declaration (1:1)
   healthDecl      HealthDeclaration?
   formToken       HealthFormToken?
@@ -226,9 +220,6 @@ model Member {
   // Origin tracing (each side owns the ↔ relation)
   fromInquiry         Inquiry?     @relation("MemberFromInquiry")
   fromTrial           Trial?       @relation("MemberFromTrial")
-  // Zoho archive
-  zohoId              String?      @unique
-  zohoRaw             String?
   // Children
   plans               Plan[]
   assessments         Assessment[]
@@ -335,9 +326,6 @@ model Plan {
   // Optional billing override (B2B legal name on invoice, when GSTIN present)
   billingNameOverride String?
   notes               String?
-  // Zoho archive
-  zohoId              String?   @unique
-  zohoRaw             String?
   // Receipt — auto-created on plan create
   receipt             Receipt?
   createdAt           DateTime  @default(now())

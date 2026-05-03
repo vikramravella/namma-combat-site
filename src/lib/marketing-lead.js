@@ -5,7 +5,7 @@ import { mapLegacyInterest } from './legacy-interest-map';
 // Shared lead-submit helper for the marketing landing pages.
 // All public landing pages (trial, kickboxing, mma, …) call this with their
 // inline form's { name, phone, interest } and create an Inquiry record in
-// the NCA database — no more Zoho. Phone-dedupe is handled server-side.
+// the NCA database. Phone-dedupe is handled server-side.
 export async function submitMarketingLead({ name, phone, interest }) {
   if (!name || !phone) return { ok: false };
   const parts = String(name).trim().split(' ');

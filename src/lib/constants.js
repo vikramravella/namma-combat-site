@@ -101,7 +101,7 @@ export const PAYMENT_METHODS = [
 
 // ─── Pricing ──────────────────────────────────────────────────────────
 // Base prices in RUPEES (pre-GST). Convert to paise via × 100 at use.
-// Source: Zoho memory — verify with Vinod before any price change.
+// Verify with Vinod before any price change.
 export const TIERS = [
   { key: 'Silver',   label: 'Silver',   floor: '1 floor',          notes: '1 floor (Arena OR Sanctuary)' },
   { key: 'Student',  label: 'Student',  floor: 'Both floors',      notes: 'Both floors · valid student ID required' },

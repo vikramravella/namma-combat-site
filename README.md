@@ -6,39 +6,23 @@ Founded by Vinod Karuturi. Built solo after firing the previous dev team. All ac
 
 ---
 
-## ▶ RESUME HERE — May 3, 2026 (after Sunday rest)
+## Current state
 
-The **NCA admin platform shipped end-to-end and is LIVE.**
+The **NCA admin platform is LIVE and self-sufficient.**
 
 ### What's live
-- **URL:** https://academy.nammacombat.com (Vercel, Singapore region `sin1`, custom domain mapped)
-- **Login:** `vi@nammacombat.com` / `xERjyhNrd9Ekw2sv` *(rotate ASAP — see below)*
-- **DB:** Prisma Postgres (Singapore, free tier) auto-linked to Vercel project
+- **URL:** https://academy.nammacombat.com (Vercel, custom domain mapped)
+- **DB:** Supabase Postgres (Mumbai, `ap-south-1`) — migrated May 3, 2026
 - **Marketing site** unchanged at `nammacombat.com`. Subdomain middleware (`src/middleware.js`) keeps the two surfaces separate.
-
-### Imported from Zoho on first deploy
-- 129 Inquiries · 118 Members · 50 Trials · 70 Plans + 70 Receipts + 70 Payments · ₹9,31,773 lifetime revenue mapped
-- Full original Zoho payload preserved per record in `zohoRaw` field — nothing is lost.
-
-### 🚨 CRITICAL — DO FIRST WHEN YOU WAKE UP
-**Rotate these production credentials.** I accidentally committed `.env.production` to the public GitHub repo for ~5 minutes (force-pushed clean since, but assume the secrets are exposed):
-1. **NEXTAUTH_SECRET** — generate new, set in Vercel env vars, redeploy
-2. **ADMIN_PASSWORD** — generate new, set in Vercel + I update prod DB
-3. **ZOHO_CLIENT_SECRET + REFRESH_TOKEN** — regenerate from https://api-console.zoho.in/
-4. **Prisma Postgres password** — rotate via https://console.prisma.io/ → DB → settings
-
-Walk-through with Claude when you start the next session.
+- **Lead capture:** all 16 marketing forms now write directly to NCA's database via `/inquire` server action. Public lead form also at `nammacombat.com/inquire`.
+- **Error tracking:** Sentry (https://namma-combat-j4.sentry.io) catches every runtime exception with stack traces.
 
 ### Queued for next session(s)
-1. Rotate the leaked secrets above (top priority)
-2. Auto-save on edit forms (no Save button — saves as you type, debounced; hook scaffold already in `src/lib/useAutoSave.js`)
-3. Books invoices import — pull historical Zoho Books invoices into NCA Receipts so original invoice numbers are preserved
-4. Lead form migration — swap the 18 website forms to POST to NCA's `/api/leads` instead of Zoho. After this verifies → safe to delete Zoho org.
-5. Move DB from Singapore → Mumbai region (~50ms latency improvement)
-6. HR module — employees + payroll
-7. Client birthday alerts (dashboard surface + later auto-WhatsApp)
-8. WhatsApp Business API integration — sync incoming messages per member, send outgoing from platform
-9. Security pass: 2FA (TOTP/passkey), audit log surfacing, magic-link login, rate limit
+1. Auto-save on edit forms (no Save button — saves as you type, debounced; hook scaffold already in `src/lib/useAutoSave.js`)
+2. HR module — employees + payroll
+3. Client birthday alerts (dashboard surface + later auto-WhatsApp)
+4. WhatsApp Business API integration — sync incoming messages per member, send outgoing from platform
+5. Security pass: 2FA (TOTP/passkey), audit log surfacing, magic-link login, rate limit
 
 ### NCA platform — what's built (locked-in shape)
 - **Repo:** folded into existing `namma-combat-site` repo. Marketing site at root, admin at `/admin`, public health form at `/form/[token]`. Subdomain middleware routes by host.
@@ -51,51 +35,7 @@ Walk-through with Claude when you start the next session.
 - **Freeze policy:** Monthly 7d / Quarterly 18d / Semi-Annual 30d / Annual 54d. Min 7 days per freeze, 7 days advance notice, medical exception bypasses.
 - **Skill levels:** Beginner / Intermediate / Advanced / Professional. Members track multiple `disciplines` (comma-list).
 - **Dashboard:** clean module navigator (no money on home page — privacy from screen-watchers). All metrics live behind `/admin/reports`.
-- **Importer:** `scripts/import-zoho.js` — re-runnable, idempotent (phone is dedup key). Run with `node --env-file=.env.production scripts/import-zoho.js`.
 - **Seed:** `prisma/seed.js` — Vinod's user + 7 coaches (Bhagyarajan, Rajan, Kantharaj, Venkatesh, Spoorthi, Manoj, Naeem).
-
-### Original platform-build plan (kept for reference)
-
-**Big decision tonight:** building NCC's own admin platform to replace Zoho dependency. Zoho stays running untouched — we build in parallel and migrate piece by piece.
-
-### Why
-- Zoho is too confusing — 18 Deluge functions, 27 fields, v6/v8 endpoint inconsistency, function source not API-readable, 3-product UI sprawl (CRM/Books/Forms). Even with API access, key things require manual UI clicks
-- Monthly cost (~₹3-8k saved) recovered into our own infra
-- Vinod is going to build a member booking app eventually anyway — this platform IS that app's backend, no throwaway work
-- Vinod's quote: *"this zoho is too confusing... instead of being dependent on third party and pay them monthly this is the best way"*
-
-### Phase 1 MVP scope (THIS WEEK — 3-4 days focused build)
-**Admin-only back-office tool.** No member-facing stuff yet.
-- Vinod's login (1-2 staff later)
-- Add/edit member records (mirror Zoho Trials/Members fields)
-- Create memberships (tier, billing cycle, dates, payment status, freeze tracking — match Zoho Deals model)
-- Generate GST-compliant PDF invoices: CGST 2.5% + SGST 2.5%, SAC 999723, GSTIN 29AHXPV9545M2ZR, sequential numbering
-- Send invoice as link via email/WhatsApp (manual share initially)
-- Basic dashboard: today's revenue, active members, expiring this week
-
-### Architecture (locked in)
-- **Repo:** fold platform into existing `namma-combat-site` repo as `/admin` (staff) and later `/portal` (members) routes. Marketing site stays at root. One deploy, shared auth.
-- **Stack:** Next.js 14 + Postgres (Supabase or Vercel Postgres) + Tailwind/shadcn + Prisma + NextAuth (or similar) for staff
-- **Dual-write:** every action writes to BOTH new DB AND Zoho during transition (use existing Zoho API access at `~/.zoho/credentials`) so nothing breaks
-
-### Two unblocks needed from Vinod tomorrow morning (~15 min total)
-1. **Subdomain pick:** `app.nammacombat.com` / `portal.nammacombat.com` / `members.nammacombat.com` — or "you pick"
-2. **Database:** sign up free at supabase.com (Google login, 2 min) → create project `namma-combat` → paste connection string. OR say "you pick" → use Vercel Postgres (zero setup)
-
-Everything else (Razorpay, MSG91, Resend, WhatsApp via Meta) wired later as needed.
-
-### Phased roadmap (parallel-run with Zoho throughout)
-- **Week 1:** Phase 1 MVP above (admin login + member CRUD + invoicing)
-- **Weeks 3-5:** Phase 2 — Member portal (login, see status, freeze), public trial booking form replacing Zoho Forms
-- **Weeks 3-5:** Phase 3 — Membership lifecycle automation (renewal, freeze, expiry) + WhatsApp/SMS via Meta Business API + MSG91
-- **Weeks 6-8:** Phase 4 — Full Books replacement (parallel-run for 1 month, CA review, then cut over)
-- **Weeks 9+:** Phase 5 — Decommission Zoho CRM (optionally keep Books as 1-quarter safety net)
-
-### Lead form migration (free win during Phase 2)
-~18 lead forms across the site (homepage + 14 discipline landings + 3 coach pages) currently POST to Zoho. New API route `/api/leads` will dual-write. One PR switches them all over.
-
-### Cost while building
-₹0. Vercel free tier + Supabase free tier handles everything until ~50k members.
 
 ### Vinod's schedule
 Committed (May 3) to 6 hrs sleep/day going forward. Default to "you pick" in choices, batch decisions, async-friendly handoffs.
@@ -462,26 +402,11 @@ Required for Razorpay KYC and Indian Digital Personal Data Protection Act 2023 c
 
 ---
 
-## Zoho CRM Integration
+## Lead Form
 
-- **Endpoint:** https://crm.zoho.in/crm/WebToLeadForm
-- **Method:** Hidden iframe form submission (NOT fetch — CORS blocks)
-- **Form ID:** webform1242297000001060922
-- **Fields sent:** First Name, Last Name, Phone, Lead Source (auto: "Website"), LEADCF14 (Interested In)
-- **returnURL:** https://nammacombat.com/trial
-- **Form Location URL whitelist (in Zoho):** nammacombat.com, www.nammacombat.com, academy.nammacombat.com
+All public lead-capture forms (homepage modal, 14 discipline landings, 3 coach pages, and the standalone `/inquire` page) submit directly to NCA's database via the `submitInquiry` server action in `src/app/inquire/actions.js`. Phone is the dedupe key — re-submissions append a `Re-inquired` event to the existing inquiry instead of creating a duplicate.
 
-### Current hidden keys (regenerate ALL files when form edited in Zoho)
-- `xnQsjsdp`: `46046e1b1518a2e1c8335abc6c416cc060d54010509945e0354e8c12064719fe`
-- `xmIwtLD`: `a9a1d770007ff6c74947f678d63c2e80373d35aa1e34f909ded5b4cb6df9af52dcdb4166291a626a499d63089a7299d9`
-- **Last regenerated:** April 24, 2026
-
-### To update keys across all files:
-```bash
-# Note: after Apr 20 split, client forms are in .jsx files, not .js
-find src -type f -name "*.jsx" -exec sed -i '' "s|'xnQsjsdp': '[a-f0-9]*'|'xnQsjsdp': 'NEW_KEY_HERE'|g" {} \;
-find src -type f -name "*.jsx" -exec sed -i '' "s|'xmIwtLD': '[a-f0-9]*'|'xmIwtLD': 'NEW_KEY_HERE'|g" {} \;
-```
+Shared helper: `src/lib/marketing-lead.js` — landing pages call `submitMarketingLead({ name, phone, interest })` and the helper handles legacy interest-string mapping via `src/lib/legacy-interest-map.js`.
 
 ---
 
@@ -839,14 +764,15 @@ Review trial → member conversion rate after transparent pricing live.
 - Google Workspace admin: Vinod
 - Google Analytics: Vinod
 - Google Search Console: Vinod (vi@nammacombat.com)
-- Zoho CRM: Vinod
+- Sentry: vi@nammacombat.com (`namma-combat-j4` org)
+- Supabase: provisioned via Vercel Marketplace integration
 
 ---
 
 ## Security Posture
 
 ### Account 2FA — confirmed Apr 28, 2026
-All major accounts (GitHub, Vercel, Namecheap, Google Workspace, Zoho CRM) have 2FA enabled. Worth occasionally verifying that critical accounts (Namecheap, Vercel, GitHub) use authenticator app or hardware key, NOT SMS — SIM-swap attacks bypass SMS-based 2FA.
+All major accounts (GitHub, Vercel, Namecheap, Google Workspace, Supabase, Sentry) have 2FA enabled. Worth occasionally verifying that critical accounts (Namecheap, Vercel, GitHub) use authenticator app or hardware key, NOT SMS — SIM-swap attacks bypass SMS-based 2FA.
 
 ### Email authentication — DMARC tightening in progress
 
@@ -859,7 +785,7 @@ Current DNS state on nammacombat.com (as of Apr 28, 2026):
 | DKIM | OK | Active (Google selector) |
 | DMARC | partial | `v=DMARC1; p=none; rua=mailto:combatnamma@gmail.com` — monitoring only, reports to personal Gmail |
 
-**Confirmed:** Google Workspace is the ONLY sender for `@nammacombat.com`. No Mailchimp, no Zoho campaigns, no Calendly, no other third-party senders. This means we can tighten DMARC aggressively without risk of breaking forgotten legit mail.
+**Confirmed:** Google Workspace is the ONLY sender for `@nammacombat.com`. No Mailchimp, no Calendly, no other third-party senders. This means we can tighten DMARC aggressively without risk of breaking forgotten legit mail.
 
 **Resume here next session — two decisions pending:**
 1. Which `@nammacombat.com` address should receive DMARC reports? Options:
@@ -875,7 +801,7 @@ Once a path is picked, the change is a single TXT record edit in Vercel DNS pane
 1. **Done** — Account takeover prevention via 2FA on all critical accounts.
 2. **In progress** — Email spoofing prevention via DMARC tightening.
 3. **Pending** — Brand impersonation: trademark Namma Combat wordmark + seal in India (~₹4,500 govt fee + lawyer time). Legal protection against fake academies / impersonation pages.
-4. **Pending** — DPDP Act compliance: create `privacy@nammacombat.com` alias (already noted in main Pending), document Zoho lead retention policy, plan for breach response.
+4. **Pending** — DPDP Act compliance: create `privacy@nammacombat.com` alias (already noted in main Pending), document NCA lead-retention policy, plan for breach response.
 5. **Pending** — Form spam: honeypot hidden field on all 15 trial forms; optional invisible hCaptcha if spam volume becomes real.
 6. **Pending** — HTTP security headers via `next.config.js` or Vercel: Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, Referrer-Policy. Defends against clickjacking + injection classes.
 7. **Pending (low priority)** — Asset hardening: largely unsolvable since browser must download fonts/SVGs to render. Real levers are font licensing audit (verify Materia Pro Bold web-embed license) + photo watermarking post-shoot. Hotlink protection blocks other domains from embedding `/public` assets — small win.
@@ -892,7 +818,7 @@ Once a path is picked, the change is a single TXT record edit in Vercel DNS pane
 ## Notes for Future Chats
 
 - If context is lost, start a new chat and paste this README
-- Website is fully functional at nammacombat.com with Zoho + GA4 + Search Console live
+- Website is fully functional at nammacombat.com with the NCA admin platform + GA4 + Search Console + Sentry live
 - Vinod is non-technical but fluent in Terminal / Git after this project
 - Prefers `python3` in-place edits via heredoc over downloading whole files
 
@@ -902,14 +828,11 @@ Once a path is picked, the change is a single TXT record edit in Vercel DNS pane
 - **zsh: unknown file attribute: h** — from certain command flags, ignore
 - **zsh: ! in history expansion** — escape with `\` or wrap in single quotes
 - **Form pre-select values MUST exactly match dropdown options** or they fall back to first option
-- **Zoho regenerates hidden keys on every form edit** — must propagate across all client Landing files (now .jsx, not .js)
 - **`&` in sed replacements breaks regex** — use python3 `.replace()` instead
 - **Always `npm run build 2>&1 | tail -5` before pushing** — catches errors without printing thousands of lines
 - **For high-stakes changes (pricing, legal, irreversible UX), SHOW the code BEFORE running** — Vinod has strong design taste and catches issues pre-ship
-- **Zoho keys silently regenerate when the form is edited in Zoho** — or occasionally for reasons unclear. Symptom: form submits successfully, email notification arrives, but no lead appears in Zoho CRM. The hidden `xnQsjsdp` and `xmIwtLD` keys become invalid, so Zoho silently rejects the POST. Fix: edit form in Zoho (any minor change + save), grab fresh embed code, sweep both keys across all 15 files, deploy. Always check Zoho Leads module directly for verification — the Webforms analytics view is unreliable.
 - **Form field placeholders live in data objects, not JSX attributes** — trial forms use `{[{k,l,t,p}, ...]}` arrays with `placeholder={p}`. To find/replace placeholder text, search the single-quoted string inside the data object (`p: 'value'`), not `placeholder="value"`. Otherwise grep/sed will miss everything.
-- **Email notification vs Zoho lead is NOT the same thing.** If "Notify Leads Owner" is enabled in Zoho, you'll get an email for every submission even when the actual lead insertion fails. Never use "got an email" as proof that the lead landed in Zoho. Always verify via the Leads module.
-- **Test the full pipeline, not just the form submission.** After any change touching Zoho integration or trial forms: submit a test lead in incognito, confirm email arrived, AND confirm it appears in Zoho Leads module (filter by Created Date today). Don't rely on one signal.
+- **Server components can't attach event handlers** — `<input onClick={...}>` in a server component throws a redacted "An error occurred in the Server Components render" in production. Move interactive bits into a child `'use client'` component.
 
 ### Working pattern
 - ONE change at a time. Surgical, verified, committed.
