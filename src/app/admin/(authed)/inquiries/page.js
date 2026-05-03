@@ -57,6 +57,7 @@ export default async function InquiriesPage({ searchParams }) {
 
   return (
     <>
+      <MarkSeenOnMount />
       <div className="adm-page-header">
         <div>
           <h1 className="adm-page-title">Inquiries</h1>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
@@ -19,9 +20,10 @@ export default async function HomePage() {
   const now = new Date();
   const { start: todayStart, end: todayEnd } = istTodayWindow(now);
 
-  // Notification counts for the module tiles — same idea as iOS app badges.
-  const in14 = new Date(); in14.setDate(in14.getDate() + 14);
-  const in90 = new Date(); in90.setDate(in90.getDate() - 90);
+  // Read the "last seen inquiries" cookie so we can highlight only the
+  // website leads that arrived since Vinod last opened the inquiries list.
+  const lastSeenRaw = (await cookies()).get('last-seen-inq')?.value;
+  const lastSeenInq = lastSeenRaw ? new Date(Number(lastSeenRaw)) : new Date(0);
 
   const [
     callsToday,
@@ -33,10 +35,6 @@ export default async function HomePage() {
     recentInquiryEvents,
     recentTrialEvents,
     countNewInquiries,
-    countUpcomingTrials,
-    countExpiringMembers,
-    countUnpaidReceipts,
-    countPendingAssessments,
   ] = await Promise.all([
     // 1. Calls to make today — leads with overdue follow-ups
     db.inquiry.findMany({
@@ -121,25 +119,12 @@ export default async function HomePage() {
     }),
     // Module-tile notification counts
     db.inquiry.count({
-      where: { stage: 'new', convertedMemberId: null, trials: { none: {} } },
-    }),
-    db.trial.count({
       where: {
-        scheduledDate: { gte: todayStart },
-        status: { in: ['booked', 'confirmed'] },
+        source: 'website',
+        createdAt: { gt: lastSeenInq },
         convertedMemberId: null,
+        trials: { none: {} },
       },
-    }),
-    db.member.count({
-      where: {
-        plans: { some: { status: { in: ['active', 'on_freeze'] }, endDate: { gte: now, lte: in14 } } },
-      },
-    }),
-    db.receipt.count({
-      where: { status: { in: ['issued', 'partial'] } },
-    }),
-    db.assessmentBooking.count({
-      where: { status: 'booked', scheduledDate: { gte: todayStart } },
     }),
   ]);
 
@@ -151,13 +136,12 @@ export default async function HomePage() {
     smokers.length +
     noMediaConsent.length;
 
+  // Badges only on Alerts and Inquiries. The other modules don't need a
+  // pile of red bubbles — the alert dashboard already surfaces what's
+  // urgent across the whole admin.
   const moduleCounts = {
     '/admin/alerts': totalAlerts,
     '/admin/inquiries': countNewInquiries,
-    '/admin/trials': countUpcomingTrials,
-    '/admin/members': countExpiringMembers,
-    '/admin/receipts': countUnpaidReceipts,
-    '/admin/assessments': countPendingAssessments,
   };
 
   const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || (m.medicalNotes && m.medicalNotes.trim()));
