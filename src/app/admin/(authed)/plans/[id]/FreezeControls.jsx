@@ -37,7 +37,7 @@ export function FreezeControls({ plan }) {
   }
 
   function handleCancel() {
-    const r = prompt('Cancel this plan? Optional reason:');
+    const r = prompt('Cancel this membership? Optional reason:');
     if (r === null) return;
     startTransition(async () => {
       await cancelPlan(plan.id, r);
@@ -45,14 +45,14 @@ export function FreezeControls({ plan }) {
     });
   }
 
-  if (plan.status === 'cancelled') return <p className="adm-muted">This plan is cancelled.</p>;
-  if (plan.status === 'ended') return <p className="adm-muted">This plan has ended.</p>;
+  if (plan.status === 'cancelled') return <p className="adm-muted">This membership is cancelled.</p>;
+  if (plan.status === 'ended') return <p className="adm-muted">This membership has ended.</p>;
 
   if (plan.status === 'on_freeze') {
     return (
       <>
         {error && <p className="adm-error">{error}</p>}
-        <p>Plan is on freeze from <strong>{formatDate(plan.freezeStart)}</strong> to <strong>{formatDate(plan.freezeEnd)}</strong>.</p>
+        <p>Membership is on freeze from <strong>{formatDate(plan.freezeStart)}</strong> to <strong>{formatDate(plan.freezeEnd)}</strong>.</p>
         {plan.freezeReason && <p className="adm-muted">{plan.freezeReason}</p>}
         <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
           <button type="button" onClick={handleEnd} disabled={isPending} className="adm-btn">End freeze early</button>
@@ -83,8 +83,8 @@ export function FreezeControls({ plan }) {
         Medical exception (bypass cap + minimum + advance-notice rules)
       </label>
       <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
-        <button type="button" onClick={handleCancel} className="adm-btn adm-btn-danger">Cancel plan</button>
-        <button type="submit" disabled={isPending} className="adm-btn">{isPending ? 'Freezing…' : 'Freeze plan'}</button>
+        <button type="button" onClick={handleCancel} className="adm-btn adm-btn-danger">Cancel membership</button>
+        <button type="submit" disabled={isPending} className="adm-btn">{isPending ? 'Freezing…' : 'Freeze membership'}</button>
       </div>
     </form>
   );

@@ -93,7 +93,7 @@ export function ConvertControl({ trial }) {
       <button type="button" onClick={handleConvert} disabled={isPending} className="adm-btn" style={{ width: '100%' }}>
         {isPending ? 'Converting…' : 'Convert to member → create plan'}
       </button>
-      <p className="adm-help" style={{ marginTop: 8 }}>Creates a Member record, links from this Trial + Inquiry, and opens the New Plan form.</p>
+      <p className="adm-help" style={{ marginTop: 8 }}>Creates a Member record, links from this Trial + Inquiry, and opens the new membership form.</p>
     </>
   );
 }

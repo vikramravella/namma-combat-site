@@ -33,10 +33,10 @@ export default async function PlansPage({ searchParams }) {
     <>
       <div className="adm-page-header">
         <div>
-          <h1 className="adm-page-title">Plans</h1>
-          <p className="adm-page-subtitle">{rows.length === allCount ? `${allCount} plan${allCount === 1 ? '' : 's'}` : `${rows.length} of ${allCount} matching`}</p>
+          <h1 className="adm-page-title">Memberships</h1>
+          <p className="adm-page-subtitle">{rows.length === allCount ? `${allCount} membership${allCount === 1 ? '' : 's'}` : `${rows.length} of ${allCount} matching`}</p>
         </div>
-        <Link href="/admin/plans/new" className="adm-btn">+ New plan</Link>
+        <Link href="/admin/plans/new" className="adm-btn">+ Add membership</Link>
       </div>
 
       <div className="prv-chips">
@@ -48,10 +48,10 @@ export default async function PlansPage({ searchParams }) {
 
       <div className="prv-table-wrap">
         {rows.length === 0 ? (
-          <div className="prv-empty"><p>No plans yet.</p></div>
+          <div className="prv-empty"><p>No memberships yet.</p></div>
         ) : (
           <table className="prv-table">
-            <thead><tr><th>Member</th><th>Plan</th><th>Period</th><th>Status</th><th>Amount</th><th>Receipt</th></tr></thead>
+            <thead><tr><th>Member</th><th>Membership</th><th>Period</th><th>Status</th><th>Amount</th><th>Receipt</th></tr></thead>
             <tbody>
               {rows.map((p) => (
                 <tr key={p.id}>

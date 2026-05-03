@@ -84,7 +84,7 @@ export function MembershipTypeForm({ row, action, mode }) {
         </div>
         <div className="adm-field">
           <label className="adm-label" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <input type="checkbox" name="active" defaultChecked={mode === 'create' ? true : r.active} /> Active (available in plan-creation dropdown)
+            <input type="checkbox" name="active" defaultChecked={mode === 'create' ? true : r.active} /> Active (available in add-membership dropdown)
           </label>
         </div>
       </div>

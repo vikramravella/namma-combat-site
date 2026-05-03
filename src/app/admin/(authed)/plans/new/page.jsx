@@ -17,9 +17,9 @@ export default async function NewPlanPage({ searchParams }) {
       <>
         <div className="adm-page-header">
           <div>
-            <p className="prv-eyebrow"><Link href="/admin/plans" className="prv-back">← Plans</Link></p>
-            <h1 className="adm-page-title">New plan</h1>
-            <p className="adm-page-subtitle">Pick the member to create a plan for.</p>
+            <p className="prv-eyebrow"><Link href="/admin/plans" className="prv-back">← Memberships</Link></p>
+            <h1 className="adm-page-title">Add membership</h1>
+            <p className="adm-page-subtitle">Pick the member to add a membership for.</p>
           </div>
         </div>
         <div className="prv-table-wrap">
@@ -59,8 +59,8 @@ export default async function NewPlanPage({ searchParams }) {
       <div className="adm-page-header">
         <div>
           <p className="prv-eyebrow"><Link href={`/admin/members/${member.id}`} className="prv-back">← {fullName(member)}</Link></p>
-          <h1 className="adm-page-title">New plan</h1>
-          <p className="adm-page-subtitle">Pick a membership type, then accept the full price or enter the agreed final amount.</p>
+          <h1 className="adm-page-title">Add membership</h1>
+          <p className="adm-page-subtitle">Pick a tier+cycle, then accept the full price or enter the agreed final amount.</p>
         </div>
       </div>
 

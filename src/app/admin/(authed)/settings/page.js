@@ -22,7 +22,7 @@ export default async function SettingsHubPage() {
         <SettingsCard
           title="Membership types"
           subtitle={`${typeCount} active`}
-          description="Tier + cycle + price catalog used by the plan-creation flow."
+          description="Tier + cycle + price catalog used when adding a membership."
           href="/admin/settings/memberships"
         />
         <SettingsCard

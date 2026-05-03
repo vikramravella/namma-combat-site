@@ -151,7 +151,7 @@ export async function createPlan(formData) {
   } catch (err) {
     if (err?.digest?.startsWith('NEXT_REDIRECT')) throw err;
     console.error('createPlan failed', err);
-    return { ok: false, error: 'Could not create plan.' };
+    return { ok: false, error: 'Could not create membership.' };
   }
 }
 
@@ -186,7 +186,7 @@ export async function freezePlan(planId, formData) {
 
   try {
     const plan = await db.plan.findUnique({ where: { id: planId } });
-    if (!plan) return { ok: false, error: 'Plan not found' };
+    if (!plan) return { ok: false, error: 'Membership not found' };
     const newUsed = (plan.freezeDaysUsed || 0) + days;
     if (!medicalException && newUsed > plan.freezeDaysAllowed) {
       return { ok: false, error: `Freeze would exceed allowance (${plan.freezeDaysAllowed} days). Used so far: ${plan.freezeDaysUsed}; this freeze: ${days}.` };
@@ -214,7 +214,7 @@ export async function freezePlan(planId, formData) {
     return { ok: true };
   } catch (err) {
     console.error('freezePlan failed', err);
-    return { ok: false, error: 'Could not freeze plan.' };
+    return { ok: false, error: 'Could not freeze membership.' };
   }
 }
 
@@ -222,7 +222,7 @@ export async function endFreeze(planId) {
   const session = await requireSession();
   try {
     const plan = await db.plan.findUnique({ where: { id: planId } });
-    if (!plan || plan.status !== 'on_freeze') return { ok: false, error: 'Plan is not on freeze' };
+    if (!plan || plan.status !== 'on_freeze') return { ok: false, error: 'Membership is not on freeze' };
     await db.plan.update({
       where: { id: planId },
       data: { status: 'active', freezeStart: null, freezeEnd: null, freezeReason: null },
@@ -242,7 +242,7 @@ export async function cancelPlan(planId, reason) {
   const session = await requireSession();
   try {
     const plan = await db.plan.findUnique({ where: { id: planId } });
-    if (!plan) return { ok: false, error: 'Plan not found' };
+    if (!plan) return { ok: false, error: 'Membership not found' };
     await db.plan.update({
       where: { id: planId },
       data: { status: 'cancelled', notes: [plan.notes, `Cancelled: ${reason || 'no reason given'}`].filter(Boolean).join('\n\n') },

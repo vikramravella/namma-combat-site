@@ -101,7 +101,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
           </div>
 
           <div className="rcpt-plan">
-            <div className="rcpt-plan-label">Plan summary</div>
+            <div className="rcpt-plan-label">Membership summary</div>
             <div className="rcpt-plan-grid">
               <div><div className="rcpt-plan-key">Tier</div><div className="rcpt-plan-val">{r.plan.tier}</div></div>
               <div><div className="rcpt-plan-key">Billing cycle</div><div className="rcpt-plan-val">{r.plan.cycle}</div></div>
@@ -198,7 +198,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
           <div className="rcpt-terms">
             <div className="rcpt-terms-label">Terms & Conditions</div>
             <ol className="rcpt-terms-list">
-              <li><strong>Period locked</strong> to dates above; plan starts on start date regardless of first attendance.</li>
+              <li><strong>Period locked</strong> to dates above; membership starts on start date regardless of first attendance.</li>
               <li><strong>Freeze:</strong> up to {r.plan.freezeDaysAllowed} days per cycle (min {FREEZE_POLICY.minDaysPerFreeze} days/freeze, {FREEZE_POLICY.advanceNoticeDays} days advance notice). Medical exception with doctor's note.</li>
               <li><strong>Non-refundable</strong> once started. Pre-start cancellations: 5% processing deduction. Non-transferable.</li>
               <li><strong>Health declaration</strong> must be on file and current; disclose any change before next session.</li>

@@ -13,7 +13,7 @@ export default async function MembershipTypesPage({ searchParams }) {
       <div className="adm-page-header">
         <div>
           <h1 className="adm-page-title">Membership types</h1>
-          <p className="adm-page-subtitle">{rows.length} {rows.length === 1 ? 'type' : 'types'}. These appear in the plan-creation dropdown.</p>
+          <p className="adm-page-subtitle">{rows.length} {rows.length === 1 ? 'type' : 'types'}. These appear in the add-membership dropdown.</p>
         </div>
         <Link href="/admin/settings/memberships/new" className="adm-btn">+ New membership type</Link>
       </div>
