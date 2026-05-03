@@ -5,7 +5,7 @@ import { istTodayWindow } from '@/lib/today-ist';
 import { isHealthNoteMeaningful } from '@/lib/health-notes';
 import { MarkAlertsSeenOnMount } from './MarkAlertsSeenOnMount';
 
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 export default async function AlertsPage() {
   const now = new Date();

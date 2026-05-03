@@ -5,7 +5,9 @@ import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
 import { isHealthNoteMeaningful } from '@/lib/health-notes';
 
-export const revalidate = 30;
+// Always render fresh — no cache. Dashboard counts must reflect the
+// state right now, not 30s ago. Accelerate keeps the DB roundtrip fast.
+export const dynamic = 'force-dynamic';
 
 const MODULES = [
   { href: '/admin/alerts',      label: 'Alerts',      sub: 'Calls · Trials · Health', tone: 'rust',     emoji: '⏻' },

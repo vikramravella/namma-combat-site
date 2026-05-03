@@ -5,7 +5,7 @@ import { formatDate, formatRelative } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
 import { isHealthNoteMeaningful } from '@/lib/health-notes';
 
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 const KINDS = {
   calls:    { title: 'Calls today', sub: 'Follow-ups due', empty: 'Nobody to chase right now.' },
