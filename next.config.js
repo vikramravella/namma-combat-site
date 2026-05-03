@@ -3,13 +3,18 @@ const { withSentryConfig } = require('@sentry/nextjs');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Ensure the Prisma query-engine binary for the Vercel Lambda runtime
-  // (rhel-openssl-3.0.x) gets copied into every serverless function bundle.
-  // Next.js's static analysis can't see that the engine is loaded dynamically,
-  // so we tell the file-tracer explicitly. Without this, every Prisma call
-  // throws "could not locate the Query Engine for runtime rhel-openssl-3.0.x".
+  // Tell Next.js NOT to bundle Prisma — load it from node_modules at runtime
+  // where the rhel-openssl-3.0.x engine binary is generated during postinstall.
+  // (App Router uses experimental.serverComponentsExternalPackages.)
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'prisma', '.prisma/client'],
+  },
+  // Belt-and-braces: also explicitly trace the generated Prisma client + engines.
   outputFileTracingIncludes: {
-    '/**/*': ['./src/generated/prisma/**/*'],
+    '/inquire': ['./src/generated/prisma/**/*'],
+    '/admin/**': ['./src/generated/prisma/**/*'],
+    '/form/[token]': ['./src/generated/prisma/**/*'],
+    '/api/**': ['./src/generated/prisma/**/*'],
   },
 };
 
