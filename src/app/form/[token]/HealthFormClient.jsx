@@ -55,9 +55,7 @@ export function HealthFormClient({ inquiry, trial, action }) {
       <div className="form-public-header">
         <img src="/seal.svg" alt="Namma Combat" className="form-public-seal" />
         <h1 className="form-public-title">Welcome, {inquiry.firstName}</h1>
-        <p className="form-public-sub">
-          Confirm your details below — takes about 90 seconds. We need this before your trial on <strong>{trialDate}</strong> at <strong>{trial.scheduledTime}</strong>.
-        </p>
+        <p className="form-public-sub">Confirm your details.</p>
       </div>
 
       <Section label="Confirm">
