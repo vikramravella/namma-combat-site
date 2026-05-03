@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { authOptions } from '@/lib/auth';
 import { SignOutButton } from './SignOutButton';
 import { HeaderSearch } from './HeaderSearch';
+import { HeaderHistory } from './HeaderHistory';
 
 export default async function AuthedLayout({ children }) {
   const session = await getServerSession(authOptions);
@@ -30,6 +31,7 @@ export default async function AuthedLayout({ children }) {
           </div>
           <div className="adm-header-right">
             <HeaderSearch />
+            <HeaderHistory />
             <span className="adm-user-email">{session.user.email}</span>
             <SignOutButton />
           </div>

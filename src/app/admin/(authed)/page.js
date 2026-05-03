@@ -32,8 +32,6 @@ export default async function HomePage() {
     healthAlerts,
     smokers,
     noMediaConsent,
-    recentInquiryEvents,
-    recentTrialEvents,
     countNewInquiries,
   ] = await Promise.all([
     // 1. Calls to make today — leads with overdue follow-ups
@@ -107,16 +105,6 @@ export default async function HomePage() {
       take: 10,
       select: { id: true, firstName: true, lastName: true },
     }),
-    db.inquiryEvent.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 10,
-      include: { inquiry: { select: { id: true, firstName: true, lastName: true } } },
-    }),
-    db.trialEvent.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 10,
-      include: { trial: { select: { id: true, inquiry: { select: { firstName: true, lastName: true } } } } },
-    }),
     // Module-tile notification counts
     db.inquiry.count({
       where: {
@@ -146,27 +134,6 @@ export default async function HomePage() {
     '/admin/inquiries': countNewInquiries,
   };
 
-  const feed = [
-    ...recentInquiryEvents.map((e) => ({
-      id: 'i' + e.id,
-      when: e.createdAt,
-      label: e.label,
-      detail: e.detail,
-      who: `${e.inquiry.firstName} ${e.inquiry.lastName}`,
-      href: `/admin/inquiries/${e.inquiryId}`,
-      kind: 'inquiry',
-    })),
-    ...recentTrialEvents.map((e) => ({
-      id: 't' + e.id,
-      when: e.createdAt,
-      label: e.label,
-      detail: e.detail,
-      who: `${e.trial.inquiry.firstName} ${e.trial.inquiry.lastName}`,
-      href: `/admin/trials/${e.trialId}`,
-      kind: 'trial',
-    })),
-  ].sort((a, b) => new Date(b.when) - new Date(a.when)).slice(0, 12);
-
   const greeting = greet(now);
   const dateLine = now.toLocaleDateString('en-IN', { weekday: 'long', day: '2-digit', month: 'long' });
 
@@ -184,32 +151,6 @@ export default async function HomePage() {
       </header>
 
       <div className="home-rule" />
-
-
-      {feed.length > 0 && (
-        <div className="dash-feed">
-          <h2 className="dash-feed-title">Recent activity</h2>
-          <ol className="dash-feed-list">
-            {feed.map((e) => (
-              <li key={e.id} className="dash-feed-item">
-                <Link href={e.href} className="dash-feed-link">
-                  <span className={`dash-feed-dot dash-feed-dot-${e.kind}`} aria-hidden />
-                  <div className="dash-feed-body">
-                    <div className="dash-feed-head">
-                      <span className="dash-feed-label">{e.label}</span>
-                      <span className="dash-feed-time">{formatRelative(e.when)}</span>
-                    </div>
-                    <div className="dash-feed-meta">
-                      <span className="dash-feed-who">{e.who}</span>
-                      {e.detail && <span className="dash-feed-detail">· {e.detail}</span>}
-                    </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
 
       <div className="home-grid">
         {MODULES.map((m, i) => {
