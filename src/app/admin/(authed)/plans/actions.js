@@ -10,6 +10,7 @@ import { logAudit } from '@/lib/audit';
 import { TIERS, CYCLES, FREEZE_POLICY, PLAN_STATUSES } from '@/lib/constants';
 import { reverseCalc, basePricePaise, cycleMeta, computeEndDate, fiscalYearOf, formatInvoiceNumber } from '@/lib/calc';
 import { rupeesInputToPaise, fullName } from '@/lib/format';
+import { syncMemberStatusFromPlans } from '@/lib/member-status';
 
 const tierKeys = TIERS.map((t) => t.key);
 const cycleKeys = CYCLES.map((c) => c.key);
@@ -107,6 +108,7 @@ export async function createPlan(formData) {
         },
       });
 
+      await syncMemberStatusFromPlans(tx, memberId);
       return { plan, receipt };
     });
 
@@ -176,6 +178,7 @@ export async function freezePlan(planId, formData) {
         status: 'on_freeze',
       },
     });
+    await syncMemberStatusFromPlans(null, plan.memberId);
 
     await logAudit({ actorUserId: session.user.id, action: 'freeze', entity: 'Plan', entityId: planId, before: { endDate: plan.endDate, freezeDaysUsed: plan.freezeDaysUsed }, after: { freezeStart: start, freezeEnd: end, days, newEndDate, medicalException } });
     revalidatePath(`/admin/plans/${planId}`);
@@ -196,6 +199,7 @@ export async function endFreeze(planId) {
       where: { id: planId },
       data: { status: 'running', freezeStart: null, freezeEnd: null, freezeReason: null },
     });
+    await syncMemberStatusFromPlans(null, plan.memberId);
     await logAudit({ actorUserId: session.user.id, action: 'end_freeze', entity: 'Plan', entityId: planId });
     revalidatePath(`/admin/plans/${planId}`);
     revalidatePath(`/admin/members/${plan.memberId}`);
@@ -215,6 +219,7 @@ export async function cancelPlan(planId, reason) {
       where: { id: planId },
       data: { status: 'cancelled', notes: [plan.notes, `Cancelled: ${reason || 'no reason given'}`].filter(Boolean).join('\n\n') },
     });
+    await syncMemberStatusFromPlans(null, plan.memberId);
     await logAudit({ actorUserId: session.user.id, action: 'cancel', entity: 'Plan', entityId: planId, before: { status: plan.status }, after: { status: 'cancelled', reason } });
     revalidatePath(`/admin/plans/${planId}`);
     revalidatePath(`/admin/members/${plan.memberId}`);
