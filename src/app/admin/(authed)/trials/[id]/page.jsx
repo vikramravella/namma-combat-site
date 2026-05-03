@@ -79,7 +79,7 @@ export default async function TrialDetailPage({ params, searchParams }) {
                   <>
                     <div className="adm-field">
                       <label className="adm-label">Form link (token expires {formatDate(trial.formToken.expiresAt)})</label>
-                      <input type="text" readOnly value={formUrl} className="adm-input adm-mono" onClick={(e) => e.target.select()} />
+                      <input type="text" readOnly defaultValue={formUrl} className="adm-input adm-mono" />
                     </div>
                     <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
                       <a href={`https://wa.me/91${phoneDigits}?text=${waMessage}`} target="_blank" rel="noreferrer" className="adm-btn">
