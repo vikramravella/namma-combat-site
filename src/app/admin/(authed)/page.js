@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
+import { DashFolder } from './DashFolder';
 
 export const revalidate = 30;
 
@@ -152,89 +153,14 @@ export default async function HomePage() {
 
       <div className="home-rule" />
 
-      <div className="dash-grid">
-
-        <DashCard title="Calls today" icon="☎" accent="rust" empty="Nobody to chase right now." count={callsToday.length}>
-          {callsToday.map((i) => (
-            <Link key={i.id} href={`/admin/inquiries/${i.id}`} className="dash-row">
-              <div>
-                <div className="dash-row-name">{i.firstName} {i.lastName}</div>
-                <div className="dash-row-sub adm-mono">{i.phone}</div>
-              </div>
-              <div className="dash-row-meta">
-                {i.followUpAttempts > 0 ? `${i.followUpAttempts} prev` : 'first'}
-              </div>
-            </Link>
-          ))}
-        </DashCard>
-
-        <DashCard title="Trials today" icon="◇" accent="gold" empty="No trials on the floor today." count={todaysTrials.length}>
-          {todaysTrials.map((t) => (
-            <Link key={t.id} href={`/admin/trials/${t.id}`} className="dash-row">
-              <div>
-                <div className="dash-row-name">{t.inquiry.firstName} {t.inquiry.lastName}</div>
-                <div className="dash-row-sub">
-                  {t.scheduledTime} · {t.discipline} ({t.area})
-                  {!t.healthDecl && <span className="dash-pill dash-pill-warn"> form pending</span>}
-                </div>
-              </div>
-              <div className={`dash-row-meta dash-row-meta-${t.status}`}>{t.status.replace('_', ' ')}</div>
-            </Link>
-          ))}
-        </DashCard>
-
-        <DashCard title="Convert from trial" icon="↗" accent="rust" empty="No trials waiting to convert." count={conversionFollowUps.length}>
-          {conversionFollowUps.map((t) => (
-            <Link key={t.id} href={`/admin/trials/${t.id}`} className="dash-row">
-              <div>
-                <div className="dash-row-name">{t.inquiry.firstName} {t.inquiry.lastName}</div>
-                <div className="dash-row-sub">
-                  {t.discipline} · {formatDate(t.scheduledDate)}
-                  {t.outcome && <span> · {t.outcome.replace('_', ' ')}</span>}
-                </div>
-              </div>
-              <div className="dash-row-meta">{formatRelative(t.scheduledDate)}</div>
-            </Link>
-          ))}
-        </DashCard>
-
-        <DashCard title="Health alerts" icon="⚠" accent="rust" empty="No critical health flags." count={healthAlertsFiltered.length}>
-          {healthAlertsFiltered.map((m) => (
-            <Link key={m.id} href={`/admin/members/${m.id}`} className="dash-row">
-              <div>
-                <div className="dash-row-name">
-                  {m.criticalHealthFlag && <span className="dash-icon" aria-hidden style={{ color: 'var(--rust)' }}>⚠</span>}
-                  {m.firstName} {m.lastName}
-                </div>
-                {m.medicalNotes && <div className="dash-row-sub" style={{ whiteSpace: 'normal' }}>{m.medicalNotes}</div>}
-              </div>
-            </Link>
-          ))}
-        </DashCard>
-
-        <DashCard title="Smokers" icon="◌" accent="gold" empty="No smokers on the roster." count={smokers.length}>
-          {smokers.map((m) => (
-            <Link key={m.id} href={`/admin/members/${m.id}`} className="dash-row">
-              <div>
-                <div className="dash-row-name">{m.firstName} {m.lastName}</div>
-                <div className="dash-row-sub">Adjust cardio expectations</div>
-              </div>
-            </Link>
-          ))}
-        </DashCard>
-
-        <DashCard title="No media consent" icon="✕" accent="gold" empty="All members OK with photos / video." count={noMediaConsent.length}>
-          {noMediaConsent.map((m) => (
-            <Link key={m.id} href={`/admin/members/${m.id}`} className="dash-row">
-              <div>
-                <div className="dash-row-name">{m.firstName} {m.lastName}</div>
-                <div className="dash-row-sub">Do not photograph or feature</div>
-              </div>
-            </Link>
-          ))}
-        </DashCard>
-
-      </div>
+      <DashFolder data={{
+        callsToday,
+        todaysTrials,
+        conversionFollowUps,
+        healthAlerts: healthAlertsFiltered,
+        smokers,
+        noMediaConsent,
+      }} />
 
       {feed.length > 0 && (
         <div className="dash-feed">
@@ -275,25 +201,6 @@ export default async function HomePage() {
         <img src="/seal.svg" alt="Namma Combat" className="home-foot-seal" />
         <p className="home-foot-tag"><em>Skill · Strength · Sanctuary</em></p>
       </div>
-    </div>
-  );
-}
-
-function DashCard({ title, icon, accent, count, children, empty }) {
-  return (
-    <div className={`dash-card dash-card-${accent}`}>
-      <div className="dash-card-head">
-        <span className="dash-card-title">
-          <span className="dash-card-icon" aria-hidden>{icon}</span>
-          {title}
-        </span>
-        <span className="dash-card-count">{count}</span>
-      </div>
-      {count === 0 ? (
-        <p className="dash-card-empty">{empty}</p>
-      ) : (
-        <div className="dash-card-list">{children}</div>
-      )}
     </div>
   );
 }
