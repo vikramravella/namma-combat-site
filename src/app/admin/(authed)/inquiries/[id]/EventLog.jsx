@@ -26,16 +26,17 @@ export function EventLog({ inquiryId, currentStage }) {
   const [type, setType] = useState('called');
   const [outcome, setOutcome] = useState('');
   const [detail, setDetail] = useState('');
-  const [nextDate, setNextDate] = useState(defaultNextDate());
+  const [nextDate, setNextDate] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   function reset() {
-    setType('called'); setOutcome(''); setDetail(''); setNextDate(defaultNextDate()); setError('');
+    setType('called'); setOutcome(''); setDetail(''); setNextDate(''); setError('');
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    setError('');
+    setError(''); setSuccess('');
     const fd = new FormData();
     fd.set('type', type);
     if (outcome) fd.set('outcome', outcome);
@@ -45,7 +46,9 @@ export function EventLog({ inquiryId, currentStage }) {
       const r = await logEvent(inquiryId, fd);
       if (r?.ok === false) { setError(r.error); return; }
       reset();
+      setSuccess(nextDate ? `Logged. Next follow-up set for ${formatDisplay(nextDate)}.` : 'Logged.');
       router.refresh();
+      setTimeout(() => setSuccess(''), 4000);
     });
   }
 
@@ -54,6 +57,7 @@ export function EventLog({ inquiryId, currentStage }) {
   return (
     <form onSubmit={handleSubmit} className="adm-form">
       {error && <p className="adm-error">{error}</p>}
+      {success && <p className="adm-success">{success}</p>}
 
       <div className="adm-form-row" style={{ gridTemplateColumns: '1fr 1fr' }}>
         <div className="adm-field">
@@ -129,8 +133,8 @@ function StageQuickSwitch({ inquiryId, currentStage }) {
   );
 }
 
-function defaultNextDate() {
-  const d = new Date();
-  d.setDate(d.getDate() + 2);
-  return d.toISOString().slice(0, 10);
+function formatDisplay(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  return isFinite(d) ? d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : iso;
 }
