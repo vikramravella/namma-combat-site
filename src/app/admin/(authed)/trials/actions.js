@@ -367,7 +367,11 @@ export async function rescheduleTrial(id, formData) {
         area,
         discipline,
         coachId,
-        status: 'rescheduled',
+        // Re-booking puts the trial back in 'booked' state. rescheduleCount
+        // is the durable record of how many times this happened — we don't
+        // need a 'rescheduled' status because that's not a real lifecycle
+        // step (the trial is once again upcoming-and-booked).
+        status: 'booked',
         nextFollowUpAt: newDate,
         rescheduleCount: (before.rescheduleCount || 0) + 1,
         events: {

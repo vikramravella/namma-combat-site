@@ -5,7 +5,7 @@ import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta, VENDOR } from '@/lib/constants';
 import { StatusControls, ConvertControl } from './StatusControls';
 import { TrialFollowUpForm } from './TrialFollowUpForm';
-import { Booker } from '../new/Booker';
+import { RescheduleSection } from './RescheduleSection';
 
 export default async function TrialDetailPage({ params, searchParams }) {
   const { id } = await params;
@@ -109,12 +109,8 @@ export default async function TrialDetailPage({ params, searchParams }) {
             <p className="adm-muted">{trial.attendanceNotes || 'Not recorded yet.'}</p>
           </div>
 
-          {(trial.status === 'no_show' || trial.status === 'rescheduled') && !trial.convertedMember && (
-            <div className="adm-card" style={{ borderLeft: '4px solid var(--gold, #C99419)' }}>
-              <h2 className="adm-card-title">Reschedule — pick a new slot</h2>
-              <p className="adm-help" style={{ marginBottom: 12 }}>Same trial record, full history preserved.</p>
-              <Booker inquiry={trial.inquiry} mode="reschedule" trialId={trial.id} currentArea={trial.area} />
-            </div>
+          {!trial.convertedMember && trial.status !== 'attended' && trial.status !== 'cancelled' && (
+            <RescheduleSection trial={trial} />
           )}
 
           {(trial.outcome === 'didnt_join' || trial.outcome === 'lost_touch') && (
