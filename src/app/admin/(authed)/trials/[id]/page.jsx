@@ -5,7 +5,7 @@ import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta, VENDOR } from '@/lib/constants';
 import { StatusControls, ConvertControl } from './StatusControls';
 import { TrialFollowUpForm } from './TrialFollowUpForm';
-import { RescheduleForm } from './RescheduleForm';
+import { Booker } from '../new/Booker';
 
 export default async function TrialDetailPage({ params, searchParams }) {
   const { id } = await params;
@@ -111,9 +111,9 @@ export default async function TrialDetailPage({ params, searchParams }) {
 
           {(trial.status === 'no_show' || trial.status === 'rescheduled') && !trial.convertedMember && (
             <div className="adm-card" style={{ borderLeft: '4px solid var(--gold, #C99419)' }}>
-              <h2 className="adm-card-title">Reschedule</h2>
-              <p className="adm-help" style={{ marginBottom: 12 }}>Pick a new slot — same trial record, history preserved.</p>
-              <RescheduleForm trialId={trial.id} currentArea={trial.area} currentDiscipline={trial.discipline} currentDay={trial.day} currentTime={trial.scheduledTime} />
+              <h2 className="adm-card-title">Reschedule — pick a new slot</h2>
+              <p className="adm-help" style={{ marginBottom: 12 }}>Same trial record, full history preserved.</p>
+              <Booker inquiry={trial.inquiry} mode="reschedule" trialId={trial.id} currentArea={trial.area} />
             </div>
           )}
 

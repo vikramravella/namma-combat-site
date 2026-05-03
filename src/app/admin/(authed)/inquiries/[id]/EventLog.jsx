@@ -83,19 +83,17 @@ export function EventLog({ inquiryId, currentStage }) {
         <textarea value={detail} onChange={(e) => setDetail(e.target.value)} className="adm-textarea" rows={2} placeholder={type === 'note' ? 'Useful context for next time…' : 'Brief summary of the conversation'} />
       </div>
 
-      <div className="adm-form-row">
-        <div className="adm-field">
-          <label className="adm-label">Next follow-up</label>
-          <DatePicker value={nextDate} onChange={setNextDate} />
-          <span className="adm-help">Leave blank if no next contact planned.</span>
-        </div>
-        <div className="adm-field" style={{ justifyContent: 'flex-end' }}>
-          <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>
-            <button type="submit" disabled={isPending} className="adm-btn">
-              {isPending ? 'Saving…' : 'Log event'}
-            </button>
+      <div className="adm-field">
+        <label className="adm-label">Next follow-up</label>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+          <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+            <DatePicker value={nextDate} onChange={setNextDate} />
           </div>
+          <button type="submit" disabled={isPending} className="adm-btn" style={{ flex: '0 0 auto' }}>
+            {isPending ? 'Saving…' : 'Log event'}
+          </button>
         </div>
+        <span className="adm-help">Leave blank if no next contact planned.</span>
       </div>
 
       <StageQuickSwitch inquiryId={inquiryId} currentStage={currentStage} />

@@ -4,12 +4,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ARENA_SCHEDULE, SANCTUARY_SCHEDULE, DAY_LABELS, coachFor } from '@/lib/schedule';
 import { fullName } from '@/lib/format';
-import { scheduleTrial } from '../actions';
+import { scheduleTrial, rescheduleTrial } from '../actions';
 
-export function Booker({ inquiry }) {
+export function Booker({ inquiry, mode = 'create', trialId, currentArea }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [tab, setTab] = useState('Arena');
+  const [tab, setTab] = useState(currentArea || 'Arena');
   const [selected, setSelected] = useState(null);
   const [error, setError] = useState('');
 
@@ -29,14 +29,17 @@ export function Booker({ inquiry }) {
     if (!selected) return;
     setError('');
     const fd = new FormData();
-    fd.set('inquiryId', inquiry.id);
+    if (mode === 'create') fd.set('inquiryId', inquiry.id);
     fd.set('area', selected.area);
     fd.set('discipline', selected.discipline);
     fd.set('dayIndex', String(selected.dayIndex));
     fd.set('time', selected.time);
     startTransition(async () => {
-      const r = await scheduleTrial(fd);
+      const r = mode === 'reschedule'
+        ? await rescheduleTrial(trialId, fd)
+        : await scheduleTrial(fd);
       if (r?.ok === false) setError(r.error);
+      else if (mode === 'reschedule') router.refresh();
     });
   }
 
@@ -70,7 +73,7 @@ export function Booker({ inquiry }) {
           <div className="sch-confirm-actions">
             <button type="button" onClick={() => setSelected(null)} className="adm-btn adm-btn-secondary adm-btn-sm">Pick another</button>
             <button type="button" onClick={handleConfirm} disabled={isPending} className="adm-btn">
-              {isPending ? 'Booking…' : 'Confirm booking'}
+              {isPending ? (mode === 'reschedule' ? 'Rescheduling…' : 'Booking…') : (mode === 'reschedule' ? 'Confirm reschedule' : 'Confirm booking')}
             </button>
           </div>
         </div>
