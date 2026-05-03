@@ -119,8 +119,26 @@ export function PlanForm({ member, types }) {
                 min="0"
                 max={baseRup * 1.05}
               />
-              <span className="adm-help">Enter the round number you agreed (e.g. 21000). System reverse-calculates GST.</span>
+              <span className="adm-help">Enter the round number you agreed. System reverse-calculates GST + discount.</span>
             </div>
+          </div>
+
+          <div className="adm-field">
+            <label className="adm-label">Quick discount</label>
+            <div className="prv-chips">
+              {[0, 5, 10, 15, 20, 25].map((pct) => {
+                const fullIncl = Math.round(baseRup * 1.05);
+                const target = pct === 0 ? '' : String(Math.round(fullIncl * (100 - pct) / 100));
+                const isOn = pct === 0 ? !agreedRupees : Number(agreedRupees) === Number(target);
+                return (
+                  <button key={pct} type="button" onClick={() => setAgreedRupees(target)} className={`prv-chip ${isOn ? 'prv-chip-on' : ''}`}>
+                    {pct === 0 ? 'No discount' : `${pct}% off`}
+                    {pct > 0 && <span className="prv-chip-count">₹{Number(target).toLocaleString('en-IN')}</span>}
+                  </button>
+                );
+              })}
+            </div>
+            <span className="adm-help">Or type any custom amount in &ldquo;Final amount agreed&rdquo; above.</span>
           </div>
 
           <BreakdownPreview calc={calc} />
