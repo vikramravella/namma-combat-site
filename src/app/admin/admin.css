@@ -2515,19 +2515,25 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 
 .home-foot {
   text-align: center;
-  margin-top: 48px;
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.home-foot-seal {
+  width: 56px;
+  height: 56px;
+  display: block;
+  margin: 0 auto 10px;
+  opacity: 0.95;
+}
+.home-foot-tag {
   font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
   font-size: 14px;
-  color: var(--text-muted);
-  letter-spacing: 0.08em;
+  color: var(--rust, #9A3520);
+  letter-spacing: 0.12em;
+  margin: 0;
 }
 .home-foot em { font-style: italic; }
-.home-foot-mark {
-  display: block;
-  color: var(--gold, #E3C768);
-  font-size: 22px;
-  margin-bottom: 4px;
-}
 
 @media (max-width: 600px) {
   .home-greet { font-size: 28px; }

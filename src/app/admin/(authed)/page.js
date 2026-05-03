@@ -43,10 +43,10 @@ export default function HomePage() {
         ))}
       </div>
 
-      <p className="home-foot">
-        <span className="home-foot-mark">⌘</span>
-        <em>Skill · Strength · Sanctuary</em>
-      </p>
+      <div className="home-foot">
+        <img src="/seal.svg" alt="Namma Combat" className="home-foot-seal" />
+        <p className="home-foot-tag"><em>Skill · Strength · Sanctuary</em></p>
+      </div>
     </div>
   );
 }
