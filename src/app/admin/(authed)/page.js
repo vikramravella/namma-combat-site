@@ -128,6 +128,8 @@ export default async function HomePage() {
     }),
   ]);
 
+  const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || (m.medicalNotes && m.medicalNotes.trim()));
+
   const totalAlerts =
     callsToday.length +
     todaysTrials.length +
@@ -143,8 +145,6 @@ export default async function HomePage() {
     '/admin/alerts': totalAlerts,
     '/admin/inquiries': countNewInquiries,
   };
-
-  const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || (m.medicalNotes && m.medicalNotes.trim()));
 
   const feed = [
     ...recentInquiryEvents.map((e) => ({
