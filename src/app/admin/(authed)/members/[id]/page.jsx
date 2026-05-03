@@ -58,7 +58,7 @@ export default async function MemberDetailPage({ params }) {
   }
   events.push({ when: member.joinedAt, type: 'convert', label: 'Joined as member', detail: null });
   for (const p of member.plans) {
-    events.push({ when: p.startDate, type: 'plan', label: `Plan — ${p.tier} ${p.cycle}`, detail: `${formatDate(p.startDate)} → ${formatDate(p.endDate)}${p.receipt ? ' · ' + formatRupees(p.receipt.totalPaise) : ''}` });
+    events.push({ when: p.startDate, type: 'plan', label: `Membership — ${p.tier} ${p.cycle}`, detail: `${formatDate(p.startDate)} → ${formatDate(p.endDate)}${p.receipt ? ' · ' + formatRupees(p.receipt.totalPaise) : ''}` });
   }
   for (const a of member.assessments) {
     events.push({ when: a.assessedAt, type: 'assess', label: `Assessment${a.coach ? ' — ' + a.coach.name : ''}`, detail: a.priorityFocus });
@@ -83,7 +83,7 @@ export default async function MemberDetailPage({ params }) {
         </div>
         <div className="prv-action-row">
           <a href={`https://wa.me/91${member.phone.replace(/\D/g, '').slice(-10)}`} target="_blank" rel="noreferrer" className="adm-btn adm-btn-secondary">Open WhatsApp</a>
-          <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn">+ New plan</Link>
+          <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn">+ Add membership</Link>
         </div>
       </div>
 
@@ -95,19 +95,19 @@ export default async function MemberDetailPage({ params }) {
             <p style={{ margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
               <span>
                 <strong>Renewal due in {daysLeft} day{daysLeft === 1 ? '' : 's'}.</strong>{' '}
-                Current plan ({currentPlan.tier} {currentPlan.cycle}) ends {formatDate(currentPlan.endDate)}.
+                Current membership ({currentPlan.tier} {currentPlan.cycle}) ends {formatDate(currentPlan.endDate)}.
               </span>
-              <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn">+ Renew plan</Link>
+              <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn">+ Renew membership</Link>
             </p>
           </div>
         );
       })()}
 
       <div className="prv-summary-grid">
-        <SummaryStat label="Current plan" value={currentPlan ? `${currentPlan.tier} · ${currentPlan.cycle}` : 'None'} sub={currentPlan ? `Until ${formatDate(currentPlan.endDate)}` : null} />
-        <SummaryStat label="Last assessment" value={lastAssess ? formatDate(lastAssess.assessedAt) : 'Pending'} sub={lastAssess?.priorityFocus} />
+        <SummaryStat label="Current membership" value={currentPlan ? `${currentPlan.tier} · ${currentPlan.cycle}` : 'None'} sub={currentPlan ? `Until ${formatDate(currentPlan.endDate)}` : null} />
+        <AssessmentTile memberId={member.id} lastAssess={lastAssess} upcomingBookings={upcomingBookings} slots={slots} />
         <SummaryStat label="Disciplines" value={member.disciplines || member.primaryDiscipline || '—'} />
-        <SummaryStat label="Lifetime value" value={formatRupees(ltvPaise)} sub={`${member.plans.length} plan${member.plans.length === 1 ? '' : 's'}`} />
+        <SummaryStat label="Lifetime value" value={formatRupees(ltvPaise)} sub={`${member.plans.length} membership${member.plans.length === 1 ? '' : 's'}`} />
       </div>
 
       <div className="prv-detail-grid">
@@ -132,14 +132,14 @@ export default async function MemberDetailPage({ params }) {
 
           <div className="adm-card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-              <h2 className="adm-card-title" style={{ marginBottom: 0 }}>Plans</h2>
-              <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn adm-btn-secondary adm-btn-sm">+ New plan</Link>
+              <h2 className="adm-card-title" style={{ marginBottom: 0 }}>Memberships</h2>
+              <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn adm-btn-secondary adm-btn-sm">+ Add membership</Link>
             </div>
             {member.plans.length === 0 ? (
-              <p className="adm-muted" style={{ marginTop: 12 }}>No plans yet.</p>
+              <p className="adm-muted" style={{ marginTop: 12 }}>No memberships yet.</p>
             ) : (
               <table className="prv-table" style={{ marginTop: 12 }}>
-                <thead><tr><th>Plan</th><th>Period</th><th>Status</th><th>Amount</th><th>Receipt</th><th></th></tr></thead>
+                <thead><tr><th>Membership</th><th>Period</th><th>Status</th><th>Amount</th><th>Receipt</th><th></th></tr></thead>
                 <tbody>
                   {member.plans.map((p) => {
                     const isCurrent = ['active', 'on_freeze'].includes(p.status);
@@ -194,20 +194,10 @@ export default async function MemberDetailPage({ params }) {
           )}
 
           <div className="adm-card">
-            <h2 className="adm-card-title">Book assessment</h2>
-            {upcomingBookings.length > 0 && (
-              <p className="adm-muted" style={{ fontSize: 12, marginBottom: 8 }}>
-                Already booked: {upcomingBookings.map((b) => `${formatDate(b.scheduledDate)} ${b.slot.timeOfDay}`).join(', ')}
-              </p>
-            )}
-            <BookAssessment memberId={member.id} slots={slots} />
-          </div>
-
-          <div className="adm-card">
             <h2 className="adm-card-title">Quick actions</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <Link href={`/admin/assessments/new?memberId=${member.id}`} className="adm-btn adm-btn-secondary">+ Walk-in assessment</Link>
-              <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn adm-btn-secondary">+ New plan</Link>
+              <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn adm-btn-secondary">+ Add membership</Link>
             </div>
           </div>
         </aside>
@@ -227,6 +217,58 @@ function SummaryStat({ label, value, sub }) {
       <div className="prv-summary-label">{label}</div>
       <div className="prv-summary-value">{value}</div>
       {sub && <div className="prv-summary-sub">{sub}</div>}
+    </div>
+  );
+}
+
+// Assessment tile that combines the summary stat (last date / Pending /
+// "2nd assessment pending" once 3 months elapse) with the inline booking
+// form. Replaces the separate sidebar "Book assessment" card.
+function AssessmentTile({ memberId, lastAssess, upcomingBookings, slots }) {
+  const ASSESSMENT_VALIDITY_DAYS = 90;
+  const validityMs = ASSESSMENT_VALIDITY_DAYS * 24 * 60 * 60 * 1000;
+  const ageMs = lastAssess ? Date.now() - new Date(lastAssess.assessedAt).getTime() : null;
+  const overdue = ageMs != null && ageMs > validityMs;
+  const fresh = ageMs != null && ageMs <= validityMs;
+  const showBookingUi = !lastAssess || overdue;
+  const ordinal = !lastAssess ? '1st' : '2nd';
+
+  return (
+    <div className="prv-summary">
+      <div className="prv-summary-label">Last assessment</div>
+      {fresh ? (
+        <>
+          <div className="prv-summary-value">
+            <Link href={`/admin/assessments/${lastAssess.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+              {formatDate(lastAssess.assessedAt)}
+            </Link>
+          </div>
+          {lastAssess.priorityFocus && <div className="prv-summary-sub">{lastAssess.priorityFocus}</div>}
+        </>
+      ) : (
+        <>
+          <div className="prv-summary-value" style={{ color: 'var(--gold-deep, #C99419)' }}>
+            {ordinal} pending
+          </div>
+          {overdue && (
+            <div className="prv-summary-sub">
+              Previous:{' '}
+              <Link href={`/admin/assessments/${lastAssess.id}`}>{formatDate(lastAssess.assessedAt)}</Link>
+            </div>
+          )}
+        </>
+      )}
+      {showBookingUi && (
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border, #E0D6C8)' }}>
+          {upcomingBookings.length > 0 ? (
+            <p className="adm-muted" style={{ fontSize: 12, margin: 0 }}>
+              Booked: {upcomingBookings.map((b) => `${formatDate(b.scheduledDate)} ${b.slot.timeOfDay}`).join(', ')}
+            </p>
+          ) : (
+            <BookAssessment memberId={memberId} slots={slots} />
+          )}
+        </div>
+      )}
     </div>
   );
 }
