@@ -5,31 +5,30 @@ import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta, VENDOR } from '@/lib/constants';
 import { StatusControls, ConvertControl } from './StatusControls';
 
-export default async function TrialDetailPage({ params, searchParams }) {
-  const { id } = await params;
-  const sp = await searchParams;
-  let trial = null;
-  let debugError = null;
+export default async function TrialDetailPage(props) {
   try {
-    trial = await db.trial.findUnique({
-      where: { id },
-      include: { inquiry: true, coach: true, healthDecl: true, formToken: true, convertedMember: true },
-    });
+    return await renderTrialDetail(props);
   } catch (err) {
-    debugError = { message: err?.message || String(err), code: err?.code, stack: (err?.stack || '').split('\n').slice(0, 10).join('\n') };
-    console.error('[trial/[id]] Prisma findUnique failed:', err);
-  }
-  if (debugError) {
+    if (err?.digest?.startsWith?.('NEXT_')) throw err;
+    console.error('[trial/[id]] render failed:', err);
     return (
       <div style={{ padding: 16, background: '#fff5f5', border: '1px solid #c00', borderRadius: 6 }}>
-        <h2>Trial detail query failed</h2>
-        <p><strong>Trial id:</strong> {id}</p>
-        <p><strong>Message:</strong> {debugError.message}</p>
-        <p><strong>Code:</strong> {debugError.code || '(none)'}</p>
-        <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, background: '#fafafa', padding: 8 }}>{debugError.stack}</pre>
+        <h2>Trial detail render failed</h2>
+        <p><strong>Message:</strong> {err?.message || String(err)}</p>
+        <p><strong>Code:</strong> {err?.code || '(none)'}</p>
+        <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, background: '#fafafa', padding: 8 }}>{(err?.stack || '').split('\n').slice(0, 14).join('\n')}</pre>
       </div>
     );
   }
+}
+
+async function renderTrialDetail({ params, searchParams }) {
+  const { id } = await params;
+  const sp = await searchParams;
+  const trial = await db.trial.findUnique({
+    where: { id },
+    include: { inquiry: true, coach: true, healthDecl: true, formToken: true, convertedMember: true },
+  });
   if (!trial) notFound();
 
   const justScheduled = sp?.scheduled === '1';
