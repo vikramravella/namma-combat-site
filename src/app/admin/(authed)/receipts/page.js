@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { formatDate, formatRupees } from '@/lib/format';
 import { RECEIPT_STATUSES, stageMeta } from '@/lib/constants';
+import { FyFilter } from './FyFilter';
 
 export const revalidate = 10;
 const STATUS_KEYS = RECEIPT_STATUSES.map((s) => s.key);
@@ -41,11 +42,7 @@ export default async function ReceiptsPage({ searchParams }) {
 
       <div className="prv-toolbar">
         {fys.length > 0 && (
-          <select value={fy} onChange={() => {}} className="adm-select prv-tool-btn" aria-label="Fiscal year"
-            onChangeCapture={(e) => { window.location.href = `?status=${status}&fy=${e.target.value}`; }}>
-            <option value="">All FYs</option>
-            {fys.map((f) => <option key={f.fiscalYear} value={f.fiscalYear}>FY {f.fiscalYear.slice(0,2)}-{f.fiscalYear.slice(2)}</option>)}
-          </select>
+          <FyFilter currentFy={fy} status={status} fys={fys} />
         )}
       </div>
 
