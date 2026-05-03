@@ -1,6 +1,7 @@
 'use server';
 
 import { z } from 'zod';
+import * as Sentry from '@sentry/nextjs';
 import { db } from '@/lib/db';
 import { DESIGNATIONS, OFFERINGS, PRIMARY_GOALS, EXPERIENCE_LEVELS } from '@/lib/constants';
 import { normalizePhone } from '@/lib/phone';
@@ -18,17 +19,31 @@ const schema = z.object({
 
 export async function submitInquiry(formData) {
   const raw = Object.fromEntries(formData);
+  console.log('[submitInquiry] received', { firstName: raw.firstName, lastName: raw.lastName, phoneLen: (raw.phone || '').length });
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+  if (!parsed.success) {
+    Sentry.captureMessage(`submitInquiry validation failed: ${parsed.error.issues[0].message}`, {
+      level: 'warning',
+      tags: { source: 'submitInquiry', stage: 'validation' },
+      extra: { raw, issue: parsed.error.issues[0] },
+    });
+    return { ok: false, error: parsed.error.issues[0].message };
+  }
   const data = parsed.data;
   const phone = normalizePhone(data.phone);
-  if (!phone) return { ok: false, error: 'Phone number looks invalid.' };
+  if (!phone) {
+    Sentry.captureMessage(`submitInquiry phone invalid: "${data.phone}"`, {
+      level: 'warning',
+      tags: { source: 'submitInquiry', stage: 'phone' },
+      extra: { raw },
+    });
+    return { ok: false, error: 'Phone number looks invalid.' };
+  }
   const interestedIn = formData.getAll('interestedIn').filter((v) => offeringSet.has(v));
 
   try {
     const existing = await db.inquiry.findUnique({ where: { phone } });
     if (existing) {
-      // Don't create a duplicate — but log as a re-inquiry event
       await db.inquiry.update({
         where: { id: existing.id },
         data: {
@@ -41,9 +56,10 @@ export async function submitInquiry(formData) {
           },
         },
       });
+      console.log('[submitInquiry] dedup hit', { id: existing.id, phone });
       return { ok: true, dedup: true };
     }
-    await db.inquiry.create({
+    const created = await db.inquiry.create({
       data: {
         designation: data.designation || null,
         firstName: data.firstName,
@@ -59,9 +75,11 @@ export async function submitInquiry(formData) {
         },
       },
     });
+    console.log('[submitInquiry] created', { id: created.id, phone });
     return { ok: true };
   } catch (err) {
     console.error('submitInquiry failed', err);
+    Sentry.captureException(err, { tags: { source: 'submitInquiry', stage: 'db' }, extra: { raw } });
     return { ok: false, error: 'Something went wrong — please WhatsApp us.' };
   }
 }
