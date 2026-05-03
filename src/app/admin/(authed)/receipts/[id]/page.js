@@ -114,77 +114,82 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
             </div>
           </div>
 
-          <div className="rcpt-totals-wrap">
-            <table className="rcpt-totals">
-              <tbody>
-                <tr><td>Subtotal (taxable)</td><td className="rcpt-num">₹{paiseToString(r.grossTaxablePaise)}</td></tr>
-                {r.discountFinalPaise > 0 && (
-                  <tr className="rcpt-discount-row">
-                    <td>Discount<span className="rcpt-discount-note">agreed ₹{paiseToString(r.totalPaise)} of full ₹{paiseToString(r.grossTaxablePaise + Math.round(r.grossTaxablePaise * 0.05))}</span></td>
-                    <td className="rcpt-num">−₹{paiseToString(r.discountPreTaxPaise)}</td>
-                  </tr>
-                )}
-                {r.discountFinalPaise > 0 && (
-                  <tr><td>Net taxable</td><td className="rcpt-num">₹{paiseToString(r.netTaxablePaise)}</td></tr>
-                )}
-                <tr><td>CGST <span className="rcpt-rate">@ 2.5%</span></td><td className="rcpt-num">₹{paiseToString(r.cgstPaise)}</td></tr>
-                <tr><td>SGST <span className="rcpt-rate">@ 2.5%</span></td><td className="rcpt-num">₹{paiseToString(r.sgstPaise)}</td></tr>
-                <tr className="rcpt-total-row"><td>Total</td><td className="rcpt-num">₹{paiseToString(r.totalPaise)}</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Payment block */}
-          {r.status === 'paid' && lastPayment && (
-            <div className="rcpt-paid">
-              <div className="rcpt-paid-stamp">PAID</div>
-              <div>
-                <div className="rcpt-paid-when">Received on {formatDate(lastPayment.receivedAt)}</div>
-                <div className="rcpt-paid-method">via {lastPayment.method}{lastPayment.reference && <> · Ref <span className="adm-mono">{lastPayment.reference}</span></>}</div>
-              </div>
-            </div>
-          )}
-          {r.status === 'partial' && (
-            <>
-              <div className="rcpt-partial">
-                <div className="rcpt-partial-stamp">PART · PAID</div>
-                <div className="rcpt-partial-body">
-                  <div className="rcpt-partial-amounts">
-                    <span className="rcpt-partial-paid-amt">₹{paiseToString(totalPaid)}</span>
-                    <span className="rcpt-partial-of">of ₹{paiseToString(r.totalPaise)}</span>
-                    <span className="rcpt-partial-balance-amt">· Balance <strong>₹{paiseToString(balance)}</strong></span>
+          {/* Two-column finance row: payment status (left) sits in the
+              empty space next to the totals (right), instead of stacking
+              below and wasting page space. */}
+          <div className="rcpt-finance-row">
+            <div className="rcpt-finance-left">
+              {r.status === 'paid' && lastPayment && (
+                <div className="rcpt-paid">
+                  <div className="rcpt-paid-stamp">PAID</div>
+                  <div>
+                    <div className="rcpt-paid-when">Received on {formatDate(lastPayment.receivedAt)}</div>
+                    <div className="rcpt-paid-method">via {lastPayment.method}{lastPayment.reference && <> · Ref <span className="adm-mono">{lastPayment.reference}</span></>}</div>
                   </div>
-                  {lastPayment && (
-                    <div className="rcpt-partial-meta">
-                      Last received {formatDate(lastPayment.receivedAt)} via {lastPayment.method}{lastPayment.reference && <> · Ref <span className="adm-mono">{lastPayment.reference}</span></>}
-                    </div>
-                  )}
-                </div>
-              </div>
-              {r.nextAgreedDate && (
-                <div className="rcpt-next">
-                  <span className="rcpt-next-label">Next agreed</span>
-                  <span className="rcpt-next-date">{formatDate(r.nextAgreedDate)}</span>
-                  <span className="rcpt-next-amount">· ₹{paiseToString(balance)} due</span>
-                  {r.nextAgreedNote && <p className="rcpt-next-note">{r.nextAgreedNote}</p>}
                 </div>
               )}
-            </>
-          )}
-          {r.status === 'issued' && (
-            <div className="rcpt-unpaid">
-              <div className="rcpt-unpaid-stamp">UNPAID</div>
-              <div>
-                <div className="rcpt-unpaid-amount">₹{paiseToString(r.totalPaise)} due</div>
-              </div>
+              {r.status === 'partial' && (
+                <>
+                  <div className="rcpt-partial">
+                    <div className="rcpt-partial-stamp">PART · PAID</div>
+                    <div className="rcpt-partial-body">
+                      <div className="rcpt-partial-amounts">
+                        <span className="rcpt-partial-paid-amt">₹{paiseToString(totalPaid)}</span>
+                        <span className="rcpt-partial-of">of ₹{paiseToString(r.totalPaise)}</span>
+                        <span className="rcpt-partial-balance-amt">· Balance <strong>₹{paiseToString(balance)}</strong></span>
+                      </div>
+                      {lastPayment && (
+                        <div className="rcpt-partial-meta">
+                          Last received {formatDate(lastPayment.receivedAt)} via {lastPayment.method}{lastPayment.reference && <> · Ref <span className="adm-mono">{lastPayment.reference}</span></>}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {r.nextAgreedDate && (
+                    <div className="rcpt-next">
+                      <span className="rcpt-next-label">Next agreed</span>
+                      <span className="rcpt-next-date">{formatDate(r.nextAgreedDate)}</span>
+                      <span className="rcpt-next-amount">· ₹{paiseToString(balance)} due</span>
+                      {r.nextAgreedNote && <p className="rcpt-next-note">{r.nextAgreedNote}</p>}
+                    </div>
+                  )}
+                </>
+              )}
+              {r.status === 'issued' && (
+                <div className="rcpt-unpaid">
+                  <div className="rcpt-unpaid-stamp">UNPAID</div>
+                  <div>
+                    <div className="rcpt-unpaid-amount">₹{paiseToString(r.totalPaise)} due</div>
+                  </div>
+                </div>
+              )}
+              {r.status === 'void' && (
+                <div className="rcpt-unpaid" style={{ background: '#f3f4f6', borderColor: '#9ca3af' }}>
+                  <div className="rcpt-unpaid-stamp" style={{ color: '#6b7280', borderColor: '#6b7280' }}>VOID</div>
+                  <div className="rcpt-unpaid-amount">This receipt has been voided.</div>
+                </div>
+              )}
             </div>
-          )}
-          {r.status === 'void' && (
-            <div className="rcpt-unpaid" style={{ background: '#f3f4f6', borderColor: '#9ca3af' }}>
-              <div className="rcpt-unpaid-stamp" style={{ color: '#6b7280', borderColor: '#6b7280' }}>VOID</div>
-              <div className="rcpt-unpaid-amount">This receipt has been voided.</div>
+            <div className="rcpt-totals-wrap">
+              <table className="rcpt-totals">
+                <tbody>
+                  <tr><td>Subtotal (taxable)</td><td className="rcpt-num">₹{paiseToString(r.grossTaxablePaise)}</td></tr>
+                  {r.discountFinalPaise > 0 && (
+                    <tr className="rcpt-discount-row">
+                      <td>Discount<span className="rcpt-discount-note">agreed ₹{paiseToString(r.totalPaise)} of full ₹{paiseToString(r.grossTaxablePaise + Math.round(r.grossTaxablePaise * 0.05))}</span></td>
+                      <td className="rcpt-num">−₹{paiseToString(r.discountPreTaxPaise)}</td>
+                    </tr>
+                  )}
+                  {r.discountFinalPaise > 0 && (
+                    <tr><td>Net taxable</td><td className="rcpt-num">₹{paiseToString(r.netTaxablePaise)}</td></tr>
+                  )}
+                  <tr><td>CGST <span className="rcpt-rate">@ 2.5%</span></td><td className="rcpt-num">₹{paiseToString(r.cgstPaise)}</td></tr>
+                  <tr><td>SGST <span className="rcpt-rate">@ 2.5%</span></td><td className="rcpt-num">₹{paiseToString(r.sgstPaise)}</td></tr>
+                  <tr className="rcpt-total-row"><td>Total</td><td className="rcpt-num">₹{paiseToString(r.totalPaise)}</td></tr>
+                </tbody>
+              </table>
             </div>
-          )}
+          </div>
 
           <p className="rcpt-words">
             <strong>Amount in words:</strong> {rupeesToWords(totalRupeesRoughInt)}

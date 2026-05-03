@@ -1517,11 +1517,33 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 }
 .rcpt-num { text-align: right; font-variant-numeric: tabular-nums; }
 
+/* Two-column finance row: payment status (left) + totals (right) sit
+   side-by-side instead of stacking, eliminating the empty space that
+   used to sit to the left of the totals table. */
+.rcpt-finance-row {
+  display: grid;
+  grid-template-columns: 1fr minmax(280px, auto);
+  gap: 24px;
+  align-items: end;
+  margin: 0 0 12px;
+}
+.rcpt-finance-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.rcpt-finance-left > * { margin: 0 !important; }
+@media (max-width: 720px) {
+  .rcpt-finance-row { grid-template-columns: 1fr; }
+}
+
 /* Totals */
 .rcpt-totals-wrap {
   display: flex;
   justify-content: flex-end;
-  margin: 0 0 12px;
+  margin: 0;
 }
 .rcpt-totals {
   border-collapse: collapse;
