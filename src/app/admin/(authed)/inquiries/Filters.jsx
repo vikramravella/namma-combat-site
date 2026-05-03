@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { INQUIRY_STAGES, SOURCES } from '@/lib/constants';
+import { INQUIRY_STAGES } from '@/lib/constants';
 
 export function Filters({ counts }) {
   const router = useRouter();
@@ -10,7 +10,6 @@ export function Filters({ counts }) {
   const params = useSearchParams();
 
   const stage = params.get('stage') || '';
-  const source = params.get('source') || '';
   const queue = params.get('queue') || '';
   const initialQ = params.get('q') || '';
 
@@ -32,7 +31,7 @@ export function Filters({ counts }) {
     router.replace(next.toString() ? `${pathname}?${next.toString()}` : pathname, { scroll: false });
   }
 
-  const hasActive = stage || source || queue || q;
+  const hasActive = stage || queue || q;
 
   return (
     <>
@@ -47,10 +46,6 @@ export function Filters({ counts }) {
             className="prv-search"
           />
         </div>
-        <select value={source} onChange={(e) => setParam('source', e.target.value)} className="adm-select prv-tool-btn" aria-label="Source" style={{ minWidth: 140 }}>
-          <option value="">Any source</option>
-          {SOURCES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
-        </select>
         {hasActive && (
           <button type="button" onClick={() => router.replace(pathname, { scroll: false })} className="adm-btn adm-btn-secondary adm-btn-sm">
             Clear
