@@ -222,7 +222,8 @@ export async function convertTrialToMember(id, formData) {
           emergencyRelation: hd?.emergencyRelation ?? null,
           medicalNotes: hd?.medicalConditions || hd?.injuries || null,
           smokes: hd?.smoking === 'yes' || hd?.smoking === 'occasionally',
-          // mediaConsent and criticalHealthFlag remain null/false until set by staff
+          mediaConsent: hd?.mediaConsent ?? null,
+          // criticalHealthFlag remains false until set by staff
           status: 'active',
           joinedAt: new Date(),
         },

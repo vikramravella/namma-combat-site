@@ -15,6 +15,7 @@ const formSchema = z.object({
   medications: z.string().trim().max(1000).optional().or(z.literal('')),
   smoking: z.enum(['no', 'occasionally', 'yes', '']).optional(),
   alcohol: z.enum(['no', 'socially', 'regularly', '']).optional(),
+  mediaConsent: z.enum(['yes', 'no']).optional(),
   consentSignedName: z.string().trim().min(1, 'Please type your full name to sign').max(120),
 });
 
@@ -49,6 +50,7 @@ export async function submitHealthForm(token, formData) {
           medications: data.medications || null,
           smoking: data.smoking || null,
           alcohol: data.alcohol || null,
+          mediaConsent: data.mediaConsent === 'yes' ? true : data.mediaConsent === 'no' ? false : null,
           consentSignedName: data.consentSignedName,
           consentSignedAt: new Date(),
           submittedFromIp: ip,

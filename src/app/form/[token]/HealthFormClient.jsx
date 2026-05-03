@@ -9,6 +9,7 @@ export function HealthFormClient({ inquiry, trial, action }) {
 
   const [smoking, setSmoking] = useState('no');
   const [alcohol, setAlcohol] = useState('no');
+  const [mediaConsent, setMediaConsent] = useState('yes');
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -16,6 +17,7 @@ export function HealthFormClient({ inquiry, trial, action }) {
     const fd = new FormData(e.target);
     fd.set('smoking', smoking);
     fd.set('alcohol', alcohol);
+    fd.set('mediaConsent', mediaConsent);
     startTransition(async () => {
       const r = await action(fd);
       if (r?.ok === false) setError(r.error);
@@ -77,6 +79,13 @@ export function HealthFormClient({ inquiry, trial, action }) {
             I confirm the information above is accurate. I understand combat sports involve physical risk and accept full responsibility for my participation. I will inform the coach immediately if I feel unwell.
           </p>
         </div>
+        <ToggleField
+          label="Photos / video — OK for the academy to share you on social and marketing?"
+          options={['yes', 'no']}
+          labels={['Yes, that’s fine', 'No, please don’t']}
+          value={mediaConsent}
+          onChange={setMediaConsent}
+        />
         <Field name="consentSignedName" label="Type your full name as signature" placeholder={fullName(inquiry)} required />
         <p className="form-public-meta">Signed at submission · IP logged for our records</p>
       </Section>

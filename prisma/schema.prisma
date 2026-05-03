@@ -156,6 +156,9 @@ model HealthDeclaration {
   alcohol            String?  // "no" | "socially" | "regularly"
   consentSignedName  String
   consentSignedAt    DateTime @default(now())
+  // Media consent — opt-in for use of photos/video on social/marketing.
+  // null until they fill the form; true=ok, false=no.
+  mediaConsent       Boolean?
   submittedFromIp    String?
   createdAt          DateTime @default(now())
 }
