@@ -2,8 +2,12 @@
 // SQLite for local dev; Postgres-portable (no SQLite-only features).
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../src/generated/prisma"
+  // Vercel Lambdas run on Amazon Linux (rhel-openssl-3.0.x). Without this,
+  // Prisma only ships the build-machine's binary and the deployed function
+  // throws "could not locate the Query Engine" at runtime.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
