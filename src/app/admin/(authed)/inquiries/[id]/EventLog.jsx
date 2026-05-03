@@ -1,111 +1,14 @@
 'use client';
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { logEvent, changeStage } from '../actions';
+import { changeStage } from '../actions';
 import { INQUIRY_STAGES } from '@/lib/constants';
-import { DatePicker } from '@/components/DatePicker';
 
-const TYPES = [
-  { key: 'called', label: 'Called', needsOutcome: true },
-  { key: 'whatsapp', label: 'WhatsApp', needsOutcome: true },
-  { key: 'in_person', label: 'In person', needsOutcome: false },
-  { key: 'note', label: 'Note', needsOutcome: false },
-];
-
-const OUTCOMES = [
-  { key: 'got_through', label: 'Got through' },
-  { key: 'no_answer', label: 'No answer' },
-  { key: 'busy', label: 'Busy / declined' },
-  { key: 'wrong_number', label: 'Wrong number' },
-  { key: 'responded', label: 'They responded' },
-];
-
+// Just the quick-stage-change chips. The old free-form "log an event" form
+// (Type / Outcome / What happened / Next follow-up combo) was removed —
+// nobody was filling it in. Next follow-up moved to its own sidebar card;
+// the per-event journal is captured automatically when the stage changes.
 export function EventLog({ inquiryId, currentStage }) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [type, setType] = useState('called');
-  const [outcome, setOutcome] = useState('');
-  const [detail, setDetail] = useState('');
-  const [nextDate, setNextDate] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  function reset() {
-    setType('called'); setOutcome(''); setDetail(''); setNextDate(''); setError('');
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    setError(''); setSuccess('');
-    const fd = new FormData();
-    fd.set('type', type);
-    if (outcome) fd.set('outcome', outcome);
-    if (detail) fd.set('detail', detail);
-    if (nextDate) fd.set('nextFollowUpAt', new Date(nextDate).toISOString());
-    startTransition(async () => {
-      const r = await logEvent(inquiryId, fd);
-      if (r?.ok === false) { setError(r.error); return; }
-      reset();
-      setSuccess(nextDate ? `Logged. Next follow-up set for ${formatDisplay(nextDate)}.` : 'Logged.');
-      router.refresh();
-      setTimeout(() => setSuccess(''), 4000);
-    });
-  }
-
-  const meta = TYPES.find((t) => t.key === type);
-
-  return (
-    <form onSubmit={handleSubmit} className="adm-form">
-      {error && <p className="adm-error">{error}</p>}
-      {success && <p className="adm-success">{success}</p>}
-
-      <div className="adm-form-row" style={{ gridTemplateColumns: '1fr 1fr' }}>
-        <div className="adm-field">
-          <label className="adm-label">Type</label>
-          <div className="evt-type-row">
-            {TYPES.map((t) => (
-              <button key={t.key} type="button" onClick={() => setType(t.key)} className={`evt-type ${type === t.key ? 'evt-type-on' : ''}`}>
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {meta?.needsOutcome && (
-          <div className="adm-field">
-            <label className="adm-label">Outcome</label>
-            <select value={outcome} onChange={(e) => setOutcome(e.target.value)} className="adm-select">
-              <option value="">— pick one —</option>
-              {OUTCOMES.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
-            </select>
-          </div>
-        )}
-      </div>
-
-      <div className="adm-field">
-        <label className="adm-label">What happened</label>
-        <textarea value={detail} onChange={(e) => setDetail(e.target.value)} className="adm-textarea" rows={2} placeholder={type === 'note' ? 'Useful context for next time…' : 'Brief summary of the conversation'} />
-      </div>
-
-      <div className="adm-field">
-        <label className="adm-label">Next follow-up</label>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-          <div style={{ flex: '1 1 220px', minWidth: 0 }}>
-            <DatePicker value={nextDate} onChange={setNextDate} />
-          </div>
-          <button type="submit" disabled={isPending} className="adm-btn" style={{ flex: '0 0 auto' }}>
-            {isPending ? 'Saving…' : 'Log event'}
-          </button>
-        </div>
-        <span className="adm-help">Leave blank if no next contact planned.</span>
-      </div>
-
-      <StageQuickSwitch inquiryId={inquiryId} currentStage={currentStage} />
-    </form>
-  );
-}
-
-function StageQuickSwitch({ inquiryId, currentStage }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -120,21 +23,19 @@ function StageQuickSwitch({ inquiryId, currentStage }) {
   const targets = INQUIRY_STAGES.filter((s) => s.key !== currentStage);
 
   return (
-    <div style={{ borderTop: '1px solid var(--border, #E0D6C8)', paddingTop: 12, marginTop: 4 }}>
-      <div className="adm-label" style={{ marginBottom: 8 }}>Quick stage change</div>
-      <div className="prv-chips">
-        {targets.map((s) => (
-          <button key={s.key} type="button" disabled={isPending} onClick={() => handle(s.key)} className="prv-chip" style={{ cursor: isPending ? 'wait' : 'pointer' }}>
-            → {s.label}
-          </button>
-        ))}
-      </div>
+    <div className="prv-chips">
+      {targets.map((s) => (
+        <button
+          key={s.key}
+          type="button"
+          disabled={isPending}
+          onClick={() => handle(s.key)}
+          className="prv-chip"
+          style={{ cursor: isPending ? 'wait' : 'pointer' }}
+        >
+          → {s.label}
+        </button>
+      ))}
     </div>
   );
-}
-
-function formatDisplay(iso) {
-  if (!iso) return '';
-  const d = new Date(iso + 'T00:00:00');
-  return isFinite(d) ? d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : iso;
 }

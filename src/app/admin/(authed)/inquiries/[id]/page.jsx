@@ -6,6 +6,7 @@ import { INQUIRY_STAGES, SOURCES, stageMeta } from '@/lib/constants';
 import { InquiryForm } from '../InquiryForm';
 import { updateInquiry, deleteInquiry } from '../actions';
 import { EventLog } from './EventLog';
+import { FollowUpForm } from './FollowUpForm';
 
 export default async function InquiryDetailPage({ params, searchParams }) {
   const { id } = await params;
@@ -47,7 +48,6 @@ export default async function InquiryDetailPage({ params, searchParams }) {
           <a href={`https://wa.me/91${inquiry.phone.replace(/\D/g, '').slice(-10)}`} target="_blank" rel="noreferrer" className="adm-btn adm-btn-secondary">
             Open WhatsApp
           </a>
-          <Link href={`/admin/trials/new?inquiryId=${inquiry.id}`} className="adm-btn">Schedule trial</Link>
         </div>
       </div>
 
@@ -72,7 +72,7 @@ export default async function InquiryDetailPage({ params, searchParams }) {
       <div className="prv-detail-grid">
         <div className="prv-detail-main">
           <div className="adm-card">
-            <h2 className="adm-card-title">Log an event</h2>
+            <h2 className="adm-card-title">Move to</h2>
             <EventLog inquiryId={inquiry.id} currentStage={inquiry.stage} />
           </div>
 
@@ -109,6 +109,11 @@ export default async function InquiryDetailPage({ params, searchParams }) {
               <DefRow label="Follow-up attempts" value={String(inquiry.followUpAttempts || 0)} />
               <DefRow label="Last contacted" value={inquiry.lastContactedAt ? formatRelative(inquiry.lastContactedAt) : '—'} />
             </dl>
+          </div>
+
+          <div className="adm-card">
+            <h2 className="adm-card-title">Next follow-up</h2>
+            <FollowUpForm inquiryId={inquiry.id} currentNext={inquiry.nextFollowUpAt} />
           </div>
 
           <div className="adm-card">
