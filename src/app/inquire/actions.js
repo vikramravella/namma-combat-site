@@ -80,6 +80,8 @@ export async function submitInquiry(formData) {
   } catch (err) {
     console.error('submitInquiry failed', err);
     Sentry.captureException(err, { tags: { source: 'submitInquiry', stage: 'db' }, extra: { raw } });
+    // Flush so the Lambda doesn't shut down before Sentry transmits.
+    try { await Sentry.flush(2000); } catch {}
     // TEMP: surface the real exception text so we can debug; will revert.
     return { ok: false, error: `DB error: ${err?.code || ''} ${err?.message?.slice(0, 240) || String(err)}` };
   }
