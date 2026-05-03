@@ -2,7 +2,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { DESIGNATIONS, INQUIRY_STAGES, SOURCES, PRIMARY_GOALS, EXPERIENCE_LEVELS, OFFERINGS } from '@/lib/constants';
+import { INQUIRY_STAGES, SOURCES, PRIMARY_GOALS, EXPERIENCE_LEVELS, OFFERINGS } from '@/lib/constants';
 
 export function InquiryForm({ inquiry, action, deleteAction, mode }) {
   const router = useRouter();
@@ -37,8 +37,7 @@ export function InquiryForm({ inquiry, action, deleteAction, mode }) {
       <div className="adm-card">
         <h2 className="adm-card-title">Identity</h2>
         <div className="adm-form">
-          <div className="adm-form-row" style={{ gridTemplateColumns: '110px 1fr 1fr' }}>
-            <Select label="Designation" name="designation" defaultValue={i.designation || ''} options={[['', '—'], ...DESIGNATIONS.map((d) => [d, d])]} />
+          <div className="adm-form-row">
             <Field label="First name *" name="firstName" defaultValue={i.firstName} required />
             <Field label="Last name *" name="lastName" defaultValue={i.lastName} required />
           </div>
