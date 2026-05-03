@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
   });
   if (!r) return { title: 'Receipt' };
   const safeInvoice = r.invoiceNumber.replace(/\//g, '-');
-  return { title: `Invoice ${safeInvoice} — ${fullName(r.plan.member)}` };
+  return { title: `${fullName(r.plan.member)} ${safeInvoice}` };
 }
 
 export default async function ReceiptDetailPage({ params, searchParams }) {
