@@ -6,6 +6,20 @@ import { VENDOR, FREEZE_POLICY, RECEIPT_STATUSES, stageMeta } from '@/lib/consta
 import { ReceiptActions } from './Actions';
 import { PaymentForm } from './PaymentForm';
 
+// Set a useful page <title> so the browser's "Save as PDF" dialog suggests
+// a meaningful default filename like "Invoice NCA-2627-0006 — Yuktesh Vipparthy"
+// instead of the generic "Namma Combat — Admin".
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const r = await db.receipt.findUnique({
+    where: { id },
+    include: { plan: { include: { member: true } } },
+  });
+  if (!r) return { title: 'Receipt' };
+  const safeInvoice = r.invoiceNumber.replace(/\//g, '-');
+  return { title: `Invoice ${safeInvoice} — ${fullName(r.plan.member)}` };
+}
+
 export default async function ReceiptDetailPage({ params, searchParams }) {
   const { id } = await params;
   const sp = await searchParams;
@@ -196,8 +210,9 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
         </div>
       </div>
 
-      {/* Payment management — sits below the printable receipt */}
-      <div style={{ maxWidth: 820, margin: '24px auto 0' }}>
+      {/* Payment management — sits below the printable receipt. Hidden on
+          print so the saved PDF is just the one-page receipt. */}
+      <div className="rcpt-admin-only" style={{ maxWidth: 820, margin: '24px auto 0' }}>
         <div className="adm-card">
           <h2 className="adm-card-title">Payments</h2>
           <PaymentForm receipt={r} balance={balance} />

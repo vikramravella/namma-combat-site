@@ -1778,20 +1778,46 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   margin: 0;
 }
 
-/* Print — strict A4 fit */
+/* Print — strict A4 fit. Goal: receipt fits exactly one page, payment-
+   management chrome is hidden so the saved PDF is just the invoice. */
 @media print {
-  body { background: #fff !important; }
-  .adm-header, .adm-page-header, .prv-action-row { display: none !important; }
+  html, body {
+    background: #fff !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .adm-header,
+  .adm-page-header,
+  .prv-action-row,
+  .rcpt-admin-only {
+    display: none !important;
+  }
   .adm-main { padding: 0 !important; }
   .rcpt-doc { padding: 0 !important; }
   .rcpt-paper {
     box-shadow: none !important;
     border: 0 !important;
     border-radius: 0 !important;
-    padding: 16mm 14mm !important;
+    padding: 12mm 12mm !important;
     max-width: none !important;
     page-break-inside: avoid;
+    break-inside: avoid;
   }
+  /* Tighten vertical rhythm so the receipt fits A4 on one page even when
+     it contains the discount row + part-paid block + next-agreed strip. */
+  .rcpt-wordmark { margin-bottom: 8mm !important; }
+  .rcpt-meta-strip,
+  .rcpt-billto,
+  .rcpt-plan,
+  .rcpt-totals-wrap,
+  .rcpt-paid,
+  .rcpt-partial,
+  .rcpt-next,
+  .rcpt-unpaid { margin-bottom: 4mm !important; }
+  .rcpt-plan-grid { gap: 6px 18px !important; }
+  .rcpt-terms { margin-top: 4mm !important; padding-top: 4mm !important; }
+  .rcpt-terms-list li { line-height: 1.35 !important; margin-bottom: 2px !important; }
+  .rcpt-closing { margin-top: 6mm !important; }
   @page { size: A4; margin: 0; }
 }
 
