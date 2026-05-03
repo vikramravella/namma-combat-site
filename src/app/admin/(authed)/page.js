@@ -19,10 +19,13 @@ export default async function HomePage() {
   const now = new Date();
   const { start: todayStart, end: todayEnd } = istTodayWindow(now);
 
-  // Read the "last seen inquiries" cookie so we can highlight only the
-  // website leads that arrived since Vinod last opened the inquiries list.
-  const lastSeenRaw = (await cookies()).get('last-seen-inq')?.value;
-  const lastSeenInq = lastSeenRaw ? new Date(Number(lastSeenRaw)) : new Date(0);
+  // Read the "last seen" cookies so badges only count items that arrived
+  // since Vinod last opened the relevant module — clears once he visits.
+  const jar = await cookies();
+  const lastSeenInqRaw = jar.get('last-seen-inq')?.value;
+  const lastSeenInq = lastSeenInqRaw ? new Date(Number(lastSeenInqRaw)) : new Date(0);
+  const lastSeenAlertsRaw = jar.get('last-seen-alerts')?.value;
+  const lastSeenAlerts = lastSeenAlertsRaw ? new Date(Number(lastSeenAlertsRaw)) : new Date(0);
 
   const [
     callsToday,
@@ -43,7 +46,7 @@ export default async function HomePage() {
       },
       orderBy: { nextFollowUpAt: 'asc' },
       take: 10,
-      select: { id: true, firstName: true, lastName: true, phone: true, nextFollowUpAt: true, stage: true, followUpAttempts: true },
+      select: { id: true, firstName: true, lastName: true, phone: true, nextFollowUpAt: true, stage: true, followUpAttempts: true, createdAt: true },
     }),
     // 2. Trials scheduled for today
     db.trial.findMany({
@@ -55,6 +58,7 @@ export default async function HomePage() {
         scheduledTime: true,
         discipline: true,
         area: true,
+        createdAt: true,
         inquiry: { select: { firstName: true, lastName: true, phone: true } },
         healthDecl: { select: { id: true } },
       },
@@ -75,6 +79,7 @@ export default async function HomePage() {
         status: true,
         outcome: true,
         discipline: true,
+        createdAt: true,
         inquiry: { select: { firstName: true, lastName: true, phone: true } },
       },
     }),
@@ -88,21 +93,21 @@ export default async function HomePage() {
       },
       orderBy: { joinedAt: 'desc' },
       take: 10,
-      select: { id: true, firstName: true, lastName: true, criticalHealthFlag: true, medicalNotes: true },
+      select: { id: true, firstName: true, lastName: true, criticalHealthFlag: true, medicalNotes: true, joinedAt: true },
     }),
     // 5. Smoker members — coach attention for cardio plan
     db.member.findMany({
       where: { smokes: true },
       orderBy: { joinedAt: 'desc' },
       take: 10,
-      select: { id: true, firstName: true, lastName: true },
+      select: { id: true, firstName: true, lastName: true, joinedAt: true },
     }),
     // 6. Members who declined photo / video consent
     db.member.findMany({
       where: { mediaConsent: false },
       orderBy: { joinedAt: 'desc' },
       take: 10,
-      select: { id: true, firstName: true, lastName: true },
+      select: { id: true, firstName: true, lastName: true, joinedAt: true },
     }),
     // Module-tile notification counts
     db.inquiry.count({
@@ -117,13 +122,17 @@ export default async function HomePage() {
 
   const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || isHealthNoteMeaningful(m.medicalNotes));
 
+  // Alerts badge counts items NEW since the last visit to /admin/alerts.
+  // The alerts page itself still shows the full live list — this only
+  // affects the badge on the dashboard tile.
+  const isNewer = (d) => d && new Date(d) > lastSeenAlerts;
   const totalAlerts =
-    callsToday.length +
-    todaysTrials.length +
-    conversionFollowUps.length +
-    healthAlertsFiltered.length +
-    smokers.length +
-    noMediaConsent.length;
+    callsToday.filter((i) => isNewer(i.createdAt)).length +
+    todaysTrials.filter((t) => isNewer(t.createdAt)).length +
+    conversionFollowUps.filter((t) => isNewer(t.createdAt)).length +
+    healthAlertsFiltered.filter((m) => isNewer(m.joinedAt)).length +
+    smokers.filter((m) => isNewer(m.joinedAt)).length +
+    noMediaConsent.filter((m) => isNewer(m.joinedAt)).length;
 
   // Badges only on Alerts and Inquiries. The other modules don't need a
   // pile of red bubbles — the alert dashboard already surfaces what's

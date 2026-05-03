@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { DashFolder } from '../DashFolder';
 import { istTodayWindow } from '@/lib/today-ist';
 import { isHealthNoteMeaningful } from '@/lib/health-notes';
+import { MarkAlertsSeenOnMount } from './MarkAlertsSeenOnMount';
 
 export const revalidate = 30;
 
@@ -43,6 +44,7 @@ export default async function AlertsPage() {
 
   return (
     <div className="home">
+      <MarkAlertsSeenOnMount />
       <div className="adm-page-header">
         <div>
           <p className="prv-eyebrow"><Link href="/admin" className="prv-back">← Dashboard</Link></p>
