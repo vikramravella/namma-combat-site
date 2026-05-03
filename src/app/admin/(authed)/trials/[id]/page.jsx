@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import * as Sentry from '@sentry/nextjs';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta, VENDOR } from '@/lib/constants';
@@ -10,6 +11,8 @@ export default async function TrialDetailPage(props) {
     return await renderTrialDetail(props);
   } catch (err) {
     if (err?.digest?.startsWith?.('NEXT_')) throw err;
+    Sentry.captureException(err, { tags: { route: '/admin/trials/[id]' } });
+    await Sentry.flush(2000);
     console.error('[trial/[id]] render failed:', err);
     return (
       <div style={{ padding: 16, background: '#fff5f5', border: '1px solid #c00', borderRadius: 6 }}>
