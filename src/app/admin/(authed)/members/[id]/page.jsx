@@ -87,6 +87,8 @@ export default async function MemberDetailPage({ params }) {
         </div>
       </div>
 
+      <MemberAlerts member={member} />
+
       {currentPlan && (() => {
         const daysLeft = Math.ceil((new Date(currentPlan.endDate) - new Date()) / 86400000);
         if (daysLeft < 0 || daysLeft > 14) return null;
@@ -203,6 +205,69 @@ export default async function MemberDetailPage({ params }) {
         </aside>
       </div>
     </>
+  );
+}
+
+// Surfaces medical + media-consent flags right under the page header so a
+// coach scanning the member page can't miss them. Renders nothing when the
+// member has no flags (i.e. healthy, default).
+function MemberAlerts({ member }) {
+  const items = [];
+  if (member.criticalHealthFlag) {
+    items.push({
+      key: 'critical',
+      tone: 'rust',
+      icon: '⚠',
+      label: 'Critical health flag',
+      detail: 'Coach attention required before any session.',
+    });
+  }
+  if (member.medicalNotes && member.medicalNotes.trim()) {
+    items.push({
+      key: 'medical',
+      tone: 'rust',
+      icon: '🩺',
+      label: 'Medical notes on file',
+      detail: member.medicalNotes,
+    });
+  }
+  if (member.mediaConsent === false) {
+    items.push({
+      key: 'media',
+      tone: 'gold',
+      icon: '📷',
+      label: 'No media consent',
+      detail: 'Do not photograph, record, or feature in any post.',
+    });
+  }
+  if (items.length === 0) return null;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+      {items.map((it) => {
+        const isRust = it.tone === 'rust';
+        return (
+          <div
+            key={it.key}
+            className="adm-card"
+            style={{
+              padding: '10px 14px',
+              borderLeft: `4px solid ${isRust ? 'var(--rust, #9A3520)' : 'var(--gold, #C99419)'}`,
+              background: isRust ? 'rgba(154,53,32,0.06)' : 'rgba(201,148,25,0.06)',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 12,
+            }}
+          >
+            <span style={{ fontSize: 20, lineHeight: 1, marginTop: 2 }} aria-hidden>{it.icon}</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600, color: isRust ? 'var(--rust, #9A3520)' : 'var(--text)' }}>{it.label}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-light)', whiteSpace: 'pre-wrap' }}>{it.detail}</div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
