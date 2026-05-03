@@ -38,7 +38,7 @@ export function StatusControls({ trial }) {
       <div className="adm-field">
         <label className="adm-label">Trial status</label>
         <div className="prv-chips">
-          {TRIAL_STATUSES.map((s) => (
+          {TRIAL_STATUSES.filter((s) => s.key !== 'rescheduled').map((s) => (
             <button key={s.key} type="button" disabled={isPending} onClick={() => changeStatus(s.key)} className={`prv-chip ${trial.status === s.key ? 'prv-chip-on' : ''}`}>
               {s.label}
             </button>

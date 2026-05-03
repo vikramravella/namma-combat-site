@@ -8,7 +8,7 @@ import { Booker } from '../../trials/new/Booker';
 // router-pushes away to /admin/trials/[id], so this component effectively
 // stays in its closed state on return.
 export function RescheduleSection({ trial }) {
-  const [open, setOpen] = useState(trial.status === 'no_show');
+  const [open, setOpen] = useState(trial.status === 'no_show' || trial.status === 'rescheduled');
 
   if (open) {
     return (
