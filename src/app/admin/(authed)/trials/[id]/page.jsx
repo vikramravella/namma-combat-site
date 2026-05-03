@@ -34,6 +34,18 @@ async function renderTrialDetail({ params, searchParams }) {
   });
   if (!trial) notFound();
 
+  // BISECT MODE: render bare-minimum first to see what's actually present.
+  if (sp?.bare === '1') {
+    return (
+      <div style={{ padding: 16 }}>
+        <h2>Trial bare-render OK</h2>
+        <pre style={{ whiteSpace: 'pre-wrap', fontSize: 11, background: '#fafafa', padding: 8, maxHeight: 400, overflow: 'auto' }}>
+          {JSON.stringify(trial, (k, v) => (k === 'zohoRaw' ? '...truncated...' : v), 2)}
+        </pre>
+      </div>
+    );
+  }
+
   const justScheduled = sp?.scheduled === '1';
   const status = stageMeta(TRIAL_STATUSES, trial.status);
   const outcome = trial.outcome ? stageMeta(TRIAL_OUTCOMES, trial.outcome) : null;
