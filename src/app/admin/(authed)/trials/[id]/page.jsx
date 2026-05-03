@@ -158,9 +158,6 @@ export default async function TrialDetailPage({ params, searchParams }) {
               <DefRow label="Phone" value={<span className="adm-mono">{trial.inquiry.phone}</span>} />
               <DefRow label="Source" value={trial.inquiry.source} />
             </dl>
-            <p style={{ marginTop: 12 }}>
-              <Link href={`/admin/inquiries/${trial.inquiry.id}`} className="adm-btn adm-btn-secondary adm-btn-sm">→ Open inquiry</Link>
-            </p>
           </div>
 
           <div className="adm-card">
