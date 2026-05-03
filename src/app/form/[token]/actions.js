@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import { db } from '@/lib/db';
 
 const formSchema = z.object({
+  fullName: z.string().trim().min(1, 'Name required').max(160),
   dob: z.string().min(1, 'Date of birth required'),
   gender: z.string().trim().min(1, 'Gender required').max(20),
   emergencyName: z.string().trim().min(1, 'Emergency contact name required').max(120),
@@ -27,7 +28,7 @@ export async function submitHealthForm(token, formData) {
 
   const tokenRow = await db.healthFormToken.findUnique({
     where: { token },
-    include: { trial: { include: { healthDecl: true } } },
+    include: { trial: { include: { healthDecl: true, inquiry: true } } },
   });
   if (!tokenRow) return { ok: false, error: 'Invalid link' };
   if (tokenRow.expiresAt < new Date()) return { ok: false, error: 'Link expired' };
@@ -75,6 +76,21 @@ export async function submitHealthForm(token, formData) {
       };
       if (trial.status === 'booked') updates.status = 'confirmed';
       await tx.trial.update({ where: { id: tokenRow.trialId }, data: updates });
+
+      // Propagate any name correction the customer made on the form back to
+      // their inquiry record so the rest of the system (admin lists, future
+      // member conversion, receipts) uses the corrected name.
+      const parts = data.fullName.split(/\s+/).filter(Boolean);
+      const newFirst = parts[0] || '';
+      const newLast = parts.slice(1).join(' ') || '-';
+      const oldFirst = trial.inquiry.firstName || '';
+      const oldLast = trial.inquiry.lastName || '';
+      if (newFirst && (newFirst !== oldFirst || newLast !== oldLast)) {
+        await tx.inquiry.update({
+          where: { id: trial.inquiryId },
+          data: { firstName: newFirst, lastName: newLast },
+        });
+      }
     });
     return { ok: true };
   } catch (err) {

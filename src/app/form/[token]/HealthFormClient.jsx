@@ -12,16 +12,19 @@ export function HealthFormClient({ inquiry, trial, action }) {
   const [alcohol, setAlcohol] = useState('no');
   const [mediaConsent, setMediaConsent] = useState('yes');
   const [dob, setDob] = useState('');
+  const [editName, setEditName] = useState(fullName(inquiry));
 
   function handleSubmit(e) {
     e.preventDefault();
     setError('');
     if (!dob) { setError('Date of birth is required.'); return; }
+    if (!editName.trim()) { setError('Name is required.'); return; }
     const fd = new FormData(e.target);
     fd.set('dob', dob);
     fd.set('smoking', smoking);
     fd.set('alcohol', alcohol);
     fd.set('mediaConsent', mediaConsent);
+    fd.set('fullName', editName.trim());
     startTransition(async () => {
       const r = await action(fd);
       if (r?.ok === false) setError(r.error);
@@ -59,7 +62,17 @@ export function HealthFormClient({ inquiry, trial, action }) {
       </div>
 
       <Section label="Confirm">
-        <ReadField label="Name" value={fullName(inquiry)} hint="Tell us if there's a typo" />
+        <div className="form-public-field">
+          <label className="form-public-label">Name <span className="form-public-req">*</span></label>
+          <input
+            type="text"
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+            className="form-public-input"
+            required
+          />
+          <div className="form-public-read-hint">Fix any typo — we&rsquo;ll update our records.</div>
+        </div>
         <ReadField label="Phone" value={inquiry.phone} locked hint="Locked — this is the link you came from" />
         {Array.isArray(inquiry.interestedIn) && inquiry.interestedIn.length > 0 && <ReadField label="Interested in" value={inquiry.interestedIn.join(', ')} />}
         <ReadField label="Trial" value={`${trial.discipline} · ${trialDate} ${trial.scheduledTime}`} />
