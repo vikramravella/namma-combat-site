@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ASSESSMENT_OPTIONS } from '@/lib/constants';
 import { saveAssessment, deleteAssessment } from './actions';
 
-export function AssessmentForm({ member, coaches, assessment, mode }) {
+export function AssessmentForm({ member, coaches, assessment, mode, bookingId }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -28,6 +28,7 @@ export function AssessmentForm({ member, coaches, assessment, mode }) {
     setError(''); setSuccess('');
     const fd = new FormData(e.target);
     fd.set('memberId', member.id);
+    if (bookingId) fd.set('bookingId', bookingId);
     fd.set('spinePosture', spinePosture.join(','));
     fd.set('scapulaPosition', scapulaPosition.join(','));
     fd.set('headNeckPosition', headNeckPosition.join(','));
@@ -37,7 +38,10 @@ export function AssessmentForm({ member, coaches, assessment, mode }) {
       const r = await saveAssessment(fd, mode === 'edit' ? { id: assessment.id } : {});
       if (r?.ok === false) { setError(r.error); return; }
       setSuccess('Saved.');
-      if (mode === 'create' && r.id) router.push(`/admin/assessments/${r.id}`);
+      // After create, send Naeem back to the queue if this came from a booking
+      // (so he can pick up the next person), otherwise to the new assessment.
+      if (mode === 'create' && bookingId) router.push('/admin/assessments');
+      else if (mode === 'create' && r.id) router.push(`/admin/assessments/${r.id}`);
       else router.refresh();
     });
   }

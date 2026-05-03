@@ -6,21 +6,30 @@ import { MEMBER_STATUSES, SKILL_LEVELS, PLAN_STATUSES, stageMeta } from '@/lib/c
 import { MemberForm } from '../MemberForm';
 import { updateMember, deleteMember } from '../actions';
 import { SkillLevelEditor } from './SkillLevelEditor';
+import { BookAssessment } from './BookAssessment';
 
 export default async function MemberDetailPage({ params }) {
   const { id } = await params;
-  const member = await db.member.findUnique({
-    where: { id },
-    include: {
-      plans: {
-        include: { receipt: { include: { payments: true } } },
-        orderBy: { startDate: 'desc' },
+  const [member, slots, upcomingBookings] = await Promise.all([
+    db.member.findUnique({
+      where: { id },
+      include: {
+        plans: {
+          include: { receipt: { include: { payments: true } } },
+          orderBy: { startDate: 'desc' },
+        },
+        assessments: { orderBy: { assessedAt: 'desc' }, include: { coach: true } },
+        fromInquiry: { include: { events: true } },
+        fromTrial: { include: { coach: true } },
       },
-      assessments: { orderBy: { assessedAt: 'desc' }, include: { coach: true } },
-      fromInquiry: { include: { events: true } },
-      fromTrial: { include: { coach: true } },
-    },
-  });
+    }),
+    db.assessmentSlot.findMany({ where: { active: true }, orderBy: [{ dayOfWeek: 'asc' }, { timeOfDay: 'asc' }] }),
+    db.assessmentBooking.findMany({
+      where: { memberId: id, status: 'booked', scheduledDate: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
+      include: { slot: true },
+      orderBy: { scheduledDate: 'asc' },
+    }),
+  ]);
   if (!member) notFound();
 
   const status = stageMeta(MEMBER_STATUSES, member.status);
@@ -169,9 +178,19 @@ export default async function MemberDetailPage({ params }) {
           )}
 
           <div className="adm-card">
+            <h2 className="adm-card-title">Book assessment</h2>
+            {upcomingBookings.length > 0 && (
+              <p className="adm-muted" style={{ fontSize: 12, marginBottom: 8 }}>
+                Already booked: {upcomingBookings.map((b) => `${formatDate(b.scheduledDate)} ${b.slot.timeOfDay}`).join(', ')}
+              </p>
+            )}
+            <BookAssessment memberId={member.id} slots={slots} />
+          </div>
+
+          <div className="adm-card">
             <h2 className="adm-card-title">Quick actions</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <Link href={`/admin/assessments/new?memberId=${member.id}`} className="adm-btn adm-btn-secondary">+ New assessment</Link>
+              <Link href={`/admin/assessments/new?memberId=${member.id}`} className="adm-btn adm-btn-secondary">+ Walk-in assessment</Link>
               <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn adm-btn-secondary">+ New plan</Link>
             </div>
           </div>

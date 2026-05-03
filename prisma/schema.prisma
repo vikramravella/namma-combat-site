@@ -208,6 +208,7 @@ model Member {
   // Children
   plans               Plan[]
   assessments         Assessment[]
+  assessmentBookings  AssessmentBooking[]
   notes               String?
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt
@@ -230,9 +231,30 @@ model AssessmentSlot {
   capacity        Int      @default(10)
   active          Boolean  @default(true)
   notes           String?
+  bookings        AssessmentBooking[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   @@index([active, dayOfWeek, timeOfDay])
+}
+
+// AssessmentBooking — a member booked into a specific date+slot for an
+// assessment session. Once Naeem fills the form, it links to the
+// resulting Assessment record and is marked completed.
+model AssessmentBooking {
+  id            String         @id @default(cuid())
+  memberId      String
+  member        Member         @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  slotId        String
+  slot          AssessmentSlot @relation(fields: [slotId], references: [id])
+  scheduledDate DateTime       // the actual date the member is booked for
+  status        String         @default("booked") // booked | completed | no_show | cancelled
+  assessmentId  String?        @unique
+  assessment    Assessment?    @relation("BookingAssessment", fields: [assessmentId], references: [id])
+  notes         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  @@index([scheduledDate, status])
+  @@index([memberId])
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -415,6 +437,7 @@ model Assessment {
   // Sign-off
   coachSignedName          String?
   coachSignedAt            DateTime?
+  fromBooking              AssessmentBooking? @relation("BookingAssessment")
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
 

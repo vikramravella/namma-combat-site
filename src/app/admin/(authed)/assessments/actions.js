@@ -104,6 +104,16 @@ export async function saveAssessment(formData, { id } = {}) {
         },
       });
       await logAudit({ actorUserId: session.user.id, action: 'create', entity: 'Assessment', entityId: saved.id, after: saved });
+
+      // If this assessment fulfilled a booking, mark it completed and link.
+      const bookingId = raw.bookingId || null;
+      if (bookingId) {
+        await db.assessmentBooking.update({
+          where: { id: bookingId },
+          data: { status: 'completed', assessmentId: saved.id },
+        });
+        revalidatePath('/admin/assessments');
+      }
     }
     revalidatePath('/admin/assessments');
     revalidatePath(`/admin/members/${data.memberId}`);
