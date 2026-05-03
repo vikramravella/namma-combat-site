@@ -2624,6 +2624,71 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   letter-spacing: 0;
 }
 
+/* Alert tiles use the same look as module tiles but are buttons (not Links). */
+.dash-alert-tile {
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+}
+.dash-alert-on {
+  outline: 2px solid var(--rust, #9A3520);
+  outline-offset: 2px;
+}
+
+/* Details panel that opens below the alert tile grid. */
+.dash-alert-panel {
+  background: var(--cream, #FEF8EE);
+  border: 1px solid var(--border, #E0D6C8);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 28px;
+  box-shadow: 0 1px 3px rgba(44, 35, 24, 0.04);
+  animation: dashPanelIn 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes dashPanelIn {
+  from { opacity: 0; transform: translateY(-4px) }
+  to { opacity: 1; transform: translateY(0) }
+}
+.dash-alert-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border, #E0D6C8);
+}
+.dash-alert-panel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  color: var(--rust, #9A3520);
+  background: rgba(154, 53, 32, 0.08);
+  border-radius: 6px;
+}
+.dash-alert-panel-title {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text, #2C2318);
+  font-weight: 700;
+  flex: 1;
+}
+.dash-alert-panel-count {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--rust, #9A3520);
+  background: rgba(154, 53, 32, 0.1);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
 /* ─── Dashboard folder (one card, multiple tabs) ─── */
 .dash-folder {
   background: var(--cream, #FEF8EE);

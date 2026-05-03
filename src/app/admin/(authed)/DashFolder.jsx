@@ -3,51 +3,55 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { formatDate, formatRelative } from '@/lib/format';
 
-// One unified "folder" with tabs across the top — Calls, Trials, Convert,
-// Health, Smokers, Media. The tab with the highest count is selected by
-// default so the most demanding queue is what Vinod sees first.
+// Alert tiles — same visual language as the module tiles below, but each
+// tile carries a notification badge and clicks expand a details panel
+// inline (no navigation away from the dashboard).
 export function DashFolder({ data }) {
-  const tabs = [
-    { key: 'calls', icon: '☎', label: 'Calls today', accent: 'rust', items: data.callsToday, empty: 'Nobody to chase right now.' },
-    { key: 'trials', icon: '◇', label: 'Trials today', accent: 'gold', items: data.todaysTrials, empty: 'No trials on the floor today.' },
-    { key: 'convert', icon: '↗', label: 'Convert', accent: 'rust', items: data.conversionFollowUps, empty: 'No trials waiting to convert.' },
-    { key: 'health', icon: '⚠', label: 'Health', accent: 'rust', items: data.healthAlerts, empty: 'No critical health flags.' },
-    { key: 'smokers', icon: '◌', label: 'Smokers', accent: 'gold', items: data.smokers, empty: 'No smokers on the roster.' },
-    { key: 'media', icon: '✕', label: 'No media', accent: 'gold', items: data.noMediaConsent, empty: 'All members OK with photos / video.' },
+  const tiles = [
+    { key: 'calls', icon: '☎', label: 'Calls today', sub: 'Follow-ups due', tone: 'rust', items: data.callsToday, empty: 'Nobody to chase right now.' },
+    { key: 'trials', icon: '◇', label: 'Trials today', sub: 'On the floor', tone: 'gold', items: data.todaysTrials, empty: 'No trials on the floor today.' },
+    { key: 'convert', icon: '↗', label: 'Convert', sub: 'Trials waiting', tone: 'rust-light', items: data.conversionFollowUps, empty: 'No trials waiting to convert.' },
+    { key: 'health', icon: '⚠', label: 'Health alerts', sub: 'Coach attention', tone: 'rust', items: data.healthAlerts, empty: 'No critical health flags.' },
+    { key: 'smokers', icon: '◌', label: 'Smokers', sub: 'Adjust cardio', tone: 'gold', items: data.smokers, empty: 'No smokers on the roster.' },
+    { key: 'media', icon: '✕', label: 'No media', sub: 'Do not photograph', tone: 'cream', items: data.noMediaConsent, empty: 'All members OK with photos / video.' },
   ];
 
-  // Open on whichever tab has the most pending work — falls back to first tab.
-  const initial = tabs.reduce((best, t) => (t.items.length > best.items.length ? t : best), tabs[0]).key;
+  const initial = tiles.reduce((best, t) => (t.items.length > best.items.length ? t : best), tiles[0]).key;
   const [active, setActive] = useState(initial);
-  const tab = tabs.find((t) => t.key === active);
+  const tile = tiles.find((t) => t.key === active);
 
   return (
-    <div className="dash-folder">
-      <div className="dash-folder-tabs" role="tablist">
-        {tabs.map((t) => (
+    <>
+      <div className="home-grid dash-alerts" style={{ marginBottom: 28 }}>
+        {tiles.map((t, i) => (
           <button
             key={t.key}
             type="button"
-            role="tab"
-            aria-selected={t.key === active}
             onClick={() => setActive(t.key)}
-            className={`dash-folder-tab ${t.key === active ? 'dash-folder-tab-on' : ''} dash-folder-tab-${t.accent}`}
+            className={`home-tile home-tile-${t.tone} dash-alert-tile ${t.key === active ? 'dash-alert-on' : ''}`}
+            style={{ animationDelay: `${i * 30}ms` }}
           >
-            <span className="dash-folder-tab-icon" aria-hidden>{t.icon}</span>
-            <span className="dash-folder-tab-label">{t.label}</span>
-            {t.items.length > 0 && <span className="dash-folder-tab-count">{t.items.length}</span>}
+            <span className="home-tile-mark">{t.icon}</span>
+            {t.items.length > 0 && <span className="home-tile-badge">{t.items.length}</span>}
+            <span className="home-tile-name">{t.label}</span>
+            <span className="home-tile-sub">{t.sub}</span>
           </button>
         ))}
       </div>
 
-      <div className="dash-folder-body" role="tabpanel">
-        {tab.items.length === 0 ? (
-          <p className="dash-folder-empty">{tab.empty}</p>
+      <div className="dash-alert-panel" key={tile.key}>
+        <div className="dash-alert-panel-head">
+          <span className="dash-alert-panel-icon" aria-hidden>{tile.icon}</span>
+          <span className="dash-alert-panel-title">{tile.label}</span>
+          <span className="dash-alert-panel-count">{tile.items.length}</span>
+        </div>
+        {tile.items.length === 0 ? (
+          <p className="dash-folder-empty">{tile.empty}</p>
         ) : (
-          <div className="dash-folder-list">{renderRows(tab.key, tab.items)}</div>
+          <div className="dash-folder-list">{renderRows(tile.key, tile.items)}</div>
         )}
       </div>
-    </div>
+    </>
   );
 }
 
