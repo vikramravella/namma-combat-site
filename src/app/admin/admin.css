@@ -1811,8 +1811,24 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   .adm-header,
   .adm-page-header,
   .prv-action-row,
-  .rcpt-admin-only {
+  .rcpt-admin-only,
+  .adm-loading {
     display: none !important;
+  }
+  /* Freeze every animation during print so Safari's PDF rasterizer
+     can't catch a half-faded skeleton frame and save it blank. */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Force the receipt to be fully visible regardless of any reveal /
+     fade-in animation state. */
+  .rcpt-doc,
+  .rcpt-paper,
+  .rcpt-doc * {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
   }
   .rcpt-closing { margin-top: 4mm !important; padding-top: 4mm !important; }
   .rcpt-closing-rule { margin-bottom: 4mm !important; }
