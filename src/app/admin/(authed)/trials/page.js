@@ -11,7 +11,7 @@ export default async function TrialsPage({ searchParams }) {
   const status = sp?.status && STATUS_KEYS.includes(sp.status) ? sp.status : '';
   const when = sp?.when || ''; // 'today' | 'week'
 
-  const where = {};
+  const where = { convertedMemberId: null };
   if (status) where.status = status;
   if (when === 'today') {
     const start = new Date(); start.setHours(0, 0, 0, 0);
@@ -23,6 +23,8 @@ export default async function TrialsPage({ searchParams }) {
     where.scheduledDate = { gte: start, lt: end };
   }
 
+  const baseFilter = { convertedMemberId: null };
+
   const [rows, allCount, byStatus] = await Promise.all([
     db.trial.findMany({
       where,
@@ -30,8 +32,8 @@ export default async function TrialsPage({ searchParams }) {
       take: 200,
       include: { inquiry: true, coach: true, healthDecl: true },
     }),
-    db.trial.count(),
-    db.trial.groupBy({ by: ['status'], _count: { _all: true } }),
+    db.trial.count({ where: baseFilter }),
+    db.trial.groupBy({ by: ['status'], _count: { _all: true }, where: baseFilter }),
   ]);
 
   const counts = { '': allCount };

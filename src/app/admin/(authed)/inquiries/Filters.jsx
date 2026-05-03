@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { INQUIRY_STAGES, SOURCES } from '@/lib/constants';
 
-export function Filters({ counts, convertedCount = 0 }) {
+export function Filters({ counts }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -12,7 +12,6 @@ export function Filters({ counts, convertedCount = 0 }) {
   const stage = params.get('stage') || '';
   const source = params.get('source') || '';
   const queue = params.get('queue') || '';
-  const showConverted = params.get('showConverted') === '1';
   const initialQ = params.get('q') || '';
 
   const [q, setQ] = useState(initialQ);
@@ -33,7 +32,7 @@ export function Filters({ counts, convertedCount = 0 }) {
     router.replace(next.toString() ? `${pathname}?${next.toString()}` : pathname, { scroll: false });
   }
 
-  const hasActive = stage || source || queue || q || showConverted;
+  const hasActive = stage || source || queue || q;
 
   return (
     <>
@@ -52,17 +51,6 @@ export function Filters({ counts, convertedCount = 0 }) {
           <option value="">Any source</option>
           {SOURCES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
         </select>
-        {convertedCount > 0 && (
-          <label className="adm-btn adm-btn-secondary adm-btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <input
-              type="checkbox"
-              checked={showConverted}
-              onChange={(e) => setParam('showConverted', e.target.checked ? '1' : '')}
-              style={{ margin: 0 }}
-            />
-            Show converted ({convertedCount})
-          </label>
-        )}
         {hasActive && (
           <button type="button" onClick={() => router.replace(pathname, { scroll: false })} className="adm-btn adm-btn-secondary adm-btn-sm">
             Clear
