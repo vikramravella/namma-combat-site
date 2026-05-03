@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
+import { istTodayWindow } from '@/lib/today-ist';
 
 export const revalidate = 30;
 
@@ -16,8 +17,7 @@ const MODULES = [
 
 export default async function HomePage() {
   const now = new Date();
-  const todayStart = new Date(now); todayStart.setHours(0, 0, 0, 0);
-  const todayEnd = new Date(now); todayEnd.setHours(23, 59, 59, 999);
+  const { start: todayStart, end: todayEnd } = istTodayWindow(now);
 
   // Notification counts for the module tiles — same idea as iOS app badges.
   const in14 = new Date(); in14.setDate(in14.getDate() + 14);
