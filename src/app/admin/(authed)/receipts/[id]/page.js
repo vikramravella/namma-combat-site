@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { fullName, formatDate, paiseToString, rupeesToWords, formatRupees } from '@/lib/format';
-import { VENDOR, FREEZE_POLICY, RECEIPT_STATUSES, stageMeta } from '@/lib/constants';
+import { VENDOR, RECEIPT_STATUSES, stageMeta } from '@/lib/constants';
 import { ReceiptActions } from './Actions';
 import { PaymentForm } from './PaymentForm';
 
@@ -199,7 +199,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
             <div className="rcpt-terms-label">Terms & Conditions</div>
             <ol className="rcpt-terms-list">
               <li><strong>Period locked</strong> to dates above; membership starts on start date regardless of first attendance.</li>
-              <li><strong>Freeze:</strong> up to {r.plan.freezeDaysAllowed} days per cycle (min {FREEZE_POLICY.minDaysPerFreeze} days/freeze, {FREEZE_POLICY.advanceNoticeDays} days advance notice). Medical exception with doctor's note.</li>
+              <li><strong>Freeze:</strong> {r.plan.freezeDaysAllowed} days applicable.</li>
               <li><strong>Non-refundable</strong> once started. Pre-start cancellations: 5% processing deduction. Non-transferable.</li>
               <li><strong>Health declaration</strong> must be on file and current; disclose any change before next session.</li>
               <li>GST under reverse charge: No. Consumer (B2C). Jurisdiction: Bangalore courts.</li>
