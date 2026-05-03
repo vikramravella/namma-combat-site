@@ -84,7 +84,7 @@ export async function createPlan(formData) {
           agreedFinalPaise: calc.totalPaise,
           customerGstin: customerGstin || null,
           notes: notes || null,
-          status: 'running',
+          status: 'active',
         },
       });
 
@@ -197,7 +197,7 @@ export async function endFreeze(planId) {
     if (!plan || plan.status !== 'on_freeze') return { ok: false, error: 'Plan is not on freeze' };
     await db.plan.update({
       where: { id: planId },
-      data: { status: 'running', freezeStart: null, freezeEnd: null, freezeReason: null },
+      data: { status: 'active', freezeStart: null, freezeEnd: null, freezeReason: null },
     });
     await syncMemberStatusFromPlans(null, plan.memberId);
     await logAudit({ actorUserId: session.user.id, action: 'end_freeze', entity: 'Plan', entityId: planId });

@@ -29,10 +29,10 @@ export async function syncMemberStatusFromPlans(tx, memberId) {
   if (m.plans.length === 0) return;
 
   const onFreeze = m.plans.find((p) => p.status === 'on_freeze');
-  const running = m.plans.find((p) => p.status === 'running');
+  const activePlan = m.plans.find((p) => p.status === 'active');
   let next;
   if (onFreeze) next = 'on_freeze';
-  else if (running) next = 'active';
+  else if (activePlan) next = 'active';
   else next = 'lapsed';
 
   if (next !== m.status) {

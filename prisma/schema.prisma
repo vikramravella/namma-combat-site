@@ -241,7 +241,7 @@ model Plan {
   freezeStart         DateTime?
   freezeEnd           DateTime?
   freezeReason        String?
-  status              String    @default("running")
+  status              String    @default("active")
   // GSTIN (only for B2B plans)
   customerGstin       String?
   // Optional billing override (B2B legal name on invoice, when GSTIN present)

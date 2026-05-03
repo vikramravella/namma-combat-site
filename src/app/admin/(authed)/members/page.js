@@ -19,7 +19,7 @@ export default async function MembersPage({ searchParams }) {
 
   const planFilter = (tier || cycle) ? {
     some: {
-      status: { in: ['running', 'on_freeze'] },
+      status: { in: ['active', 'on_freeze'] },
       ...(tier ? { tier } : {}),
       ...(cycle ? { cycle } : {}),
     },
@@ -43,12 +43,12 @@ export default async function MembersPage({ searchParams }) {
       where,
       orderBy: { createdAt: 'desc' },
       take: 200,
-      include: { plans: { where: { status: { in: ['running', 'on_freeze'] } }, take: 1, orderBy: { endDate: 'desc' } } },
+      include: { plans: { where: { status: { in: ['active', 'on_freeze'] } }, take: 1, orderBy: { endDate: 'desc' } } },
     }),
     db.member.count(),
     db.member.groupBy({ by: ['status'], _count: { _all: true } }),
-    db.plan.groupBy({ by: ['tier'], where: { status: { in: ['running', 'on_freeze'] } }, _count: { _all: true } }),
-    db.plan.groupBy({ by: ['cycle'], where: { status: { in: ['running', 'on_freeze'] } }, _count: { _all: true } }),
+    db.plan.groupBy({ by: ['tier'], where: { status: { in: ['active', 'on_freeze'] } }, _count: { _all: true } }),
+    db.plan.groupBy({ by: ['cycle'], where: { status: { in: ['active', 'on_freeze'] } }, _count: { _all: true } }),
   ]);
 
   const counts = { '': allCount };

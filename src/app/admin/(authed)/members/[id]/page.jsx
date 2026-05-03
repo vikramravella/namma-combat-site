@@ -25,7 +25,7 @@ export default async function MemberDetailPage({ params }) {
 
   const status = stageMeta(MEMBER_STATUSES, member.status);
   const skill = stageMeta(SKILL_LEVELS, member.skillLevel);
-  const currentPlan = member.plans.find((p) => ['running', 'on_freeze'].includes(p.status));
+  const currentPlan = member.plans.find((p) => ['active', 'on_freeze'].includes(p.status));
   const lastAssess = member.assessments[0];
 
   // Lifetime money

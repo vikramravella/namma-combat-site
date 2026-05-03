@@ -78,7 +78,7 @@ export const MEMBER_STATUSES = [
 ];
 
 export const PLAN_STATUSES = [
-  { key: 'running', label: 'Running', tone: 'green' },
+  { key: 'active', label: 'Active', tone: 'green' },
   { key: 'on_freeze', label: 'On freeze', tone: 'gold' },
   { key: 'ended', label: 'Ended', tone: 'gray' },
   { key: 'cancelled', label: 'Cancelled', tone: 'red' },
