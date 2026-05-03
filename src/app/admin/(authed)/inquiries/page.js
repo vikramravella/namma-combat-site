@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { fullName, formatRelative, formatDate } from '@/lib/format';
 import { INQUIRY_STAGES, SOURCES, stageMeta } from '@/lib/constants';
 import { Filters } from './Filters';
+import { MarkSeenOnMount } from './MarkSeenOnMount';
 
 export const revalidate = 10;
 const STAGE_KEYS = INQUIRY_STAGES.map((s) => s.key);
