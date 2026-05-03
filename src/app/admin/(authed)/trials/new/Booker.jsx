@@ -38,8 +38,14 @@ export function Booker({ inquiry, mode = 'create', trialId, currentArea }) {
       const r = mode === 'reschedule'
         ? await rescheduleTrial(trialId, fd)
         : await scheduleTrial(fd);
-      if (r?.ok === false) setError(r.error);
-      else if (mode === 'reschedule') router.refresh();
+      if (r?.ok === false) {
+        setError(r.error);
+        return;
+      }
+      // After a successful reschedule, leave the booker grid and go back to
+      // the trial detail page so the user sees the updated time/coach. The
+      // create flow already redirects via the server action.
+      if (mode === 'reschedule') router.push(`/admin/trials/${trialId}`);
     });
   }
 
