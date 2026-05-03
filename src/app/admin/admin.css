@@ -1811,21 +1811,24 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   .adm-header,
   .adm-page-header,
   .prv-action-row,
-  .rcpt-admin-only,
-  .rcpt-closing {
+  .rcpt-admin-only {
     display: none !important;
   }
+  .rcpt-closing { margin-top: 4mm !important; padding-top: 4mm !important; }
+  .rcpt-closing-rule { margin-bottom: 4mm !important; }
+  .rcpt-closing-seal { width: 32px !important; height: 32px !important; margin-bottom: 4px !important; }
+  .rcpt-closing-tagline { font-size: 9pt !important; margin: 0 !important; }
   .adm-main { padding: 0 !important; }
   .rcpt-doc { padding: 0 !important; }
   .rcpt-paper {
     box-shadow: none !important;
     border: 0 !important;
     border-radius: 0 !important;
-    padding: 8mm 10mm !important;
+    padding: 7mm 10mm !important;
     max-width: none !important;
     page-break-inside: avoid;
     break-inside: avoid;
-    font-size: 9.5pt !important;
+    font-size: 9pt !important;
   }
   /* Aggressive vertical-rhythm compression so a fully-loaded receipt
      (discount row + part-paid block + next-agreed strip + 6 terms) fits
