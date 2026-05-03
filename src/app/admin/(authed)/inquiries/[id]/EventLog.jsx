@@ -108,8 +108,9 @@ function StageQuickSwitch({ inquiryId, currentStage }) {
 
   function handle(newStage) {
     startTransition(async () => {
-      await changeStage(inquiryId, newStage, null);
-      router.refresh();
+      const r = await changeStage(inquiryId, newStage, null);
+      if (r?.redirectTo) router.push(r.redirectTo);
+      else router.refresh();
     });
   }
 

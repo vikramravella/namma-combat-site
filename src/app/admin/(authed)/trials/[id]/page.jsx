@@ -4,13 +4,21 @@ import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta, VENDOR } from '@/lib/constants';
 import { StatusControls, ConvertControl } from './StatusControls';
+import { TrialFollowUpForm } from './TrialFollowUpForm';
 
 export default async function TrialDetailPage({ params, searchParams }) {
   const { id } = await params;
   const sp = await searchParams;
   const trial = await db.trial.findUnique({
     where: { id },
-    include: { inquiry: true, coach: true, healthDecl: true, formToken: true, convertedMember: true },
+    include: {
+      inquiry: true,
+      coach: true,
+      healthDecl: true,
+      formToken: true,
+      convertedMember: true,
+      events: { orderBy: { createdAt: 'desc' } },
+    },
   });
   if (!trial) notFound();
 
@@ -99,6 +107,34 @@ export default async function TrialDetailPage({ params, searchParams }) {
             <h2 className="adm-card-title">Coach notes</h2>
             <p className="adm-muted">{trial.attendanceNotes || 'Not recorded yet.'}</p>
           </div>
+
+          <div className="adm-card">
+            <h2 className="adm-card-title">Log a follow-up</h2>
+            <TrialFollowUpForm trialId={trial.id} />
+          </div>
+
+          <div className="adm-card">
+            <h2 className="adm-card-title">Journey</h2>
+            {trial.events.length === 0 ? (
+              <p className="adm-muted">No events yet.</p>
+            ) : (
+              <ol className="prv-timeline">
+                {trial.events.map((e) => (
+                  <li key={e.id} className={`prv-event prv-event-${e.type}`}>
+                    <div className="prv-event-marker" aria-hidden />
+                    <div className="prv-event-body">
+                      <div className="prv-event-head">
+                        <span className="prv-event-label">{e.label}</span>
+                        <span className="prv-event-time">{formatRelative(e.createdAt)}</span>
+                      </div>
+                      {e.detail && <p className="prv-event-detail">{e.detail}</p>}
+                      {e.scheduledFor && <p className="prv-event-detail adm-muted">Next: {formatDate(e.scheduledFor)}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
         </div>
 
         <aside className="prv-detail-side">
@@ -108,7 +144,6 @@ export default async function TrialDetailPage({ params, searchParams }) {
               <DefRow label="Name" value={fullName(trial.inquiry)} />
               <DefRow label="Phone" value={<span className="adm-mono">{trial.inquiry.phone}</span>} />
               <DefRow label="Source" value={trial.inquiry.source} />
-              <DefRow label="Area" value={trial.inquiry.area} />
             </dl>
             <p style={{ marginTop: 12 }}>
               <Link href={`/admin/inquiries/${trial.inquiry.id}`} className="adm-btn adm-btn-secondary adm-btn-sm">→ Open inquiry</Link>

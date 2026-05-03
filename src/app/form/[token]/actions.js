@@ -61,6 +61,20 @@ export async function submitHealthForm(token, formData) {
         where: { id: tokenRow.id },
         data: { usedAt: new Date() },
       });
+      // Flip the trial status to "confirmed" if still in "booked" state
+      // (registration is now complete) and log a journey event.
+      const trial = tokenRow.trial;
+      const updates = {
+        events: {
+          create: {
+            type: 'registration_received',
+            label: 'Registration form received',
+            detail: `Signed by ${data.consentSignedName}`,
+          },
+        },
+      };
+      if (trial.status === 'booked') updates.status = 'confirmed';
+      await tx.trial.update({ where: { id: tokenRow.trialId }, data: updates });
     });
     return { ok: true };
   } catch (err) {

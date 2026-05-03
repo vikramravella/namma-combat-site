@@ -127,6 +127,8 @@ model Trial {
   // Health declaration (1:1)
   healthDecl      HealthDeclaration?
   formToken       HealthFormToken?
+  // Journey events — schedule, reschedule, registration, no-show follow-ups
+  events          TrialEvent[]
   // Set when this trial promoted to a member
   convertedMemberId String?           @unique
   convertedMember   Member?           @relation("MemberFromTrial", fields: [convertedMemberId], references: [id])
@@ -137,6 +139,21 @@ model Trial {
   @@index([status])
   @@index([scheduledDate])
   @@index([nextFollowUpAt])
+}
+
+// TrialEvent — append-only history for a trial: scheduled, rescheduled,
+// registration received, status changes, no-show follow-ups, notes.
+model TrialEvent {
+  id           String   @id @default(cuid())
+  trialId      String
+  trial        Trial    @relation(fields: [trialId], references: [id], onDelete: Cascade)
+  type         String   // scheduled | rescheduled | registration_received | status_changed | outcome_set | follow_up | note
+  label        String
+  detail       String?
+  actorUserId  String?
+  scheduledFor DateTime?
+  createdAt    DateTime @default(now())
+  @@index([trialId])
 }
 
 // Health declaration submitted by the trialee via /form/[token]

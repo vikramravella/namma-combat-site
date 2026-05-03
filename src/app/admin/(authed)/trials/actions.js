@@ -60,6 +60,15 @@ export async function scheduleTrial(formData) {
         discipline,
         coachId,
         status: 'booked',
+        events: {
+          create: {
+            type: 'scheduled',
+            label: 'Trial scheduled',
+            detail: `${discipline} · ${day} ${time}${coachName ? ' · ' + coachName : ''} — registration form pending`,
+            actorUserId: session.user.id,
+            scheduledFor: scheduledDate,
+          },
+        },
       },
     });
 
@@ -130,7 +139,22 @@ export async function updateTrialStatus(id, formData) {
     } else if (status === 'rescheduled') {
       updates.rescheduleCount = before.rescheduleCount + 1;
     }
-    const updated = await db.trial.update({ where: { id }, data: updates });
+    const statusLabel = (TRIAL_STATUSES.find((s) => s.key === status) || {}).label || status;
+    const updated = await db.trial.update({
+      where: { id },
+      data: {
+        ...updates,
+        events: {
+          create: {
+            type: 'status_changed',
+            label: `Status → ${statusLabel}`,
+            detail: notes || null,
+            actorUserId: session.user.id,
+            scheduledFor: updates.nextFollowUpAt || null,
+          },
+        },
+      },
+    });
     await logAudit({ actorUserId: session.user.id, action: 'update_status', entity: 'Trial', entityId: id, before: { status: before.status }, after: { status } });
     revalidatePath('/admin');
     revalidatePath('/admin/trials');
@@ -167,7 +191,22 @@ export async function setTrialOutcome(id, formData) {
     } else if (outcome === 'joined' || outcome === 'didnt_join') {
       updates.nextFollowUpAt = null;
     }
-    await db.trial.update({ where: { id }, data: updates });
+    const outcomeLabel = (TRIAL_OUTCOMES.find((o) => o.key === outcome) || {}).label || outcome;
+    await db.trial.update({
+      where: { id },
+      data: {
+        ...updates,
+        events: {
+          create: {
+            type: 'outcome_set',
+            label: `Outcome → ${outcomeLabel}`,
+            detail: attendanceNotes || null,
+            actorUserId: session.user.id,
+            scheduledFor: updates.nextFollowUpAt || null,
+          },
+        },
+      },
+    });
     await logAudit({ actorUserId: session.user.id, action: 'set_outcome', entity: 'Trial', entityId: id, before: { outcome: before.outcome }, after: { outcome, attendanceNotes } });
     revalidatePath('/admin');
     revalidatePath('/admin/trials');
@@ -233,7 +272,18 @@ export async function convertTrialToMember(id, formData) {
     // Link Trial → Member, mark outcome=joined
     await db.trial.update({
       where: { id: trial.id },
-      data: { convertedMemberId: member.id, outcome: 'joined' },
+      data: {
+        convertedMemberId: member.id,
+        outcome: 'joined',
+        events: {
+          create: {
+            type: 'outcome_set',
+            label: 'Converted to member',
+            detail: `Member: ${member.firstName} ${member.lastName}`,
+            actorUserId: session.user.id,
+          },
+        },
+      },
     });
     // Link Inquiry → Member (if not already linked from a prior trial)
     if (!inquiry.convertedMemberId) {
@@ -273,4 +323,112 @@ export async function convertTrialToMember(id, formData) {
 function formatDate(d) {
   if (!d) return '—';
   return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+// ─── Reschedule / follow-up / note actions on a trial ─────────────────
+
+const rescheduleSchema = z.object({
+  area: z.enum(['Arena', 'Sanctuary']),
+  discipline: z.string().min(1),
+  dayIndex: z.coerce.number().int().min(0).max(6),
+  time: z.string().min(1),
+  scheduledDate: z.string().optional(),
+  reason: z.string().trim().max(500).optional().or(z.literal('')),
+});
+
+export async function rescheduleTrial(id, formData) {
+  const session = await requireSession();
+  const raw = Object.fromEntries(formData);
+  const parsed = rescheduleSchema.safeParse(raw);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+  const { area, discipline, dayIndex, time, reason } = parsed.data;
+  const day = DAY_LABELS[dayIndex];
+  const newDate = parsed.data.scheduledDate
+    ? new Date(parsed.data.scheduledDate)
+    : nextOccurrence(dayIndex);
+
+  try {
+    const before = await db.trial.findUnique({ where: { id } });
+    if (!before) return { ok: false, error: 'Trial not found.' };
+
+    const coachName = coachFor(area, discipline, time);
+    let coachId = null;
+    if (coachName) {
+      const single = await db.coach.findFirst({ where: { name: coachName.split(',')[0].trim() } });
+      if (single && !coachName.includes(',') && !coachName.includes(' or ')) coachId = single.id;
+    }
+
+    await db.trial.update({
+      where: { id },
+      data: {
+        scheduledDate: newDate,
+        scheduledTime: time,
+        day,
+        area,
+        discipline,
+        coachId,
+        status: 'rescheduled',
+        nextFollowUpAt: newDate,
+        rescheduleCount: (before.rescheduleCount || 0) + 1,
+        events: {
+          create: {
+            type: 'rescheduled',
+            label: 'Rescheduled',
+            detail: `${discipline} · ${day} ${time}${coachName ? ' · ' + coachName : ''}${reason ? ' — ' + reason : ''}`,
+            actorUserId: session.user.id,
+            scheduledFor: newDate,
+          },
+        },
+      },
+    });
+    await logAudit({ actorUserId: session.user.id, action: 'reschedule', entity: 'Trial', entityId: id, before: { date: before.scheduledDate, time: before.scheduledTime }, after: { date: newDate, time } });
+    revalidatePath('/admin');
+    revalidatePath('/admin/trials');
+    revalidatePath(`/admin/trials/${id}`);
+    return { ok: true };
+  } catch (err) {
+    console.error('rescheduleTrial failed', err);
+    return { ok: false, error: 'Could not reschedule.' };
+  }
+}
+
+const followUpSchema = z.object({
+  type: z.enum(['called', 'whatsapp', 'in_person', 'note']),
+  detail: z.string().trim().max(2000).optional().or(z.literal('')),
+  nextFollowUpAt: z.string().optional().or(z.literal('')),
+});
+
+export async function logTrialFollowUp(id, formData) {
+  const session = await requireSession();
+  const raw = Object.fromEntries(formData);
+  const parsed = followUpSchema.safeParse(raw);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+  const { type, detail, nextFollowUpAt } = parsed.data;
+  const labels = { called: 'Called', whatsapp: 'WhatsApp', in_person: 'Met in person', note: 'Note' };
+  const next = nextFollowUpAt ? new Date(nextFollowUpAt) : null;
+
+  try {
+    await db.trial.update({
+      where: { id },
+      data: {
+        lastContactedAt: new Date(),
+        followUpAttempts: { increment: type === 'note' ? 0 : 1 },
+        nextFollowUpAt: next ?? undefined,
+        events: {
+          create: {
+            type: 'follow_up',
+            label: labels[type] || type,
+            detail: detail || null,
+            actorUserId: session.user.id,
+            scheduledFor: next,
+          },
+        },
+      },
+    });
+    revalidatePath(`/admin/trials/${id}`);
+    return { ok: true };
+  } catch (err) {
+    console.error('logTrialFollowUp failed', err);
+    return { ok: false, error: 'Could not log.' };
+  }
 }

@@ -98,7 +98,7 @@ export async function updateInquiry(id, formData) {
   data.phone = normalizedPhone;
   const interestedIn = formData.getAll('interestedIn').filter((v) => offeringSet.has(v));
   try {
-    const before = await db.inquiry.findUnique({ where: { id } });
+    const before = await db.inquiry.findUnique({ where: { id }, include: { trials: { select: { id: true } } } });
     const updated = await db.inquiry.update({
       where: { id },
       data: {
@@ -118,8 +118,15 @@ export async function updateInquiry(id, formData) {
     await logAudit({ actorUserId: session.user.id, action: 'update', entity: 'Inquiry', entityId: id, before, after: updated });
     revalidatePath('/admin/inquiries');
     revalidatePath(`/admin/inquiries/${id}`);
+    // If the user moved this inquiry to "trial_booked" and there's no trial
+    // yet, jump straight to the scheduler — that's where they need to be.
+    const justMovedToTrial = data.stage === 'trial_booked' && before.stage !== 'trial_booked';
+    if (justMovedToTrial && before.trials.length === 0) {
+      redirect(`/admin/trials/new?inquiryId=${id}`);
+    }
     return { ok: true };
   } catch (err) {
+    if (err?.digest?.startsWith?.('NEXT_REDIRECT')) throw err;
     if (err?.code === 'P2002') return { ok: false, error: 'Another inquiry has this phone.' };
     console.error('updateInquiry failed', err);
     return { ok: false, error: 'Could not update.' };
@@ -145,7 +152,7 @@ export async function changeStage(id, newStage, reason) {
   const session = await requireSession();
   if (!stageKeys.includes(newStage)) return { ok: false, error: 'Invalid stage' };
   try {
-    const before = await db.inquiry.findUnique({ where: { id } });
+    const before = await db.inquiry.findUnique({ where: { id }, include: { trials: { select: { id: true } } } });
     if (!before) return { ok: false, error: 'Inquiry not found' };
     if (before.stage === newStage) return { ok: true };
     const stageLabel = INQUIRY_STAGES.find((s) => s.key === newStage)?.label || newStage;
@@ -167,6 +174,9 @@ export async function changeStage(id, newStage, reason) {
     revalidatePath('/admin');
     revalidatePath('/admin/inquiries');
     revalidatePath(`/admin/inquiries/${id}`);
+    if (newStage === 'trial_booked' && before.trials.length === 0) {
+      return { ok: true, redirectTo: `/admin/trials/new?inquiryId=${id}` };
+    }
     return { ok: true };
   } catch (err) {
     console.error('changeStage failed', err);
