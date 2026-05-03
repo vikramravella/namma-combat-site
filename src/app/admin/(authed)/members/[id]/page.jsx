@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative, formatRupees } from '@/lib/format';
-import { MEMBER_STATUSES, SKILL_LEVELS, stageMeta } from '@/lib/constants';
+import { MEMBER_STATUSES, SKILL_LEVELS, PLAN_STATUSES, stageMeta } from '@/lib/constants';
 import { MemberForm } from '../MemberForm';
 import { updateMember, deleteMember } from '../actions';
 import { SkillLevelEditor } from './SkillLevelEditor';
@@ -105,24 +105,34 @@ export default async function MemberDetailPage({ params }) {
             </ol>
           </div>
 
-          {member.plans.length > 0 && (
-            <div className="adm-card">
-              <h2 className="adm-card-title">Plans</h2>
-              <table className="prv-table">
-                <thead><tr><th>Plan</th><th>Period</th><th>Amount</th><th>Receipt</th></tr></thead>
+          <div className="adm-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+              <h2 className="adm-card-title" style={{ marginBottom: 0 }}>Plans</h2>
+              <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn adm-btn-secondary adm-btn-sm">+ New plan</Link>
+            </div>
+            {member.plans.length === 0 ? (
+              <p className="adm-muted" style={{ marginTop: 12 }}>No plans yet.</p>
+            ) : (
+              <table className="prv-table" style={{ marginTop: 12 }}>
+                <thead><tr><th>Plan</th><th>Period</th><th>Status</th><th>Amount</th><th>Receipt</th><th></th></tr></thead>
                 <tbody>
-                  {member.plans.map((p) => (
-                    <tr key={p.id}>
-                      <td><Link href={`/admin/plans/${p.id}`}>{p.tier} {p.cycle}</Link><div className="prv-sub">{p.status}</div></td>
-                      <td>{formatDate(p.startDate)} → {formatDate(p.endDate)}</td>
-                      <td>{p.receipt ? formatRupees(p.receipt.totalPaise) : <span className="adm-muted">—</span>}</td>
-                      <td>{p.receipt ? <Link href={`/admin/receipts/${p.receipt.id}`}>{p.receipt.invoiceNumber}</Link> : <span className="adm-muted">—</span>}</td>
-                    </tr>
-                  ))}
+                  {member.plans.map((p) => {
+                    const isCurrent = ['active', 'on_freeze'].includes(p.status);
+                    return (
+                      <tr key={p.id} style={isCurrent ? { background: 'rgba(46,125,50,0.04)' } : undefined}>
+                        <td><strong>{p.tier} {p.cycle}</strong></td>
+                        <td className="prv-muted">{formatDate(p.startDate)} → {formatDate(p.endDate)}</td>
+                        <td><PlanStatusChip status={p.status} /></td>
+                        <td className="adm-mono">{p.receipt ? formatRupees(p.receipt.totalPaise) : <span className="adm-muted">—</span>}</td>
+                        <td>{p.receipt ? <Link href={`/admin/receipts/${p.receipt.id}`}>{p.receipt.invoiceNumber}</Link> : <span className="adm-muted">—</span>}</td>
+                        <td><Link href={`/admin/plans/${p.id}`} className="adm-btn adm-btn-secondary adm-btn-sm">{isCurrent ? 'Manage' : 'View'}</Link></td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
-            </div>
-          )}
+            )}
+          </div>
 
           <div className="adm-card">
             <h2 className="adm-card-title">Edit details</h2>
@@ -169,6 +179,11 @@ export default async function MemberDetailPage({ params }) {
       </div>
     </>
   );
+}
+
+function PlanStatusChip({ status }) {
+  const meta = stageMeta(PLAN_STATUSES, status);
+  return <span className={`prv-stage prv-stage-${meta.tone}`}><span className="prv-stage-dot" />{meta.label}</span>;
 }
 
 function SummaryStat({ label, value, sub }) {
