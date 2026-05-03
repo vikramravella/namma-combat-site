@@ -1,6 +1,7 @@
 'use client';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES } from '@/lib/constants';
 import { updateTrialStatus, setTrialOutcome, convertTrialToMember } from '../actions';
 
@@ -43,6 +44,11 @@ export function StatusControls({ trial }) {
               {s.label}
             </button>
           ))}
+          {!trial.convertedMember && trial.status !== 'attended' && trial.status !== 'cancelled' && (
+            <Link href={`/admin/trials/${trial.id}?reschedule=1`} className="prv-chip prv-chip-action">
+              ↻ Reschedule
+            </Link>
+          )}
         </div>
       </div>
 

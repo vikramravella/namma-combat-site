@@ -2602,6 +2602,17 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 .adm-row { display: flex; gap: 12px; align-items: center; }
 .adm-spacer { flex: 1; }
 
+/* Reschedule chip — sits in the trial status row but visually it's an action,
+   not a state. Gold accent + arrow icon set it apart from the status pills. */
+.prv-chip-action {
+  border-color: var(--gold, #E3C768) !important;
+  color: var(--rust, #9A3520) !important;
+  font-weight: 600;
+}
+.prv-chip-action:hover {
+  background: rgba(227, 199, 104, 0.12) !important;
+}
+
 /* ─── Header search (Spotlight-style icon → modal) ─── */
 .adm-search-icon-btn {
   display: inline-flex;

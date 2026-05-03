@@ -5,7 +5,7 @@ import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta, VENDOR } from '@/lib/constants';
 import { StatusControls, ConvertControl } from './StatusControls';
 import { TrialFollowUpForm } from './TrialFollowUpForm';
-import { RescheduleSection } from './RescheduleSection';
+import { Booker } from '../new/Booker';
 
 export default async function TrialDetailPage({ params, searchParams }) {
   const { id } = await params;
@@ -24,6 +24,7 @@ export default async function TrialDetailPage({ params, searchParams }) {
   if (!trial) notFound();
 
   const justScheduled = sp?.scheduled === '1';
+  const rescheduling = sp?.reschedule === '1';
   const status = stageMeta(TRIAL_STATUSES, trial.status);
   const outcome = trial.outcome ? stageMeta(TRIAL_OUTCOMES, trial.outcome) : null;
   const formUrl = trial.formToken ? `${process.env.NEXTAUTH_URL || ''}/form/${trial.formToken.token}` : null;
@@ -53,6 +54,17 @@ export default async function TrialDetailPage({ params, searchParams }) {
       </div>
 
       {justScheduled && <p className="adm-success" style={{ marginBottom: 16 }}>Trial scheduled. Send the health form link below.</p>}
+
+      {rescheduling && (
+        <div className="adm-card" style={{ borderLeft: '4px solid var(--gold, #C99419)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
+            <h2 className="adm-card-title" style={{ marginBottom: 0 }}>Reschedule — pick a new slot</h2>
+            <Link href={`/admin/trials/${trial.id}`} className="adm-btn adm-btn-secondary adm-btn-sm">Cancel</Link>
+          </div>
+          <p className="adm-help" style={{ marginBottom: 12 }}>Same trial record, full history preserved.</p>
+          <Booker inquiry={trial.inquiry} mode="reschedule" trialId={trial.id} currentArea={trial.area} />
+        </div>
+      )}
 
       <div className="prv-detail-grid">
         <div className="prv-detail-main">
@@ -109,9 +121,6 @@ export default async function TrialDetailPage({ params, searchParams }) {
             <p className="adm-muted">{trial.attendanceNotes || 'Not recorded yet.'}</p>
           </div>
 
-          {!trial.convertedMember && trial.status !== 'attended' && trial.status !== 'cancelled' && (
-            <RescheduleSection trial={trial} />
-          )}
 
           {(trial.outcome === 'didnt_join' || trial.outcome === 'lost_touch') && (
             <div className="adm-card">
