@@ -217,6 +217,25 @@ model Member {
 }
 
 // ─────────────────────────────────────────────────────────────
+// AssessmentSlot — recurring weekly slot Naeem holds for posture
+// assessments. Members book against these. Can be disabled or edited
+// without code changes; e.g. shift Wed 6pm to Wed 7pm based on Naeem's
+// availability.
+// ─────────────────────────────────────────────────────────────
+model AssessmentSlot {
+  id              String   @id @default(cuid())
+  dayOfWeek       Int      // 1=Monday … 7=Sunday (ISO-8601)
+  timeOfDay       String   // "HH:mm" 24-hour, e.g. "07:00", "18:00"
+  durationMinutes Int      @default(30)
+  capacity        Int      @default(10)
+  active          Boolean  @default(true)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@index([active, dayOfWeek, timeOfDay])
+}
+
+// ─────────────────────────────────────────────────────────────
 // MembershipType — admin-managed catalog of plan templates.
 // Each row is one purchasable plan (e.g. "Gold Quarterly") with the
 // duration / freeze-allowance / base price / floor access. Plan creation
