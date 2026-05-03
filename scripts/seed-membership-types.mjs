@@ -1,7 +1,7 @@
 // Seed the MembershipType table from the legacy TIERS × CYCLES × PRICE_TABLE
 // constants. Idempotent (upsert by unique name).
 
-import { PrismaClient } from '../src/generated/prisma/index.js';
+import { PrismaClient } from '@prisma/client';
 
 const PRICE_TABLE = {
   Silver:   { Monthly: 5500,  Quarterly: 15000, 'Semi-Annual': 28000, Annual: 45000  },

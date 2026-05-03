@@ -1,6 +1,6 @@
 // Seed default assessment slots: Wednesday 18:00 and Saturday 07:00.
 // Idempotent — only inserts if no rows exist.
-import { PrismaClient } from '../src/generated/prisma/index.js';
+import { PrismaClient } from '@prisma/client';
 const db = new PrismaClient();
 const count = await db.assessmentSlot.count();
 if (count > 0) {
