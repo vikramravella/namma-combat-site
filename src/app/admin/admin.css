@@ -1789,7 +1789,8 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   .adm-header,
   .adm-page-header,
   .prv-action-row,
-  .rcpt-admin-only {
+  .rcpt-admin-only,
+  .rcpt-closing {
     display: none !important;
   }
   .adm-main { padding: 0 !important; }
@@ -1798,14 +1799,18 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
     box-shadow: none !important;
     border: 0 !important;
     border-radius: 0 !important;
-    padding: 12mm 12mm !important;
+    padding: 8mm 10mm !important;
     max-width: none !important;
     page-break-inside: avoid;
     break-inside: avoid;
+    font-size: 9.5pt !important;
   }
-  /* Tighten vertical rhythm so the receipt fits A4 on one page even when
-     it contains the discount row + part-paid block + next-agreed strip. */
-  .rcpt-wordmark { margin-bottom: 8mm !important; }
+  /* Aggressive vertical-rhythm compression so a fully-loaded receipt
+     (discount row + part-paid block + next-agreed strip + 6 terms) fits
+     exactly one A4 page. Closing seal/tagline is decorative and hidden
+     above. */
+  .rcpt-wordmark { margin-bottom: 4mm !important; }
+  .rcpt-wordmark-logo { height: 28px !important; }
   .rcpt-meta-strip,
   .rcpt-billto,
   .rcpt-plan,
@@ -1813,11 +1818,12 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   .rcpt-paid,
   .rcpt-partial,
   .rcpt-next,
-  .rcpt-unpaid { margin-bottom: 4mm !important; }
-  .rcpt-plan-grid { gap: 6px 18px !important; }
-  .rcpt-terms { margin-top: 4mm !important; padding-top: 4mm !important; }
-  .rcpt-terms-list li { line-height: 1.35 !important; margin-bottom: 2px !important; }
-  .rcpt-closing { margin-top: 6mm !important; }
+  .rcpt-unpaid { margin-bottom: 3mm !important; }
+  .rcpt-plan-grid { gap: 4px 18px !important; }
+  .rcpt-words { margin: 3mm 0 !important; font-size: 9pt !important; }
+  .rcpt-terms { margin-top: 3mm !important; padding-top: 3mm !important; }
+  .rcpt-terms-list { font-size: 8.5pt !important; }
+  .rcpt-terms-list li { line-height: 1.3 !important; margin-bottom: 1px !important; }
   @page { size: A4; margin: 0; }
 }
 
