@@ -27,9 +27,15 @@ async function requireSession() {
   return s;
 }
 
+// 99 paise tolerance: GST math (CGST + SGST on a discounted base) rounds to the
+// paise and can leave a balance of 1-99 paise that the customer never sees on
+// the receipt total. Without this tolerance, paying the displayed total flagged
+// the receipt as "Part Paid" with a ₹0.01 balance forever.
+const PAID_TOLERANCE_PAISE = 99;
+
 function recomputeStatus(totalPaise, paidPaise) {
   if (paidPaise <= 0) return 'issued';
-  if (paidPaise >= totalPaise) return 'paid';
+  if (paidPaise + PAID_TOLERANCE_PAISE >= totalPaise) return 'paid';
   return 'partial';
 }
 

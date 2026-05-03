@@ -1,8 +1,36 @@
-import { Inter } from 'next/font/google';
+import { DM_Sans, Playfair_Display, Archivo_Black } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import Script from 'next/script';
 
-const inter = Inter({ subsets: ['latin'] });
+// Self-hosted, preloaded, no FOUT. Replaces the previous @import url(...) in
+// globals.css and inline <style jsx global> @import statements scattered across
+// landing pages — those caused a flash of fallback font on first render.
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--nf-body',
+  display: 'swap',
+});
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  style: ['normal', 'italic'],
+  variable: '--nf-serif',
+  display: 'swap',
+});
+const archivo = Archivo_Black({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--nf-archivo',
+  display: 'swap',
+});
+const materia = localFont({
+  src: '../../public/fonts/MateriaPro-Bold.otf',
+  variable: '--nf-materia',
+  display: 'swap',
+  weight: '700',
+});
 
 export const metadata = {
   title: 'Namma Combat — India\'s Premier Combat Sports Academy',
@@ -45,7 +73,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${dmSans.variable} ${playfair.variable} ${archivo.variable} ${materia.variable}`}>
       <head>
         {/* Google Analytics GA4 */}
         <Script
@@ -107,7 +135,7 @@ export default function RootLayout({ children }) {
           `}
         </Script>
       </head>
-      <body className={inter.className}>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

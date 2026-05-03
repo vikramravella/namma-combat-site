@@ -1,12 +1,8 @@
-@font-face {
-  font-family: 'Materia Pro';
-  src: url('/fonts/MateriaPro-Bold.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
+/* Fonts are loaded via next/font in src/app/layout.js — self-hosted, preloaded
+   in <head>, no FOUT. The --nf-* CSS variables are emitted by next/font onto
+   <html>; we compose them into the existing --font-* names below so the rest
+   of the codebase (which already uses --font-body / --font-serif / --font-display)
+   keeps working unchanged. */
 
 :root {
   --rust: #9A3520;
@@ -20,9 +16,9 @@
   --text-light: #6B5D4F;
   --text-muted: #9B8E7E;
   --border: #E0D6C8;
-  --font-display: 'Materia Pro', 'Archivo Black', 'Arial Black', sans-serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-display: var(--nf-materia), var(--nf-archivo), 'Arial Black', sans-serif;
+  --font-serif: var(--nf-serif), Georgia, serif;
+  --font-body: var(--nf-body), system-ui, sans-serif;
 }
 
 * {
