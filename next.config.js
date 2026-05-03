@@ -10,9 +10,12 @@ module.exports = withSentryConfig(nextConfig, {
   project: 'javascript-nextjs',
   silent: !process.env.CI,
   widenClientFileUpload: true,
-  reactComponentAnnotation: { enabled: true },
-  tunnelRoute: '/monitoring',
   hideSourceMaps: true,
-  disableLogger: true,
-  automaticVercelMonitors: true,
+  // tunnelRoute removed — middleware blocked it on the admin host. Direct sends
+  // to sentry.io work fine for our internal admin tool.
+  webpack: {
+    reactComponentAnnotation: { enabled: true },
+    automaticVercelMonitors: true,
+    treeshake: { removeDebugLogging: true },
+  },
 });
