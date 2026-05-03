@@ -7,6 +7,7 @@ import { MemberForm } from '../MemberForm';
 import { updateMember, deleteMember } from '../actions';
 import { SkillLevelEditor } from './SkillLevelEditor';
 import { BookAssessment } from './BookAssessment';
+import { isHealthNoteMeaningful } from '@/lib/health-notes';
 
 export default async function MemberDetailPage({ params }) {
   const { id } = await params;
@@ -222,7 +223,7 @@ function MemberAlerts({ member }) {
       detail: 'Coach attention required before any session.',
     });
   }
-  if (member.medicalNotes && member.medicalNotes.trim()) {
+  if (isHealthNoteMeaningful(member.medicalNotes)) {
     items.push({
       key: 'medical',
       tone: 'rust',

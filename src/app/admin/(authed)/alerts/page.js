@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { DashFolder } from '../DashFolder';
 import { istTodayWindow } from '@/lib/today-ist';
+import { isHealthNoteMeaningful } from '@/lib/health-notes';
 
 export const revalidate = 30;
 
@@ -29,9 +30,13 @@ export default async function AlertsPage() {
         outcome: { not: 'didnt_join' },
       },
     }),
-    db.member.count({
+    // Fetch then filter rather than count — noise notes ("No known
+    // health conditions" etc.) need a JS-side filter to match the
+    // /admin/alerts/health list. Cheap (≤ ~150 rows).
+    db.member.findMany({
       where: { OR: [{ criticalHealthFlag: true }, { medicalNotes: { not: null } }] },
-    }),
+      select: { id: true, criticalHealthFlag: true, medicalNotes: true },
+    }).then((rows) => rows.filter((m) => m.criticalHealthFlag || isHealthNoteMeaningful(m.medicalNotes)).length),
     db.member.count({ where: { smokes: true } }),
     db.member.count({ where: { mediaConsent: false } }),
   ]);

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { formatDate, formatRelative } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
+import { isHealthNoteMeaningful } from '@/lib/health-notes';
 
 export const revalidate = 30;
 
@@ -164,7 +165,7 @@ async function fetchItems(kind, now, todayStart, todayEnd) {
       orderBy: { joinedAt: 'desc' },
       select: { id: true, firstName: true, lastName: true, criticalHealthFlag: true, medicalNotes: true },
     });
-    return rows.filter((m) => m.criticalHealthFlag || (m.medicalNotes && m.medicalNotes.trim()));
+    return rows.filter((m) => m.criticalHealthFlag || isHealthNoteMeaningful(m.medicalNotes));
   }
   if (kind === 'smokers') {
     return db.member.findMany({

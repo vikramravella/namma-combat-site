@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
+import { isHealthNoteMeaningful } from '@/lib/health-notes';
 
 export const revalidate = 30;
 
@@ -11,9 +12,7 @@ const MODULES = [
   { href: '/admin/inquiries',   label: 'Inquiries',   sub: 'Leads & follow-ups',     tone: 'gold',     emoji: '✦' },
   { href: '/admin/trials',      label: 'Trials',      sub: 'Bookings & outcomes',    tone: 'rust-light', emoji: '◇' },
   { href: '/admin/members',     label: 'Members',     sub: 'The roster',             tone: 'cream',    emoji: '◯' },
-  { href: '/admin/receipts',    label: 'Receipts',    sub: 'Invoices & payments',    tone: 'warm',     emoji: '✧' },
-  { href: '/admin/assessments', label: 'Assessments', sub: 'Posture & progress',     tone: 'gold',     emoji: '△' },
-  { href: '/admin/reports',     label: 'Reports',     sub: 'Money & numbers',        tone: 'rust-light', emoji: '☷' },
+  { href: '/admin/reports',     label: 'Reports',     sub: 'Money & numbers',        tone: 'warm',     emoji: '☷' },
 ];
 
 export default async function HomePage() {
@@ -116,7 +115,7 @@ export default async function HomePage() {
     }),
   ]);
 
-  const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || (m.medicalNotes && m.medicalNotes.trim()));
+  const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || isHealthNoteMeaningful(m.medicalNotes));
 
   const totalAlerts =
     callsToday.length +
