@@ -3,6 +3,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { recordPayment } from '../actions';
 import { PAYMENT_METHODS } from '@/lib/constants';
+import { DatePicker } from '@/components/DatePicker';
 
 export function PaymentForm({ receipt, balance }) {
   const router = useRouter();
@@ -65,7 +66,7 @@ export function PaymentForm({ receipt, balance }) {
         </div>
         <div className="adm-field">
           <label className="adm-label">Received on</label>
-          <input type="date" value={receivedAt} onChange={(e) => setReceivedAt(e.target.value)} className="adm-input" />
+          <DatePicker value={receivedAt} onChange={setReceivedAt} />
         </div>
       </div>
 
@@ -73,7 +74,7 @@ export function PaymentForm({ receipt, balance }) {
         <div className="adm-form-row" style={{ background: 'var(--gold-soft)', padding: 12, borderRadius: 8 }}>
           <div className="adm-field">
             <label className="adm-label">Next agreed date</label>
-            <input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} className="adm-input" />
+            <DatePicker value={nextDate} onChange={setNextDate} />
           </div>
           <div className="adm-field">
             <label className="adm-label">Note</label>

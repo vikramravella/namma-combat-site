@@ -3,6 +3,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { DESIGNATIONS, MEMBER_STATUSES, SKILL_LEVELS, DISCIPLINES_COMBAT, DISCIPLINES_SANCTUARY } from '@/lib/constants';
+import { DatePicker } from '@/components/DatePicker';
 
 const ALL_DISCIPLINES = [...DISCIPLINES_COMBAT.filter((d) => d !== 'Workshop'), ...DISCIPLINES_SANCTUARY.filter((d) => d !== 'Workshop')];
 
@@ -14,6 +15,7 @@ export function MemberForm({ member, action, deleteAction }) {
 
   const initialDisc = (member.disciplines || '').split(',').map((s) => s.trim()).filter(Boolean);
   const [disciplines, setDisciplines] = useState(initialDisc);
+  const [dob, setDob] = useState(member.dob ? new Date(member.dob).toISOString().slice(0, 10) : '');
 
   function toggleDisc(d) {
     setDisciplines((arr) => arr.includes(d) ? arr.filter((x) => x !== d) : [...arr, d]);
@@ -52,7 +54,10 @@ export function MemberForm({ member, action, deleteAction }) {
           </div>
           <div className="adm-form-row">
             <Field label="Phone *" name="phone" defaultValue={member.phone} required />
-            <Field label="DOB" name="dob" type="date" defaultValue={member.dob ? new Date(member.dob).toISOString().slice(0, 10) : ''} />
+            <div className="adm-field">
+              <label className="adm-label">DOB</label>
+              <DatePicker value={dob} onChange={setDob} name="dob" />
+            </div>
           </div>
           <div className="adm-form-row">
             <Select label="Gender" name="gender" defaultValue={member.gender || ''} options={[['', '—'], ['M', 'Male'], ['F', 'Female'], ['Other', 'Other']]} />

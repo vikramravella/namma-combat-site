@@ -2,6 +2,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { freezePlan, endFreeze, cancelPlan } from '../actions';
+import { DatePicker } from '@/components/DatePicker';
 
 export function FreezeControls({ plan }) {
   const router = useRouter();
@@ -66,11 +67,11 @@ export function FreezeControls({ plan }) {
       <div className="adm-form-row">
         <div className="adm-field">
           <label className="adm-label">Freeze from</label>
-          <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="adm-input" />
+          <DatePicker value={start} onChange={setStart} />
         </div>
         <div className="adm-field">
           <label className="adm-label">Freeze to</label>
-          <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="adm-input" />
+          <DatePicker value={end} onChange={setEnd} />
         </div>
       </div>
       <div className="adm-field">

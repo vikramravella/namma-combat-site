@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ASSESSMENT_OPTIONS } from '@/lib/constants';
 import { saveAssessment, deleteAssessment } from './actions';
+import { DatePicker } from '@/components/DatePicker';
 
 export function AssessmentForm({ member, coaches, assessment, mode, bookingId }) {
   const router = useRouter();
@@ -18,6 +19,7 @@ export function AssessmentForm({ member, coaches, assessment, mode, bookingId })
   const [headNeckPosition, setHeadNeckPosition] = useState((a.headNeckPosition || '').split(',').filter(Boolean));
   const [hasMedical, setHasMedical] = useState(a.hasMedicalCondition || false);
   const [ribFlare, setRibFlare] = useState(a.spineRibFlare || false);
+  const [assessedAt, setAssessedAt] = useState(a.assessedAt ? new Date(a.assessedAt).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10));
 
   function toggleMulti(arr, setter, val) {
     setter(arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]);
@@ -65,7 +67,7 @@ export function AssessmentForm({ member, coaches, assessment, mode, bookingId })
           <div className="adm-form-row">
             <div className="adm-field">
               <label className="adm-label">Date</label>
-              <input type="date" name="assessedAt" defaultValue={a.assessedAt ? new Date(a.assessedAt).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)} className="adm-input" />
+              <DatePicker value={assessedAt} onChange={setAssessedAt} name="assessedAt" />
             </div>
             <div className="adm-field">
               <label className="adm-label">Coach</label>
