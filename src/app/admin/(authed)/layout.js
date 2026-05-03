@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { authOptions } from '@/lib/auth';
 import { SignOutButton } from './SignOutButton';
+import { HeaderSearch } from './HeaderSearch';
 
 export default async function AuthedLayout({ children }) {
   const session = await getServerSession(authOptions);
@@ -28,6 +29,7 @@ export default async function AuthedLayout({ children }) {
             </nav>
           </div>
           <div className="adm-header-right">
+            <HeaderSearch />
             <span className="adm-user-email">{session.user.email}</span>
             <SignOutButton />
           </div>
