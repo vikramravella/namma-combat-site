@@ -25,16 +25,22 @@ export default async function TrialsPage({ searchParams }) {
 
   const baseFilter = { convertedMemberId: null };
 
-  const [rows, allCount, byStatus] = await Promise.all([
-    db.trial.findMany({
-      where,
-      orderBy: { scheduledDate: 'desc' },
-      take: 200,
-      include: { inquiry: true, coach: true, healthDecl: true },
-    }),
-    db.trial.count({ where: baseFilter }),
-    db.trial.groupBy({ by: ['status'], _count: { _all: true }, where: baseFilter }),
-  ]);
+  let rows = [], allCount = 0, byStatus = [];
+  try {
+    [rows, allCount, byStatus] = await Promise.all([
+      db.trial.findMany({
+        where,
+        orderBy: { scheduledDate: 'desc' },
+        take: 200,
+        include: { inquiry: true, coach: true, healthDecl: true },
+      }),
+      db.trial.count({ where: baseFilter }),
+      db.trial.groupBy({ by: ['status'], _count: { _all: true }, where: baseFilter }),
+    ]);
+  } catch (err) {
+    console.error('[trials/page] Prisma query failed:', err);
+    throw err;
+  }
 
   const counts = { '': allCount };
   for (const r of byStatus) counts[r.status] = r._count._all;
