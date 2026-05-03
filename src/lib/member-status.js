@@ -22,6 +22,12 @@ export async function syncMemberStatusFromPlans(tx, memberId) {
   if (!m) return;
   if (m.status === 'left') return;
 
+  // If we have no plan records at all, we don't know enough to say "lapsed" —
+  // many imported members have plans that lived only outside our NCA dataset
+  // (e.g. paid via Books, never tracked in Deals). Preserve whatever status
+  // they already have.
+  if (m.plans.length === 0) return;
+
   const onFreeze = m.plans.find((p) => p.status === 'on_freeze');
   const running = m.plans.find((p) => p.status === 'running');
   let next;

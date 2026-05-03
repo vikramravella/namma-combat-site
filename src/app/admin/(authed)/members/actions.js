@@ -9,6 +9,7 @@ import { authOptions } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
 import { DESIGNATIONS, MEMBER_STATUSES, SKILL_LEVELS } from '@/lib/constants';
 import { normalizePhone } from '@/lib/phone';
+import { inferKidDesignation } from '@/lib/designation';
 
 const statusKeys = MEMBER_STATUSES.map((s) => s.key);
 const skillKeys = SKILL_LEVELS.map((s) => s.key);
@@ -56,6 +57,7 @@ export async function updateMember(id, formData) {
   const normalizedPhone = normalizePhone(data.phone);
   if (!normalizedPhone) return { ok: false, error: 'Phone number looks invalid.' };
   data.phone = normalizedPhone;
+  data.designation = inferKidDesignation(data.dob, data.gender, data.designation);
   try {
     const before = await db.member.findUnique({ where: { id } });
     if (!before) return { ok: false, error: 'Member not found' };

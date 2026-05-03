@@ -8,6 +8,7 @@ import { db } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, INQUIRY_STAGES } from '@/lib/constants';
+import { inferKidDesignation } from '@/lib/designation';
 import { coachFor, nextOccurrence, DAY_LABELS } from '@/lib/schedule';
 import { randomToken } from '@/lib/format';
 
@@ -203,14 +204,17 @@ export async function convertTrialToMember(id, formData) {
     // Phone-based dedupe — if a member already exists with this phone, reuse it
     let member = await db.member.findUnique({ where: { phone: inquiry.phone } });
     if (!member) {
+      const dob = hd?.dob ?? null;
+      const gender = hd?.gender ?? null;
+      const designation = inferKidDesignation(dob, gender, inquiry.designation);
       member = await db.member.create({
         data: {
-          designation: inquiry.designation,
+          designation,
           firstName: inquiry.firstName,
           lastName: inquiry.lastName,
           phone: inquiry.phone,
-          dob: hd?.dob ?? null,
-          gender: hd?.gender ?? null,
+          dob,
+          gender,
           primaryDiscipline: parsed.data.primaryDiscipline || trial.discipline,
           skillLevel: parsed.data.skillLevel || 'Beginner',
           emergencyName: hd?.emergencyName ?? null,
