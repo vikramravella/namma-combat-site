@@ -1,4 +1,5 @@
 'use client';
+import { submitMarketingLead } from '@/lib/marketing-lead';
 import { useState, useEffect } from 'react';
 
 /* ═══ BRAND TOKENS ═══ */
@@ -34,21 +35,13 @@ function InlineForm() {
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const submit = () => {
+  const submit = async () => {
     if (!fd.name || !fd.phone) return;
     setLoading(true);
-    const nameParts = fd.name.trim().split(' ');
-    const firstName = nameParts[0] || '';
-    const lastName = nameParts.slice(1).join(' ') || '-';
-    let iframe = document.getElementById('zoho_iframe');
-    if (!iframe) { iframe = document.createElement('iframe'); iframe.id = 'zoho_iframe'; iframe.name = 'zoho_iframe'; iframe.style.display = 'none'; document.body.appendChild(iframe); }
-    const form = document.createElement('form');
-    form.method = 'POST'; form.action = 'https://crm.zoho.in/crm/WebToLeadForm'; form.target = 'zoho_iframe'; form.acceptCharset = 'UTF-8';
-    const fields = { 'xnQsjsdp': '46046e1b1518a2e1c8335abc6c416cc060d54010509945e0354e8c12064719fe', 'zc_gad': '', 'xmIwtLD': 'a9a1d770007ff6c74947f678d63c2e80373d35aa1e34f909ded5b4cb6df9af52dcdb4166291a626a499d63089a7299d9', 'actionType': 'TGVhZHM=', 'returnURL': 'https://nammacombat.com/trial', 'First Name': firstName, 'Last Name': lastName, 'Phone': fd.phone, 'Lead Source': 'Website' };
-    if (fd.interest) fields['LEADCF14'] = fd.interest;
-    Object.entries(fields).forEach(([key, value]) => { const input = document.createElement('input'); input.type = 'hidden'; input.name = key; input.value = value; form.appendChild(input); });
-    document.body.appendChild(form); form.submit(); document.body.removeChild(form); if (typeof window !== 'undefined' && window.gtag) { window.gtag('event', 'generate_lead', { 'source': window.location.pathname, 'interest': fd.interest || 'general' }); }
-    setTimeout(() => { setDone(true); setLoading(false); }, 1000);
+    await submitMarketingLead(fd);
+    if (typeof window !== 'undefined' && window.gtag) { window.gtag('event', 'generate_lead', { 'source': window.location.pathname, 'interest': fd.interest || 'general' }); }
+    setDone(true);
+    setLoading(false);
   };
 
   if (done) {
