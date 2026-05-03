@@ -87,6 +87,22 @@ export default async function MemberDetailPage({ params }) {
         </div>
       </div>
 
+      {currentPlan && (() => {
+        const daysLeft = Math.ceil((new Date(currentPlan.endDate) - new Date()) / 86400000);
+        if (daysLeft < 0 || daysLeft > 14) return null;
+        return (
+          <div className="adm-card" style={{ marginBottom: 16, borderLeft: '4px solid var(--gold, #C99419)', background: 'rgba(201,148,25,0.06)' }}>
+            <p style={{ margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+              <span>
+                <strong>Renewal due in {daysLeft} day{daysLeft === 1 ? '' : 's'}.</strong>{' '}
+                Current plan ({currentPlan.tier} {currentPlan.cycle}) ends {formatDate(currentPlan.endDate)}.
+              </span>
+              <Link href={`/admin/plans/new?memberId=${member.id}`} className="adm-btn">+ Renew plan</Link>
+            </p>
+          </div>
+        );
+      })()}
+
       <div className="prv-summary-grid">
         <SummaryStat label="Current plan" value={currentPlan ? `${currentPlan.tier} · ${currentPlan.cycle}` : 'None'} sub={currentPlan ? `Until ${formatDate(currentPlan.endDate)}` : null} />
         <SummaryStat label="Last assessment" value={lastAssess ? formatDate(lastAssess.assessedAt) : 'None'} sub={lastAssess?.priorityFocus} />

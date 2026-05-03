@@ -17,6 +17,8 @@ export default async function MembersPage({ searchParams }) {
   const cycle = sp?.cycle && CYCLE_KEYS.includes(sp.cycle) ? sp.cycle : '';
   const q = (sp?.q || '').trim();
 
+  const expiring = sp?.expiring === '1';
+
   const planFilter = (tier || cycle) ? {
     some: {
       status: { in: ['active', 'on_freeze'] },
@@ -29,6 +31,13 @@ export default async function MembersPage({ searchParams }) {
   if (status) where.status = status;
   if (skill) where.skillLevel = skill;
   if (planFilter) where.plans = planFilter;
+  if (expiring) {
+    const now = new Date();
+    const in14 = new Date(); in14.setDate(in14.getDate() + 14);
+    where.plans = {
+      some: { status: { in: ['active', 'on_freeze'] }, endDate: { gte: now, lte: in14 } },
+    };
+  }
   if (q) {
     where.OR = [
       { firstName: { contains: q } },
@@ -36,6 +45,13 @@ export default async function MembersPage({ searchParams }) {
       { phone: { contains: q } },
     ];
   }
+
+  // Count of members whose current active plan ends within 14 days
+  const _now = new Date();
+  const _in14 = new Date(); _in14.setDate(_in14.getDate() + 14);
+  const expiringCount = await db.member.count({
+    where: { plans: { some: { status: { in: ['active', 'on_freeze'] }, endDate: { gte: _now, lte: _in14 } } } },
+  });
 
   // Counts by tier and cycle: groupBy on Plan with current-plan filter
   const [rows, allCount, byStatus, planTierCounts, planCycleCounts] = await Promise.all([
@@ -69,10 +85,13 @@ export default async function MembersPage({ searchParams }) {
       </div>
 
       <div className="prv-chips">
-        <ChipLink href="?" on={!status && !skill && !tier && !cycle} label="All" count={counts['']} />
+        <ChipLink href="?" on={!status && !skill && !tier && !cycle && !expiring} label="All" count={counts['']} />
         {MEMBER_STATUSES.map((s) => (
-          <ChipLink key={s.key} href={hrefFor(sp, { status: s.key, tier: '', cycle: '' })} on={status === s.key} label={s.label} count={counts[s.key] ?? 0} />
+          <ChipLink key={s.key} href={hrefFor(sp, { status: s.key, tier: '', cycle: '', expiring: '' })} on={status === s.key && !expiring} label={s.label} count={counts[s.key] ?? 0} />
         ))}
+        {expiringCount > 0 && (
+          <ChipLink href={hrefFor(sp, { expiring: '1', status: '' })} on={expiring} label="Expiring ≤ 14d" count={expiringCount} />
+        )}
       </div>
 
       <div className="prv-chips" style={{ marginTop: 8 }}>
