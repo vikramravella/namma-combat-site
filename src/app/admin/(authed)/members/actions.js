@@ -8,6 +8,7 @@ import { db } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
 import { DESIGNATIONS, MEMBER_STATUSES, SKILL_LEVELS } from '@/lib/constants';
+import { normalizePhone } from '@/lib/phone';
 
 const statusKeys = MEMBER_STATUSES.map((s) => s.key);
 const skillKeys = SKILL_LEVELS.map((s) => s.key);
@@ -42,7 +43,6 @@ async function requireSession() {
 function clean(d) {
   const out = {};
   for (const [k, v] of Object.entries(d)) out[k] = v === '' || v === undefined ? null : v;
-  if (out.phone) out.phone = String(out.phone).replace(/\s|-/g, '');
   if (out.dob) out.dob = new Date(out.dob);
   return out;
 }
@@ -53,6 +53,9 @@ export async function updateMember(id, formData) {
   const parsed = memberSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
   const data = clean(parsed.data);
+  const normalizedPhone = normalizePhone(data.phone);
+  if (!normalizedPhone) return { ok: false, error: 'Phone number looks invalid.' };
+  data.phone = normalizedPhone;
   try {
     const before = await db.member.findUnique({ where: { id } });
     if (!before) return { ok: false, error: 'Member not found' };

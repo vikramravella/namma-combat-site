@@ -53,6 +53,15 @@ export default async function InquiryDetailPage({ params, searchParams }) {
 
       {justCreated && <p className="adm-success" style={{ marginBottom: 16 }}>Inquiry created.</p>}
 
+      {inquiry.convertedMemberId && (
+        <div className="adm-card" style={{ marginBottom: 16, borderLeft: '4px solid var(--green, #2E7D32)', background: 'rgba(46,125,50,0.06)' }}>
+          <p style={{ margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+            <span><strong>✓ Converted to member.</strong> This inquiry became a member; further activity is tracked there.</span>
+            <Link href={`/admin/members/${inquiry.convertedMemberId}`} className="adm-btn adm-btn-secondary adm-btn-sm">View member →</Link>
+          </p>
+        </div>
+      )}
+
       <div className="prv-detail-grid">
         <div className="prv-detail-main">
           <div className="adm-card">

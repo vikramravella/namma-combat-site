@@ -42,7 +42,7 @@ export function InquiryForm({ inquiry, action, deleteAction, mode }) {
             <Field label="First name *" name="firstName" defaultValue={i.firstName} required />
             <Field label="Last name *" name="lastName" defaultValue={i.lastName} required />
           </div>
-          <Field label="Phone *" name="phone" defaultValue={i.phone} required placeholder="9876543210" />
+          <Field label="Phone *" name="phone" defaultValue={i.phone} required placeholder="+91 98765 43210" />
         </div>
       </div>
 

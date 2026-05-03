@@ -8,6 +8,7 @@ import { db } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
 import { DESIGNATIONS, INQUIRY_STAGES, SOURCES, PRIMARY_GOALS, EXPERIENCE_LEVELS, PREFERRED_TIMES } from '@/lib/constants';
+import { normalizePhone } from '@/lib/phone';
 
 const stageKeys = INQUIRY_STAGES.map((s) => s.key);
 const sourceKeys = SOURCES.map((s) => s.key);
@@ -39,7 +40,6 @@ function clean(data) {
   for (const [k, v] of Object.entries(data)) {
     out[k] = v === '' || v === undefined ? null : v;
   }
-  if (out.phone) out.phone = String(out.phone).replace(/\s|-/g, '');
   return out;
 }
 
@@ -49,6 +49,9 @@ export async function createInquiry(formData) {
   const parsed = inquirySchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
   const data = clean(parsed.data);
+  const normalizedPhone = normalizePhone(data.phone);
+  if (!normalizedPhone) return { ok: false, error: 'Phone number looks invalid.' };
+  data.phone = normalizedPhone;
   try {
     const created = await db.inquiry.create({
       data: {
@@ -93,6 +96,9 @@ export async function updateInquiry(id, formData) {
   const parsed = inquirySchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
   const data = clean(parsed.data);
+  const normalizedPhone = normalizePhone(data.phone);
+  if (!normalizedPhone) return { ok: false, error: 'Phone number looks invalid.' };
+  data.phone = normalizedPhone;
   try {
     const before = await db.inquiry.findUnique({ where: { id } });
     const updated = await db.inquiry.update({

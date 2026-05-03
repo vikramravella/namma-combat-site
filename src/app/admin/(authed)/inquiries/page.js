@@ -13,8 +13,10 @@ export default async function InquiriesPage({ searchParams }) {
   const source = sp?.source && SOURCES.find((s) => s.key === sp.source) ? sp.source : '';
   const queue = sp?.queue || ''; // 'due' for follow-ups due today
   const q = (sp?.q || '').trim();
+  const showConverted = sp?.showConverted === '1';
 
   const where = {};
+  if (!showConverted) where.convertedMemberId = null;
   if (stage) where.stage = stage;
   if (source) where.source = source;
   if (queue === 'due') {
@@ -29,7 +31,9 @@ export default async function InquiriesPage({ searchParams }) {
     ];
   }
 
-  const [rows, allCount, byStage, dueCount] = await Promise.all([
+  const baseFilter = showConverted ? {} : { convertedMemberId: null };
+
+  const [rows, allCount, byStage, dueCount, convertedCount] = await Promise.all([
     db.inquiry.findMany({
       where,
       orderBy: queue === 'due'
@@ -37,14 +41,16 @@ export default async function InquiriesPage({ searchParams }) {
         : [{ createdAt: 'desc' }],
       take: 200,
     }),
-    db.inquiry.count(),
-    db.inquiry.groupBy({ by: ['stage'], _count: { _all: true } }),
+    db.inquiry.count({ where: baseFilter }),
+    db.inquiry.groupBy({ by: ['stage'], _count: { _all: true }, where: baseFilter }),
     db.inquiry.count({
       where: {
+        ...baseFilter,
         nextFollowUpAt: { lte: new Date() },
         stage: { in: ['new', 'following_up'] },
       },
     }),
+    db.inquiry.count({ where: { convertedMemberId: { not: null } } }),
   ]);
 
   const counts = { '': allCount, _due: dueCount };
@@ -72,7 +78,7 @@ export default async function InquiriesPage({ searchParams }) {
         <Link href="/admin/inquiries/new" className="adm-btn">+ New inquiry</Link>
       </div>
 
-      <Filters counts={counts} />
+      <Filters counts={counts} convertedCount={convertedCount} />
 
       <div className="prv-table-wrap">
         {rows.length === 0 ? (
@@ -102,7 +108,16 @@ export default async function InquiriesPage({ searchParams }) {
                       <Link href={`/admin/inquiries/${r.id}`} className="prv-name">{fullName(r)}</Link>
                       <div className="prv-sub">{r.phone}</div>
                     </td>
-                    <td><StageChip stage={r.stage} /></td>
+                    <td>
+                      {r.convertedMemberId ? (
+                        <Link href={`/admin/members/${r.convertedMemberId}`} className="prv-stage prv-stage-green" style={{ textDecoration: 'none' }}>
+                          <span className="prv-stage-dot" />
+                          Member
+                        </Link>
+                      ) : (
+                        <StageChip stage={r.stage} />
+                      )}
+                    </td>
                     <td>{r.interestedIn || <span className="adm-muted">—</span>}</td>
                     <td className="prv-muted">{r.source ? formatSource(r.source) : '—'}</td>
                     <td className="prv-muted">{r.area || '—'}</td>
