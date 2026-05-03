@@ -53,14 +53,21 @@ export default async function InquiryDetailPage({ params, searchParams }) {
 
       {justCreated && <p className="adm-success" style={{ marginBottom: 16 }}>Inquiry created.</p>}
 
-      {inquiry.convertedMemberId && (
+      {inquiry.convertedMemberId ? (
         <div className="adm-card" style={{ marginBottom: 16, borderLeft: '4px solid var(--green, #2E7D32)', background: 'rgba(46,125,50,0.06)' }}>
           <p style={{ margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-            <span><strong>✓ Converted to member.</strong> This inquiry became a member; further activity is tracked there.</span>
+            <span><strong>✓ Moved to Members.</strong> This person is now a member; further activity is tracked there. They no longer appear in the Inquiries list.</span>
             <Link href={`/admin/members/${inquiry.convertedMemberId}`} className="adm-btn adm-btn-secondary adm-btn-sm">View member →</Link>
           </p>
         </div>
-      )}
+      ) : inquiry.trials.length > 0 ? (
+        <div className="adm-card" style={{ marginBottom: 16, borderLeft: '4px solid var(--gold, #C99419)', background: 'rgba(201,148,25,0.06)' }}>
+          <p style={{ margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+            <span><strong>→ Moved to Trials.</strong> A trial has been scheduled, so this person now lives in the Trials module and no longer appears in the Inquiries list.</span>
+            <Link href={`/admin/trials/${inquiry.trials[0].id}`} className="adm-btn adm-btn-secondary adm-btn-sm">View trial →</Link>
+          </p>
+        </div>
+      ) : null}
 
       <div className="prv-detail-grid">
         <div className="prv-detail-main">

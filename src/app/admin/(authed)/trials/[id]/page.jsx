@@ -45,6 +45,15 @@ export default async function TrialDetailPage({ params, searchParams }) {
 
       {justScheduled && <p className="adm-success" style={{ marginBottom: 16 }}>Trial scheduled. Send the health form link below.</p>}
 
+      {trial.convertedMember && (
+        <div className="adm-card" style={{ marginBottom: 16, borderLeft: '4px solid var(--green, #2E7D32)', background: 'rgba(46,125,50,0.06)' }}>
+          <p style={{ margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+            <span><strong>✓ Moved to Members.</strong> This person is now a member; further activity is tracked there. They no longer appear in the Trials list.</span>
+            <Link href={`/admin/members/${trial.convertedMember.id}`} className="adm-btn adm-btn-secondary adm-btn-sm">View member →</Link>
+          </p>
+        </div>
+      )}
+
       <div className="prv-detail-grid">
         <div className="prv-detail-main">
           <div className="adm-card">
