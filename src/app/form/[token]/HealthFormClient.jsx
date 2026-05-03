@@ -43,8 +43,8 @@ export function HealthFormClient({ inquiry, trial, action }) {
           <strong>{trial.scheduledTime}</strong>
           {trial.coach?.name ? <> with <strong>{trial.coach.name}</strong></> : null}.
         </p>
-        <p className="form-public-meta" style={{ marginTop: 16 }}>
-          See you on the floor.
+        <p className="form-public-meta" style={{ marginTop: 24, fontStyle: 'italic', letterSpacing: 2, textTransform: 'uppercase', fontSize: 12 }}>
+          Skill · Strength · Sanctuary
         </p>
       </div>
     );
@@ -78,7 +78,6 @@ export function HealthFormClient({ inquiry, trial, action }) {
       <Section label="Emergency contact">
         <Field name="emergencyName" label="Name" placeholder="Who should we call if needed" required />
         <Field name="emergencyPhone" label="Phone" placeholder="+91" required />
-        <SelectField name="emergencyRelation" label="Relation" options={['Spouse', 'Parent', 'Sibling', 'Friend', 'Other']} required />
       </Section>
 
       <Section label="Health">

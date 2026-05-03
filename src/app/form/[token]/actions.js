@@ -9,7 +9,7 @@ const formSchema = z.object({
   gender: z.string().trim().min(1, 'Gender required').max(20),
   emergencyName: z.string().trim().min(1, 'Emergency contact name required').max(120),
   emergencyPhone: z.string().trim().min(1, 'Emergency contact phone required').max(20),
-  emergencyRelation: z.string().trim().min(1, 'Emergency contact relation required').max(60),
+  emergencyRelation: z.string().trim().max(60).optional().or(z.literal('')),
   // Health fields stay optional — leave blank if none
   medicalConditions: z.string().trim().max(1000).optional().or(z.literal('')),
   injuries: z.string().trim().max(1000).optional().or(z.literal('')),
