@@ -105,7 +105,7 @@ export default async function MemberDetailPage({ params }) {
 
       <div className="prv-summary-grid">
         <SummaryStat label="Current plan" value={currentPlan ? `${currentPlan.tier} · ${currentPlan.cycle}` : 'None'} sub={currentPlan ? `Until ${formatDate(currentPlan.endDate)}` : null} />
-        <SummaryStat label="Last assessment" value={lastAssess ? formatDate(lastAssess.assessedAt) : 'None'} sub={lastAssess?.priorityFocus} />
+        <SummaryStat label="Last assessment" value={lastAssess ? formatDate(lastAssess.assessedAt) : 'Pending'} sub={lastAssess?.priorityFocus} />
         <SummaryStat label="Disciplines" value={member.disciplines || member.primaryDiscipline || '—'} />
         <SummaryStat label="Lifetime value" value={formatRupees(ltvPaise)} sub={`${member.plans.length} plan${member.plans.length === 1 ? '' : 's'}`} />
       </div>
