@@ -25,17 +25,26 @@ export function HealthFormClient({ inquiry, trial, action }) {
     });
   }
 
+  const trialDate = new Date(trial.scheduledDate).toLocaleDateString('en-IN', { weekday: 'long', day: '2-digit', month: 'short' });
+
   if (success) {
     return (
       <div className="form-public-success">
         <img src="/seal.svg" alt="Namma Combat" className="form-public-seal" />
-        <h1 className="form-public-title">All set, {inquiry.firstName}.</h1>
-        <p className="form-public-sub">Your health declaration is on file. See you on the floor.</p>
+        <h1 className="form-public-title">You&rsquo;re registered, {inquiry.firstName}.</h1>
+        <p className="form-public-sub" style={{ marginTop: 12 }}>
+          Your trial session is scheduled for{' '}
+          <strong>{trial.discipline}</strong> on{' '}
+          <strong>{trialDate}</strong> at{' '}
+          <strong>{trial.scheduledTime}</strong>
+          {trial.coach?.name ? <> with <strong>{trial.coach.name}</strong></> : null}.
+        </p>
+        <p className="form-public-meta" style={{ marginTop: 16 }}>
+          See you on the floor.
+        </p>
       </div>
     );
   }
-
-  const trialDate = new Date(trial.scheduledDate).toLocaleDateString('en-IN', { weekday: 'long', day: '2-digit', month: 'short' });
 
   return (
     <form onSubmit={handleSubmit}>

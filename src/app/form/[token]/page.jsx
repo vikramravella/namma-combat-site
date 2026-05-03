@@ -12,7 +12,7 @@ export default async function PublicFormPage({ params }) {
   const { token } = await params;
   const tokenRow = await db.healthFormToken.findUnique({
     where: { token },
-    include: { trial: { include: { inquiry: true, healthDecl: true } } },
+    include: { trial: { include: { inquiry: true, healthDecl: true, coach: true } } },
   });
 
   if (!tokenRow) return <ErrorShell title="Link not found">This form link doesn't match anything in our system. Please request a fresh link from us.</ErrorShell>;
