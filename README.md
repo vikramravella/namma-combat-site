@@ -1,12 +1,60 @@
 # Namma Combat Website — Project Documentation
 
-**Last updated: May 3, 2026**
+**Last updated: May 3, 2026 (after the build sprint)**
 
 Founded by Vinod Karuturi. Built solo after firing the previous dev team. All accounts under Vinod's control.
 
 ---
 
-## ▶ TOMORROW MORNING — RESUME HERE (May 3, 2026 late night)
+## ▶ RESUME HERE — May 3, 2026 (after Sunday rest)
+
+The **NCA admin platform shipped end-to-end and is LIVE.**
+
+### What's live
+- **URL:** https://academy.nammacombat.com (Vercel, Singapore region `sin1`, custom domain mapped)
+- **Login:** `vi@nammacombat.com` / `xERjyhNrd9Ekw2sv` *(rotate ASAP — see below)*
+- **DB:** Prisma Postgres (Singapore, free tier) auto-linked to Vercel project
+- **Marketing site** unchanged at `nammacombat.com`. Subdomain middleware (`src/middleware.js`) keeps the two surfaces separate.
+
+### Imported from Zoho on first deploy
+- 129 Inquiries · 118 Members · 50 Trials · 70 Plans + 70 Receipts + 70 Payments · ₹9,31,773 lifetime revenue mapped
+- Full original Zoho payload preserved per record in `zohoRaw` field — nothing is lost.
+
+### 🚨 CRITICAL — DO FIRST WHEN YOU WAKE UP
+**Rotate these production credentials.** I accidentally committed `.env.production` to the public GitHub repo for ~5 minutes (force-pushed clean since, but assume the secrets are exposed):
+1. **NEXTAUTH_SECRET** — generate new, set in Vercel env vars, redeploy
+2. **ADMIN_PASSWORD** — generate new, set in Vercel + I update prod DB
+3. **ZOHO_CLIENT_SECRET + REFRESH_TOKEN** — regenerate from https://api-console.zoho.in/
+4. **Prisma Postgres password** — rotate via https://console.prisma.io/ → DB → settings
+
+Walk-through with Claude when you start the next session.
+
+### Queued for next session(s)
+1. Rotate the leaked secrets above (top priority)
+2. Auto-save on edit forms (no Save button — saves as you type, debounced; hook scaffold already in `src/lib/useAutoSave.js`)
+3. Books invoices import — pull historical Zoho Books invoices into NCA Receipts so original invoice numbers are preserved
+4. Lead form migration — swap the 18 website forms to POST to NCA's `/api/leads` instead of Zoho. After this verifies → safe to delete Zoho org.
+5. Move DB from Singapore → Mumbai region (~50ms latency improvement)
+6. HR module — employees + payroll
+7. Client birthday alerts (dashboard surface + later auto-WhatsApp)
+8. WhatsApp Business API integration — sync incoming messages per member, send outgoing from platform
+9. Security pass: 2FA (TOTP/passkey), audit log surfacing, magic-link login, rate limit
+
+### NCA platform — what's built (locked-in shape)
+- **Repo:** folded into existing `namma-combat-site` repo. Marketing site at root, admin at `/admin`, public health form at `/form/[token]`. Subdomain middleware routes by host.
+- **Stack:** Next.js 14 App Router + Prisma 6 + PostgreSQL (Prisma Postgres on Vercel) + NextAuth (credentials) + Zod + bcryptjs.
+- **Modules built:** Inquiries · Trials · Members · Plans · Receipts · Assessments · Reports
+- **Schema:** 12 tables incl. AuditLog (append-only) and HealthFormToken (single-use public form access).
+- **Branding:** rust/gold/cream palette, Materia Pro / Playfair Display / DM Sans. NEVER "gym" — always "academy".
+- **Naming convention:** `designation` (Mr/Mrs/Ms/Master/Miss/Dr) + `firstName` + `lastName` (no full-name field). Phone is the dedupe key. **NO email collection. NO client address collection.**
+- **GST math:** Vinod enters the agreed final amount (incl GST) per plan; system reverse-calculates discount, pre-tax discount, net taxable, CGST/SGST. Receipts numbered `NCA/{FY}/{seq:0000}`.
+- **Freeze policy:** Monthly 7d / Quarterly 18d / Semi-Annual 30d / Annual 54d. Min 7 days per freeze, 7 days advance notice, medical exception bypasses.
+- **Skill levels:** Beginner / Intermediate / Advanced / Professional. Members track multiple `disciplines` (comma-list).
+- **Dashboard:** clean module navigator (no money on home page — privacy from screen-watchers). All metrics live behind `/admin/reports`.
+- **Importer:** `scripts/import-zoho.js` — re-runnable, idempotent (phone is dedup key). Run with `node --env-file=.env.production scripts/import-zoho.js`.
+- **Seed:** `prisma/seed.js` — Vinod's user + 7 coaches (Bhagyarajan, Rajan, Kantharaj, Venkatesh, Spoorthi, Manoj, Naeem).
+
+### Original platform-build plan (kept for reference)
 
 **Big decision tonight:** building NCC's own admin platform to replace Zoho dependency. Zoho stays running untouched — we build in parallel and migrate piece by piece.
 
