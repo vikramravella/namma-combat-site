@@ -26,6 +26,7 @@ export default async function TrialsPage({ searchParams }) {
   const baseFilter = { convertedMemberId: null };
 
   let rows = [], allCount = 0, byStatus = [];
+  let debugError = null;
   try {
     [rows, allCount, byStatus] = await Promise.all([
       db.trial.findMany({
@@ -38,8 +39,18 @@ export default async function TrialsPage({ searchParams }) {
       db.trial.groupBy({ by: ['status'], _count: { _all: true }, where: baseFilter }),
     ]);
   } catch (err) {
+    debugError = { message: err?.message || String(err), code: err?.code, stack: (err?.stack || '').split('\n').slice(0, 8).join('\n') };
     console.error('[trials/page] Prisma query failed:', err);
-    throw err;
+  }
+  if (debugError) {
+    return (
+      <div className="adm-card" style={{ background: '#fff5f5', border: '1px solid #c00', padding: 16 }}>
+        <h2 className="adm-card-title">Trials query failed</h2>
+        <p><strong>Message:</strong> {debugError.message}</p>
+        <p><strong>Code:</strong> {debugError.code || '(none)'}</p>
+        <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, background: '#fafafa', padding: 8, borderRadius: 4 }}>{debugError.stack}</pre>
+      </div>
+    );
   }
 
   const counts = { '': allCount };
