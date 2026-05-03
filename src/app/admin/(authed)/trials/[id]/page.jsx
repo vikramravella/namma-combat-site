@@ -34,7 +34,7 @@ async function renderTrialDetail({ params, searchParams }) {
   });
   if (!trial) notFound();
 
-  // BISECT MODE: render bare-minimum first to see what's actually present.
+  // BISECT MODE: progressively render parts to find what breaks.
   if (sp?.bare === '1') {
     return (
       <div style={{ padding: 16 }}>
@@ -42,6 +42,23 @@ async function renderTrialDetail({ params, searchParams }) {
         <pre style={{ whiteSpace: 'pre-wrap', fontSize: 11, background: '#fafafa', padding: 8, maxHeight: 400, overflow: 'auto' }}>
           {JSON.stringify(trial, (k, v) => (k === 'zohoRaw' ? '...truncated...' : v), 2)}
         </pre>
+      </div>
+    );
+  }
+  if (sp?.bare === '2') {
+    // Same as full but skip the two client components.
+    const status = stageMeta(TRIAL_STATUSES, trial.status);
+    const outcome = trial.outcome ? stageMeta(TRIAL_OUTCOMES, trial.outcome) : null;
+    return (
+      <div style={{ padding: 16 }}>
+        <h2>Trial bare=2 (no client components)</h2>
+        <p>Name: {fullName(trial.inquiry)}</p>
+        <p>Status: {status?.label}</p>
+        <p>Outcome: {outcome?.label || '—'}</p>
+        <p>Schedule: {trial.discipline} · {trial.day} {trial.scheduledTime} ({trial.area})</p>
+        <p>Date: {formatDate(trial.scheduledDate)}</p>
+        <p>Health decl present: {trial.healthDecl ? 'yes' : 'no'}</p>
+        <p>Phone: {trial.inquiry.phone}</p>
       </div>
     );
   }
