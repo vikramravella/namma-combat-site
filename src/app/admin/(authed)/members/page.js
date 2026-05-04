@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { fullName, formatDate, formatRupees } from '@/lib/format';
 import { MEMBER_STATUSES, SKILL_LEVELS, TIERS, CYCLES, stageMeta } from '@/lib/constants';
 import { SortChips, sortToOrderBy } from '@/components/SortChips';
+import { ChipLink } from '@/components/ChipLink';
 
 export const revalidate = 10;
 const STATUS_KEYS = MEMBER_STATUSES.map((s) => s.key);
@@ -19,6 +20,7 @@ export default async function MembersPage({ searchParams }) {
   const q = (sp?.q || '').trim();
 
   const expiring = sp?.expiring === '1';
+  const noMembership = sp?.no_membership === '1';
 
   const planFilter = (tier || cycle) ? {
     some: {
@@ -38,6 +40,12 @@ export default async function MembersPage({ searchParams }) {
     where.plans = {
       some: { status: { in: ['active', 'on_freeze'] }, endDate: { gte: now, lte: in14 } },
     };
+  }
+  if (noMembership) {
+    // Members who have NEVER had a plan attached to them (lapsed members
+    // still have the historical plan rows, so they're excluded from this
+    // filter). Useful for one-off cleanup of test/orphan member rows.
+    where.plans = { none: {} };
   }
   if (q) {
     where.OR = [
@@ -71,6 +79,11 @@ export default async function MembersPage({ searchParams }) {
           <h1 className="adm-page-title">Members</h1>
           <p className="adm-page-subtitle">{rows.length === allCount ? `${allCount} ${allCount === 1 ? 'member' : 'members'}` : `${rows.length} of ${allCount} matching`}</p>
         </div>
+      </div>
+
+      <div className="prv-chips">
+        <ChipLink href="?" on={!noMembership && !expiring} label="All" count={allCount} />
+        <ChipLink href="?no_membership=1" on={noMembership} label="No membership" />
       </div>
 
       <SortChips sort={sp?.sort || 'modified'} sp={sp} />
