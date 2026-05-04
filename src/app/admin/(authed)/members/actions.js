@@ -146,11 +146,40 @@ export async function setSkillLevel(id, newLevel) {
 export async function deleteMember(id) {
   const session = await requireSession();
   try {
-    const before = await db.member.findUnique({ where: { id } });
+    const before = await db.member.findUnique({
+      where: { id },
+      include: {
+        plans: { select: { id: true } },
+        fromTrial: { select: { id: true, inquiryId: true } },
+        fromInquiry: { select: { id: true } },
+      },
+    });
     if (!before) return { ok: false, error: 'Member not found' };
-    await db.member.delete({ where: { id } });
+
+    // Plans/receipts are legally locked once issued — refuse to delete a
+    // member who has any. Staff must void the receipt(s) and cancel the
+    // membership(s) first.
+    if (before.plans.length > 0) {
+      return { ok: false, error: 'This member has memberships/receipts on file. Void those before deleting.' };
+    }
+
+    // Cascade the lifecycle chain so the deleted member doesn't leave behind
+    // an orphan inquiry or trial. Order matters: trial first (it FK-depends
+    // on inquiry via inquiryId), then inquiry.
+    const trialId = before.fromTrial?.id || null;
+    const trialInquiryId = before.fromTrial?.inquiryId || null;
+    const inquiryId = before.fromInquiry?.id || trialInquiryId || null;
+
+    await db.$transaction(async (tx) => {
+      await tx.member.delete({ where: { id } });
+      if (trialId) await tx.trial.delete({ where: { id: trialId } }).catch(() => {});
+      if (inquiryId) await tx.inquiry.delete({ where: { id: inquiryId } }).catch(() => {});
+    });
     await logAudit({ actorUserId: session.user.id, action: 'delete', entity: 'Member', entityId: id, before });
+    revalidatePath('/admin');
     revalidatePath('/admin/members');
+    revalidatePath('/admin/trials');
+    revalidatePath('/admin/inquiries');
     redirect('/admin/members');
   } catch (err) {
     if (err?.digest?.startsWith('NEXT_REDIRECT')) throw err;

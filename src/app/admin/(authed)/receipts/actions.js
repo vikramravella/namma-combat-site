@@ -8,6 +8,7 @@ import { authOptions } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
 import { PAYMENT_METHODS } from '@/lib/constants';
 import { rupeesInputToPaise } from '@/lib/format';
+import { fiscalYearOf, formatInvoiceNumber } from '@/lib/calc';
 
 const methodKeys = PAYMENT_METHODS.map((m) => m.key);
 
@@ -113,6 +114,93 @@ export async function deletePayment(paymentId) {
   } catch (err) {
     console.error('deletePayment failed', err);
     return { ok: false, error: 'Could not delete payment.' };
+  }
+}
+
+// Edits the editable parts of an issued receipt:
+//   - issueDate (critical for backdated paper entries)
+//   - customerGstinSnapshot (forgot at create time)
+//   - customerNameSnapshot (B2B: company name override)
+//   - notes
+// Money fields stay locked. If issueDate moves into a different fiscal year
+// the invoiceNumber is reissued under the new FY's next sequence — that's
+// the GST-compliant move (sequences must be monotonic per FY).
+const editReceiptSchema = z.object({
+  issueDate: z.string().min(1, 'Issue date required'),
+  customerNameSnapshot: z.string().trim().min(1).max(160),
+  customerGstinSnapshot: z.string().trim().regex(/^[0-9A-Z]{15}$/, 'GSTIN must be 15 chars').optional().or(z.literal('')),
+  notes: z.string().trim().max(2000).optional().or(z.literal('')),
+});
+
+export async function editReceipt(receiptId, formData) {
+  const session = await requireSession();
+  const raw = Object.fromEntries(formData);
+  const parsed = editReceiptSchema.safeParse(raw);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+  const { issueDate, customerNameSnapshot, customerGstinSnapshot, notes } = parsed.data;
+
+  const receipt = await db.receipt.findUnique({ where: { id: receiptId } });
+  if (!receipt) return { ok: false, error: 'Receipt not found' };
+  if (receipt.status === 'void') return { ok: false, error: 'Voided receipts cannot be edited. Issue a fresh one.' };
+
+  const newIssueDate = new Date(issueDate);
+  const newFy = fiscalYearOf(newIssueDate);
+  const fyChanged = newFy !== receipt.fiscalYear;
+
+  try {
+    const result = await db.$transaction(async (tx) => {
+      const data = {
+        issueDate: newIssueDate,
+        customerNameSnapshot,
+        customerGstinSnapshot: customerGstinSnapshot || null,
+        notes: notes || null,
+        revisionCount: { increment: 1 },
+      };
+
+      if (fyChanged) {
+        // Mint a fresh invoiceNumber in the new FY. The old number is
+        // released back to its FY but never reused (sequence is monotonic).
+        const max = await tx.receipt.aggregate({
+          where: { fiscalYear: newFy },
+          _max: { sequence: true },
+        });
+        const nextSeq = (max._max.sequence ?? 0) + 1;
+        data.fiscalYear = newFy;
+        data.sequence = nextSeq;
+        data.invoiceNumber = formatInvoiceNumber(newFy, nextSeq);
+      }
+
+      return tx.receipt.update({ where: { id: receiptId }, data });
+    });
+
+    await logAudit({
+      actorUserId: session.user.id,
+      action: 'update',
+      entity: 'Receipt',
+      entityId: receiptId,
+      before: {
+        issueDate: receipt.issueDate,
+        invoiceNumber: receipt.invoiceNumber,
+        fiscalYear: receipt.fiscalYear,
+        customerNameSnapshot: receipt.customerNameSnapshot,
+        customerGstinSnapshot: receipt.customerGstinSnapshot,
+        notes: receipt.notes,
+      },
+      after: {
+        issueDate: result.issueDate,
+        invoiceNumber: result.invoiceNumber,
+        fiscalYear: result.fiscalYear,
+        customerNameSnapshot: result.customerNameSnapshot,
+        customerGstinSnapshot: result.customerGstinSnapshot,
+        notes: result.notes,
+      },
+    });
+    revalidatePath('/admin/receipts');
+    revalidatePath(`/admin/receipts/${receiptId}`);
+    return { ok: true, invoiceNumber: result.invoiceNumber };
+  } catch (err) {
+    console.error('editReceipt failed', err);
+    return { ok: false, error: 'Could not save changes.' };
   }
 }
 
