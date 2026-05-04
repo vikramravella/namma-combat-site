@@ -2621,6 +2621,83 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 .adm-row { display: flex; gap: 12px; align-items: center; }
 .adm-spacer { flex: 1; }
 
+/* ─── Dashboard revenue strip ─── */
+.dash-revenue {
+  background: var(--cream, #FEF8EE);
+  border: 1px solid var(--border, #E0D6C8);
+  border-radius: 12px;
+  padding: 18px 20px 14px;
+  margin-bottom: 28px;
+}
+.dash-revenue-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.dash-revenue-title {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text, #2C2318);
+  font-weight: 700;
+}
+.dash-revenue-total {
+  font-family: var(--font-display), 'Materia Pro', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--rust, #9A3520);
+  letter-spacing: 0.5px;
+}
+.dash-revenue-bars {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 8px;
+  align-items: end;
+  height: 110px;
+}
+.dash-revenue-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.dash-revenue-bar-wrap {
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.dash-revenue-bar {
+  width: 100%;
+  background: linear-gradient(180deg, var(--rust, #9A3520) 0%, rgba(154, 53, 32, 0.7) 100%);
+  border-radius: 4px 4px 0 0;
+  transition: opacity 0.2s ease;
+}
+.dash-revenue-col-now .dash-revenue-bar {
+  background: linear-gradient(180deg, var(--gold, #E3C768) 0%, rgba(227, 199, 104, 0.7) 100%);
+}
+.dash-revenue-bar:hover { opacity: 0.85; }
+.dash-revenue-amt {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text, #2C2318);
+  letter-spacing: 0;
+}
+.dash-revenue-month {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted, #9B8E7E);
+}
+.dash-revenue-col-now .dash-revenue-month { color: var(--rust, #9A3520); font-weight: 700; }
+
 /* iOS-style notification badge sitting top-right inside each module tile. */
 .home-tile { position: relative; }
 .home-tile-badge {

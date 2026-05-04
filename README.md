@@ -1,6 +1,6 @@
 # Namma Combat Website — Project Documentation
 
-**Last updated: May 3, 2026 (after the build sprint)**
+**Last updated: May 4, 2026 (after the polish sprint)**
 
 Founded by Vinod Karuturi. Built solo after firing the previous dev team. All accounts under Vinod's control.
 
@@ -8,21 +8,45 @@ Founded by Vinod Karuturi. Built solo after firing the previous dev team. All ac
 
 ## Current state
 
-The **NCA admin platform is LIVE and self-sufficient.**
+The **NCA admin platform is LIVE, self-sufficient, and being actively shaped from feedback.**
 
 ### What's live
 - **URL:** https://academy.nammacombat.com (Vercel, custom domain mapped)
-- **DB:** Supabase Postgres (Mumbai, `ap-south-1`) — migrated May 3, 2026
+- **DB:** Prisma Postgres (Singapore) + Prisma Accelerate. Moved May 3, 2026 from Supabase Mumbai because Vercel Lambdas couldn't reliably bundle the rhel-openssl-3.0.x Prisma engine. Accelerate uses an HTTPS proxy at runtime so engine binary issues can't recur.
 - **Marketing site** unchanged at `nammacombat.com`. Subdomain middleware (`src/middleware.js`) keeps the two surfaces separate.
-- **Lead capture:** all 16 marketing forms now write directly to NCA's database via `/inquire` server action. Public lead form also at `nammacombat.com/inquire`.
-- **Error tracking:** Sentry (https://namma-combat-j4.sentry.io) catches every runtime exception with stack traces.
+- **Lead capture:** all 16 marketing forms now write directly to NCA's database via `/inquire` server action.
+- **Error tracking:** Sentry catches every runtime exception with stack traces.
+- **Auth:** NextAuth credentials. Single admin user (Vinod). Multi-user / role-based access is on the next-session list.
 
 ### Queued for next session(s)
-1. Auto-save on edit forms (no Save button — saves as you type, debounced; hook scaffold already in `src/lib/useAutoSave.js`)
-2. HR module — employees + payroll
-3. Client birthday alerts (dashboard surface + later auto-WhatsApp)
-4. WhatsApp Business API integration — sync incoming messages per member, send outgoing from platform
-5. Security pass: 2FA (TOTP/passkey), audit log surfacing, magic-link login, rate limit
+1. **Aesthetics pass** — bring `academy.nammacombat.com` up to `nammacombat.com` polish. Motion vocabulary, page transitions, typography rhythm. Whole-screen redesigns one at a time.
+2. **Auth rework** — multi-user (coaches, accountant, admin), role-based access, magic-link login, 2FA / passkey, surfaceable audit log.
+3. **Backend / API layer** — proper REST or tRPC layer for client app + admin to share. Currently everything is server-actions, which is fine for the admin UI but doesn't generalise for future surfaces (member app, coach app, integrations).
+4. Auto-save on edit forms (no Save button — debounced; scaffold in `src/lib/useAutoSave.js`).
+5. HR module — employees + payroll.
+6. Client birthday alerts (dashboard surface + later auto-WhatsApp).
+7. WhatsApp Business API integration — sync incoming, send outgoing.
+
+### May 4, 2026 polish session — done in this round
+- **Spotlight-style search (⌘K)** in admin header — fuzzy across Inquiries / Trials / Members deduplicated by phone, lands on canonical module.
+- **History clock-icon** in header → modal of last 25 events across inquiries + trials.
+- **Dashboard rebuilt** as a "folder" — single Alerts module tile (with badge for total pending) → `/admin/alerts` opens the 6 swatches (Calls / Trials today / Convert / Health / Smokers / No media). Each swatch links to its own list page at `/admin/alerts/[kind]`.
+- **Notification badges** with cookie-driven "since last visit" semantics. Inquiries badge counts website leads arrived since `/admin/inquiries` was last opened. Alerts badge counts items new since `/admin/alerts` was last opened. Visiting clears the badge; new arrivals reignite it.
+- **`force-dynamic`** on dashboard + alerts — no 30s ISR cache, counts always reflect current state.
+- **Sort chips** (Recently modified · Date created) on every list module — Inquiries, Trials, Members, Memberships, Receipts.
+- **State changes auto-clear follow-ups** — flipping inquiry stage or trial status (booked → confirmed → showed_up etc.) clears `nextFollowUpAt`, dropping the record out of the calls-due queue. `no_show` is the only exception (sets +1-day callback). Inquiry detail page also has a ✓ Done tick to mark a follow-up resolved without changing the stage.
+- **Detail-change history** — name corrections, phone updates, source/goal edits now write events to the inquiry timeline so history is fully traceable.
+- **Plan → Membership** rename across every user-visible string. Routes (`/admin/plans`) + DB model (`Plan`) kept for compatibility.
+- **Receipt invoice PDF** — filename "Vinod Baburao NCA-2627-0006.pdf" via `generateMetadata`. One A4 page with seal back in. 99-paise tolerance on GST rounding so a customer paying the displayed total isn't flagged Part Paid for a 1-paise gap.
+- **Editable name on health form** — customer typo correction propagates back to the inquiry record. Form is one-time-only with WhatsApp contact link on resubmission attempt.
+- **Inquiry detail simplified** — dropped the Type / Outcome / What-happened multi-field "log an event" form. Now just a "Move to" chip row + a sidebar Next-follow-up date.
+- **Trial reschedule** is a chip-action in the status row, click → `?reschedule=1` opens the booker grid full-width, on confirm router-pushes back to the trial detail.
+- **Members detail** — assessment tile in the summary grid (1st/2nd pending after 90 days, link to previous if exists, inline booker). Alerts banner at top for critical health flag, medical notes, no-media-consent. Three filter-chip rows removed.
+- **Schema noise filtered** — `["No known health conditions"]` / `["None of the above"]` no longer count as Health alerts (and 20 such rows scrubbed to NULL).
+- **Overlap guard** — `createPlan` blocks creating a renewal whose start date sits inside an existing active membership's window; error message names the existing end date.
+- **Header nav slimmed** — Dashboard · Inquiries · Trials · Members. Receipts open via member, Assessments via member, membership types via direct URL.
+- **IST-aware "today"** for dashboard date math (server runs UTC; 5h30m offset applied).
+- **Test data cleanup** — Vikram Ravella, Karun Ka, vinod baburao, Muhusina Salim, Jahanavi Musa fully purged including chained payments / receipts / plans / events.
 
 ### NCA platform — what's built (locked-in shape)
 - **Repo:** folded into existing `namma-combat-site` repo. Marketing site at root, admin at `/admin`, public health form at `/form/[token]`. Subdomain middleware routes by host.
