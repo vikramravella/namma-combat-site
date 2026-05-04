@@ -31,6 +31,12 @@ export default async function SettingsHubPage() {
           description="Recurring weekly slots Naeem holds for posture assessments."
           href="/admin/settings/assessment-slots"
         />
+        <SettingsCard
+          title="Vendor / Invoice"
+          subtitle="Brand + GST"
+          description="Brand name, address, GSTIN, SAC, contact info that prints on every receipt."
+          href="/admin/settings/vendor"
+        />
       </div>
     </>
   );

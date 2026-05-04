@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { fullName, formatDate, paiseToString, rupeesToWords, formatRupees } from '@/lib/format';
-import { VENDOR, RECEIPT_STATUSES, stageMeta } from '@/lib/constants';
+import { RECEIPT_STATUSES, stageMeta } from '@/lib/constants';
+import { getVendor } from '@/lib/vendor';
 import { customerLocationLabel } from '@/lib/gst-state';
 import { ReceiptActions } from './Actions';
 import { PaymentForm } from './PaymentForm';
@@ -32,6 +33,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
     },
   });
   if (!r) notFound();
+  const VENDOR = await getVendor();
 
   // Find the most recent posture assessment for this member that happened
   // strictly BEFORE this plan's start. Used to decide whether the receipt's

@@ -102,16 +102,19 @@
 
 /* Subtle page-content fade so admin feels alive on each navigation
    without taxing the eye. Layout / header don't fade — only the per-
-   page content under <main>. Animation on initial render only. */
+   page content under <main>. The animation is declared inside
+   `@media not print` so the receipt PDF rasterizer can never catch
+   a half-faded frame and save a blank invoice. */
 @keyframes admPageIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.adm-main > * {
-  animation: admPageIn 0.32s ease-out both;
-}
-@media (prefers-reduced-motion: reduce) {
-  .adm-main > * { animation: none; }
+@media not print {
+  @media (prefers-reduced-motion: no-preference) {
+    .adm-main > * {
+      animation: admPageIn 0.32s ease-out both;
+    }
+  }
 }
 .adm-card-title {
   font-size: 11px;
@@ -1963,21 +1966,6 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   .rcpt-admin-only,
   .adm-loading {
     display: none !important;
-  }
-  /* Freeze every animation during print so Safari's PDF rasterizer
-     can't catch a half-faded skeleton frame and save it blank. */
-  *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-  /* Force the receipt to be fully visible regardless of any reveal /
-     fade-in animation state. */
-  .rcpt-doc,
-  .rcpt-paper,
-  .rcpt-doc * {
-    opacity: 1 !important;
-    transform: none !important;
-    visibility: visible !important;
   }
   .rcpt-closing { margin-top: 4mm !important; padding-top: 4mm !important; }
   .rcpt-closing-rule { margin-bottom: 4mm !important; }

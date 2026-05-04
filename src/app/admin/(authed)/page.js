@@ -196,8 +196,17 @@ export default async function HomePage() {
   );
 }
 
+// Greeting uses IST hour-of-day. d.getHours() would read the server's
+// timezone (Vercel runs UTC), so a 9 AM IST visit was reading as ~3:30 AM
+// UTC and rendering "Late night".
+const istHourFormatter = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Asia/Kolkata',
+  hour: '2-digit',
+  hour12: false,
+});
+
 function greet(d) {
-  const h = d.getHours();
+  const h = Number(istHourFormatter.format(d));
   if (h < 5) return 'Late night';
   if (h < 12) return 'Good morning';
   if (h < 17) return 'Good afternoon';

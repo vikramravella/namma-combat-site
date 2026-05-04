@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
-import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta, VENDOR } from '@/lib/constants';
+import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta } from '@/lib/constants';
 import { StatusControls, ConvertControl } from './StatusControls';
 import { TrialFollowUpForm } from './TrialFollowUpForm';
 import { Booker } from '../new/Booker';

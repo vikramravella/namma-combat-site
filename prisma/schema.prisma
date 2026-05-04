@@ -21,6 +21,30 @@ datasource db {
 // ─────────────────────────────────────────────────────────────
 // Staff (admin users)
 // ─────────────────────────────────────────────────────────────
+// VendorSetting holds the editable brand/contact info that appears on the
+// invoice and elsewhere. Single-row pattern: id is always "main". Tax rates
+// and SAC code stay in code (constants.js / lib/calc.js) because they're
+// regulatory and shouldn't be changed without a code review.
+//
+// Existing receipts snapshot vendorGstin / vendorSac at issue time, so
+// editing this table won't retroactively change historic invoices.
+model VendorSetting {
+  id              String   @id  // Always "main"
+  legalName       String
+  brandName       String
+  brandShort      String
+  address         String
+  gstin           String
+  sac             String
+  sacDescription  String
+  placeOfSupply   String
+  pan             String
+  phone           String
+  email           String
+  whatsappNumber  String
+  updatedAt       DateTime @updatedAt
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
