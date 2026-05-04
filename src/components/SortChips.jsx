@@ -34,9 +34,19 @@ export function SortChips({ sort = 'modified', sp = {} }) {
   );
 }
 
-// Map a sort key to a Prisma orderBy clause. The fallback for invalid
-// keys is 'modified'.
+// Valid sort keys — narrow the surface so an unknown ?sort=foo doesn't
+// fall through silently. Values map to Prisma orderBy clauses.
+export const SORT_KEYS = ['modified', 'created'];
+
 export function sortToOrderBy(sort) {
-  if (sort === 'created') return { createdAt: 'desc' };
-  return { updatedAt: 'desc' };
+  switch (sort) {
+    case 'created': return { createdAt: 'desc' };
+    case 'modified':
+    case undefined:
+    case '':
+    case null:
+      return { updatedAt: 'desc' };
+    default:
+      return { updatedAt: 'desc' };
+  }
 }

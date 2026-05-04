@@ -45,16 +45,15 @@ export default async function ReportsPage({ searchParams }) {
     }
   }
 
-  // 12-month revenue series, bucketed by Payment.receivedAt
+  // 12-month revenue series. We pull all payments since the start of
+  // the 12-month window via Prisma (typed) and bucket by month in JS.
+  // Keeps us inside Prisma's query type-safety; the bucket count stays
+  // small enough that the in-memory aggregate is cheap.
   const seriesStart = new Date(); seriesStart.setHours(0, 0, 0, 0); seriesStart.setMonth(seriesStart.getMonth() - 11); seriesStart.setDate(1);
-  const monthlyRowsP = db.$queryRaw`
-    SELECT DATE_TRUNC('month', "receivedAt") AS month,
-           SUM("amountPaise")::bigint AS paise,
-           COUNT(*)::int AS count
-    FROM "Payment"
-    WHERE "receivedAt" >= ${seriesStart}
-    GROUP BY 1 ORDER BY 1 ASC
-  `;
+  const monthlyRowsP = db.payment.findMany({
+    where: { receivedAt: { gte: seriesStart } },
+    select: { receivedAt: true, amountPaise: true },
+  });
 
   // Drilldown: payments for the specific month
   let drillStart, drillEnd;
@@ -94,8 +93,10 @@ export default async function ReportsPage({ searchParams }) {
 
   const monthlyMap = new Map();
   for (const r of monthlyRows) {
-    const key = new Date(r.month).toISOString().slice(0, 7);
-    monthlyMap.set(key, { paise: Number(r.paise), count: r.count });
+    const d = new Date(r.receivedAt);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const prev = monthlyMap.get(key) || { paise: 0, count: 0 };
+    monthlyMap.set(key, { paise: prev.paise + r.amountPaise, count: prev.count + 1 });
   }
   const monthly = [];
   for (let i = 11; i >= 0; i--) {
