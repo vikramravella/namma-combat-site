@@ -156,8 +156,12 @@ export async function updateInquiry(id, formData) {
           action: 'update',
           entity: 'Inquiry',
           entityId: id,
-          before,
-          after: u,
+          // before/after are TEXT columns holding JSON snapshots —
+          // serialize explicitly. The lib/audit.js helper does this
+          // automatically, but the inline transactional write here
+          // bypassed it and was failing all updateInquiry calls.
+          before: JSON.stringify(before),
+          after: JSON.stringify(u),
         },
       });
       return u;

@@ -84,18 +84,24 @@ export async function scheduleTrial(formData) {
       },
     });
 
-    // Move inquiry to "trial_booked" stage + log event
+    // Move inquiry to "trial_booked" stage + log event. The next-follow-up
+    // reminder is CLEARED because the trial itself is now the next thing —
+    // the dashboard already surfaces today's trials separately, so we'd
+    // otherwise be double-noticing the same event. Records the "trial
+    // session" detail on the inquiry's journey (not a generic note) so
+    // history reads cleanly: lead → trial scheduled, here's where + when.
     const inquiryBefore = await db.inquiry.findUnique({ where: { id: inquiryId } });
     await db.inquiry.update({
       where: { id: inquiryId },
       data: {
         stage: 'trial_booked',
-        nextFollowUpAt: scheduledDate, // remind on trial day
+        nextFollowUpAt: null,
         events: {
           create: {
-            type: 'stage',
-            label: 'Stage → Interested in trial',
+            type: 'trial_scheduled',
+            label: 'Trial session scheduled',
             detail: `${discipline} · ${day} ${time} (${formatDate(scheduledDate)})${coachName ? ' · ' + coachName : ''}`,
+            scheduledFor: scheduledDate,
             actorUserId: session.user.id,
           },
         },
