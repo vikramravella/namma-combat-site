@@ -184,17 +184,26 @@ export async function deleteMember(id) {
       return { ok: false, error: `This member has live receipts (${nums}). Void those first, then delete.` };
     }
 
-    // Cascade the lifecycle chain so the deleted member doesn't leave behind
-    // an orphan inquiry or trial. Plans + (void) receipts + payments cascade
-    // automatically via the schema's onDelete:Cascade FKs.
+    // Full cleanup chain. Order matters: Inquiry.convertedMemberId and
+    // Trial.convertedMemberId are FKs pointing at this Member with no
+    // CASCADE, so we must remove those rows BEFORE deleting the Member
+    // itself, otherwise Postgres rejects with a foreign-key violation.
+    //
+    // Order:
+    //   1. Trial.delete  → cascades trial events / healthDecl / token
+    //                      and removes its Member FK pointer
+    //   2. Inquiry.delete → cascades inquiry events
+    //                      and removes its Member FK pointer
+    //   3. Member.delete  → cascades plans → receipts → payments,
+    //                      assessments, assessment bookings
     const trialId = before.fromTrial?.id || null;
     const trialInquiryId = before.fromTrial?.inquiryId || null;
     const inquiryId = before.fromInquiry?.id || trialInquiryId || null;
 
     await db.$transaction(async (tx) => {
-      await tx.member.delete({ where: { id } });
       if (trialId) await tx.trial.delete({ where: { id: trialId } }).catch(() => {});
       if (inquiryId) await tx.inquiry.delete({ where: { id: inquiryId } }).catch(() => {});
+      await tx.member.delete({ where: { id } });
     });
     await logAudit({ actorUserId: session.user.id, action: 'delete', entity: 'Member', entityId: id, before });
     revalidatePath('/admin');

@@ -7,6 +7,7 @@ import { getVendor } from '@/lib/vendor';
 import { customerLocationLabel } from '@/lib/gst-state';
 import { ReceiptActions } from './Actions';
 import { PaymentForm } from './PaymentForm';
+import { PaymentDeleteButton } from './PaymentDeleteButton';
 
 // Set a useful page <title> so the browser's "Save as PDF" dialog suggests
 // a meaningful default filename like "Invoice NCA-2627-0006 — Yuktesh Vipparthy"
@@ -269,7 +270,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
 
           {r.payments.length > 0 && (
             <table className="prv-table" style={{ marginTop: 16 }}>
-              <thead><tr><th>Received</th><th>Method</th><th>Reference</th><th>Amount</th></tr></thead>
+              <thead><tr><th>Received</th><th>Method</th><th>Reference</th><th>Amount</th><th></th></tr></thead>
               <tbody>
                 {r.payments.map((p) => (
                   <tr key={p.id}>
@@ -277,6 +278,9 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
                     <td>{p.method}</td>
                     <td className="adm-mono">{p.reference || '—'}</td>
                     <td>{formatRupees(p.amountPaise)}</td>
+                    <td style={{ width: 32 }}>
+                      <PaymentDeleteButton paymentId={p.id} summary={`${formatDate(p.receivedAt)} · ${formatRupees(p.amountPaise)} via ${p.method}`} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
