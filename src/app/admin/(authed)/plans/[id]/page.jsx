@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { fullName, formatDate, formatRupees } from '@/lib/format';
 import { PLAN_STATUSES, stageMeta } from '@/lib/constants';
 import { FreezeControls } from './FreezeControls';
+import { EditDatesForm } from './EditDatesForm';
 
 export default async function PlanDetailPage({ params }) {
   const { id } = await params;
@@ -45,6 +46,22 @@ export default async function PlanDetailPage({ params }) {
           <div className="adm-card">
             <h2 className="adm-card-title">Freeze</h2>
             <FreezeControls plan={plan} />
+          </div>
+
+          <div className="adm-card">
+            <h2 className="adm-card-title">Edit details</h2>
+            <p className="adm-help" style={{ marginTop: 0 }}>
+              Correct the start date, bonus days, or notes — useful for backdated paper entries.
+              Money fields stay locked because the receipt is already issued.
+            </p>
+            <EditDatesForm plan={{
+              id: plan.id,
+              startDate: plan.startDate,
+              bonusDays: plan.bonusDays,
+              durationDays: plan.durationDays,
+              freezeDaysUsed: plan.freezeDaysUsed,
+              notes: plan.notes,
+            }} />
           </div>
 
           {plan.notes && (

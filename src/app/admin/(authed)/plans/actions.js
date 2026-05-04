@@ -246,6 +246,95 @@ export async function endFreeze(planId) {
   }
 }
 
+// Edits the dates / bonusDays / notes on an existing plan. Money fields stay
+// locked because they're snapshotted on the receipt. End date is always
+// recomputed from start + base duration + bonus days, so we don't drift.
+const editPlanDatesSchema = z.object({
+  startDate: z.string().min(1, 'Start date required'),
+  bonusDays: z.coerce.number().int().min(0).max(180).default(0),
+  notes: z.string().trim().max(2000).optional().or(z.literal('')),
+});
+
+export async function editPlanDates(planId, formData) {
+  const session = await requireSession();
+  const raw = Object.fromEntries(formData);
+  const parsed = editPlanDatesSchema.safeParse(raw);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+  const { startDate, bonusDays, notes } = parsed.data;
+
+  const plan = await db.plan.findUnique({ where: { id: planId } });
+  if (!plan) return { ok: false, error: 'Membership not found' };
+
+  // Recompute end from the original cycle's base duration. We stored the
+  // *effective* durationDays (including any prior bonus + any freeze
+  // extensions) on the plan, so back-derive baseDays first.
+  const priorBonus = plan.bonusDays || 0;
+  // Note: freezes also extend endDate by freezeDaysUsed, but that's
+  // bookkeeping on top of the base term — for "edit dates" on a backdated
+  // entry, freezes haven't happened yet (freezeDaysUsed is 0 for paper
+  // imports). If a plan has freezes, we refuse to recompute; staff should
+  // unfreeze first.
+  if ((plan.freezeDaysUsed || 0) > 0) {
+    return { ok: false, error: 'Membership has freeze days applied. End the freeze first, then edit dates.' };
+  }
+  const baseDays = (plan.durationDays || 0) - priorBonus;
+  if (baseDays <= 0) return { ok: false, error: 'Base duration looks corrupted; edit blocked.' };
+
+  const start = new Date(startDate);
+  const end = new Date(start);
+  end.setDate(end.getDate() + baseDays + bonusDays);
+
+  // Overlap guard, excluding this plan itself.
+  const liveOverlap = await db.plan.findFirst({
+    where: {
+      id: { not: planId },
+      memberId: plan.memberId,
+      status: { in: ['active', 'on_freeze'] },
+      AND: [
+        { startDate: { lte: end } },
+        { endDate: { gte: start } },
+      ],
+    },
+    orderBy: { startDate: 'asc' },
+  });
+  if (liveOverlap) {
+    const existingStart = new Date(liveOverlap.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const existingEnd = new Date(liveOverlap.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    return { ok: false, error: `New dates overlap an existing membership (${existingStart} → ${existingEnd}).` };
+  }
+
+  try {
+    const before = { startDate: plan.startDate, endDate: plan.endDate, bonusDays: plan.bonusDays, durationDays: plan.durationDays, notes: plan.notes, status: plan.status };
+    const newDuration = baseDays + bonusDays;
+    const newStatus = end < new Date()
+      ? (plan.status === 'cancelled' || plan.status === 'on_freeze' ? plan.status : 'ended')
+      : (plan.status === 'ended' ? 'active' : plan.status);
+
+    const updated = await db.plan.update({
+      where: { id: planId },
+      data: {
+        startDate: start,
+        endDate: end,
+        bonusDays,
+        durationDays: newDuration,
+        notes: notes || null,
+        status: newStatus,
+      },
+    });
+    await syncMemberStatusFromPlans(null, plan.memberId);
+    await logAudit({ actorUserId: session.user.id, action: 'update', entity: 'Plan', entityId: planId, before, after: { startDate: start, endDate: end, bonusDays, durationDays: newDuration, notes, status: newStatus } });
+
+    revalidatePath('/admin');
+    revalidatePath('/admin/plans');
+    revalidatePath(`/admin/plans/${planId}`);
+    revalidatePath(`/admin/members/${plan.memberId}`);
+    return { ok: true };
+  } catch (err) {
+    console.error('editPlanDates failed', err);
+    return { ok: false, error: 'Could not save changes.' };
+  }
+}
+
 export async function cancelPlan(planId, reason) {
   const session = await requireSession();
   try {
