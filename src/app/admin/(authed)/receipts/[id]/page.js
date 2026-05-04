@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { fullName, formatDate, paiseToString, rupeesToWords, formatRupees } from '@/lib/format';
 import { VENDOR, RECEIPT_STATUSES, stageMeta } from '@/lib/constants';
+import { customerLocationLabel } from '@/lib/gst-state';
 import { ReceiptActions } from './Actions';
 import { PaymentForm } from './PaymentForm';
 
@@ -95,7 +96,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
             <div className="rcpt-party-name">{r.customerNameSnapshot}</div>
             <dl className="rcpt-party-defs">
               <div><dt>Phone</dt><dd className="adm-mono">{r.customerPhoneSnapshot}</dd></div>
-              <div><dt>Location</dt><dd>Bangalore, Karnataka, India</dd></div>
+              <div><dt>Location</dt><dd>{customerLocationLabel({ gstin: r.customerGstinSnapshot })}</dd></div>
               <div>
                 <dt>GSTIN</dt>
                 <dd className="adm-mono">{r.customerGstinSnapshot || 'N/A (B2C)'}</dd>
