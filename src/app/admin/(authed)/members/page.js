@@ -62,7 +62,7 @@ export default async function MembersPage({ searchParams }) {
     where: { plans: { some: { status: { in: ['active', 'on_freeze'] }, endDate: { gte: _now, lte: _in14 } } } },
   });
 
-  const [rows, allCount] = await Promise.all([
+  const [rows, allCount, byStatus] = await Promise.all([
     db.member.findMany({
       where,
       orderBy: sortToOrderBy(sp?.sort),
@@ -70,7 +70,10 @@ export default async function MembersPage({ searchParams }) {
       include: { plans: { where: { status: { in: ['active', 'on_freeze'] } }, take: 1, orderBy: { endDate: 'desc' } } },
     }),
     db.member.count(),
+    db.member.groupBy({ by: ['status'], _count: { _all: true } }),
   ]);
+  const statusCounts = {};
+  for (const r of byStatus) statusCounts[r.status] = r._count._all;
 
   return (
     <>
@@ -82,7 +85,10 @@ export default async function MembersPage({ searchParams }) {
       </div>
 
       <div className="prv-chips">
-        <ChipLink href="?" on={!noMembership && !expiring} label="All" count={allCount} />
+        <ChipLink href="?" on={!status && !noMembership && !expiring} label="All" count={allCount} />
+        {MEMBER_STATUSES.map((s) => (
+          <ChipLink key={s.key} href={`?status=${s.key}`} on={status === s.key} label={s.label} count={statusCounts[s.key] ?? 0} />
+        ))}
         <ChipLink href="?no_membership=1" on={noMembership} label="No membership" />
       </div>
 
