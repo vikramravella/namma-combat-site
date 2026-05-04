@@ -254,9 +254,26 @@ export async function quickAddMember(formData) {
   const normalizedPhone = normalizePhone(d.phone);
   if (!normalizedPhone) return { ok: false, error: 'Phone number looks invalid.' };
 
-  const existingMember = await db.member.findUnique({ where: { phone: normalizedPhone } });
-  if (existingMember) {
-    return { ok: false, error: `A member with phone ${normalizedPhone} already exists. Add a membership to them via their member page.` };
+  // Duplicate guard: block ONLY when first name + last name + DOB + phone
+  // ALL match — that's almost certainly the same human re-entered. Two
+  // people with the same name, same phone but different DOBs (or with
+  // DOB missing on one side) are treated as distinct: family members,
+  // namesakes, etc. The phone field has no unique constraint so the
+  // create itself will succeed; this is just a "did you mean to do
+  // that?" sanity check.
+  const dobDate = d.dob ? new Date(d.dob) : null;
+  if (dobDate) {
+    const dup = await db.member.findFirst({
+      where: {
+        phone: normalizedPhone,
+        firstName: { equals: d.firstName, mode: 'insensitive' },
+        lastName: { equals: d.lastName, mode: 'insensitive' },
+        dob: dobDate,
+      },
+    });
+    if (dup) {
+      return { ok: false, error: `A member named ${d.firstName} ${d.lastName} (DOB ${d.dob}, this phone) already exists. Add a membership to them via their member page.` };
+    }
   }
 
   const type = await db.membershipType.findUnique({ where: { id: d.membershipTypeId } });
@@ -387,7 +404,6 @@ export async function quickAddMember(formData) {
     redirect(`/admin/receipts/${result.receipt.id}?created=1`);
   } catch (err) {
     if (err?.digest?.startsWith('NEXT_REDIRECT')) throw err;
-    if (err?.code === 'P2002') return { ok: false, error: 'A member with this phone already exists.' };
     console.error('quickAddMember failed', err);
     return { ok: false, error: 'Could not save. Check the values and try again.' };
   }

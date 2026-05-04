@@ -232,7 +232,10 @@ model Member {
   designation         String?
   firstName           String
   lastName            String
-  phone               String       @unique
+  // Phone is NOT unique on Member — academy reality: parent + kid share
+  // one phone, sometimes spouses too. Inquiry.phone stays unique for
+  // public-form spam protection, but here we expect duplicates.
+  phone               String
   dob                 DateTime?
   gender              String?
   primaryDiscipline   String?

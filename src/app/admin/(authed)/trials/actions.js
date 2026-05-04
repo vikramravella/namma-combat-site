@@ -243,8 +243,16 @@ export async function convertTrialToMember(id, formData) {
     const inquiry = trial.inquiry;
     const hd = trial.healthDecl;
 
-    // Phone-based dedupe — if a member already exists with this phone, reuse it
-    let member = await db.member.findUnique({ where: { phone: inquiry.phone } });
+    // Dedupe on phone + first + last name. Two members can share a phone
+    // (parent + kid), so phone alone is not enough — we want to reuse only
+    // when the SAME person is converting from a second trial.
+    let member = await db.member.findFirst({
+      where: {
+        phone: inquiry.phone,
+        firstName: { equals: inquiry.firstName, mode: 'insensitive' },
+        lastName: { equals: inquiry.lastName, mode: 'insensitive' },
+      },
+    });
     if (!member) {
       const dob = hd?.dob ?? null;
       const gender = hd?.gender ?? null;
