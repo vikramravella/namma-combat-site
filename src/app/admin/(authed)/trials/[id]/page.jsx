@@ -36,7 +36,13 @@ export default async function TrialDetailPage({ params, searchParams }) {
       <div className="adm-page-header">
         <div>
           <p className="prv-eyebrow"><Link href="/admin/trials" className="prv-back">← Trials</Link></p>
-          <h1 className="adm-page-title">{fullName(trial.inquiry)}</h1>
+          <h1 className="adm-page-title">
+            {trial.convertedMember ? (
+              <Link href={`/admin/members/${trial.convertedMember.id}`} className="prv-title-link">{fullName(trial.inquiry)}</Link>
+            ) : (
+              <Link href={`/admin/inquiries/${trial.inquiry.id}`} className="prv-title-link">{fullName(trial.inquiry)}</Link>
+            )}
+          </h1>
           <p className="adm-page-subtitle">
             <span className={`prv-stage prv-stage-${status.tone}`}><span className="prv-stage-dot" />{status.label}</span>
             {outcome && (
@@ -163,7 +169,14 @@ export default async function TrialDetailPage({ params, searchParams }) {
           <div className="adm-card">
             <h2 className="adm-card-title">Person</h2>
             <dl className="prv-defs">
-              <DefRow label="Name" value={fullName(trial.inquiry)} />
+              <DefRow
+                label="Name"
+                value={trial.convertedMember ? (
+                  <Link href={`/admin/members/${trial.convertedMember.id}`} className="prv-name">{fullName(trial.inquiry)}</Link>
+                ) : (
+                  <Link href={`/admin/inquiries/${trial.inquiry.id}`} className="prv-name">{fullName(trial.inquiry)}</Link>
+                )}
+              />
               <DefRow label="Phone" value={<span className="adm-mono">{trial.inquiry.phone}</span>} />
               <DefRow label="Source" value={trial.inquiry.source} />
             </dl>

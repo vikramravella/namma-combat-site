@@ -93,7 +93,13 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
 
           <div className="rcpt-billto">
             <div className="rcpt-party-label">Bill to</div>
-            <div className="rcpt-party-name">{r.customerNameSnapshot}</div>
+            <div className="rcpt-party-name">
+              {r.plan?.memberId ? (
+                <Link href={`/admin/members/${r.plan.memberId}`} className="rcpt-party-name-link">{r.customerNameSnapshot}</Link>
+              ) : (
+                r.customerNameSnapshot
+              )}
+            </div>
             <dl className="rcpt-party-defs">
               <div><dt>Phone</dt><dd className="adm-mono">{r.customerPhoneSnapshot}</dd></div>
               <div><dt>Location</dt><dd>{customerLocationLabel({ gstin: r.customerGstinSnapshot })}</dd></div>
