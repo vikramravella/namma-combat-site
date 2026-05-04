@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { fullName, formatDate, formatRupees } from '@/lib/format';
 import { PLAN_STATUSES, TIERS, stageMeta } from '@/lib/constants';
 import { SortChips, sortToOrderBy } from '@/components/SortChips';
+import { ChipLink } from '@/components/ChipLink';
 
 export const revalidate = 10;
 const STATUS_KEYS = PLAN_STATUSES.map((s) => s.key);
@@ -73,14 +74,6 @@ export default async function PlansPage({ searchParams }) {
   );
 }
 
-function ChipLink({ href, on, label, count }) {
-  return (
-    <Link href={href} className={`prv-chip ${on ? 'prv-chip-on' : ''}`} scroll={false}>
-      <span>{label}</span>
-      <span className="prv-chip-count">{count}</span>
-    </Link>
-  );
-}
 
 function StatusChip({ value }) {
   const meta = stageMeta(PLAN_STATUSES, value);

@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta } from '@/lib/constants';
 import { SortChips, sortToOrderBy } from '@/components/SortChips';
+import { ChipLink } from '@/components/ChipLink';
 
 export const revalidate = 10;
 const STATUS_KEYS = TRIAL_STATUSES.map((s) => s.key);
@@ -120,15 +121,6 @@ export default async function TrialsPage({ searchParams }) {
         )}
       </div>
     </>
-  );
-}
-
-function ChipLink({ href, on, label, count }) {
-  return (
-    <Link href={href} className={`prv-chip ${on ? 'prv-chip-on' : ''}`} scroll={false}>
-      <span>{label}</span>
-      {count !== undefined && <span className="prv-chip-count">{count}</span>}
-    </Link>
   );
 }
 

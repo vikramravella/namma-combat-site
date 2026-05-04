@@ -3,6 +3,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { INQUIRY_STAGES } from '@/lib/constants';
+import { ChipLink } from '@/components/ChipLink';
 
 export function Filters({ counts }) {
   const router = useRouter();
@@ -63,15 +64,6 @@ export function Filters({ counts }) {
         ))}
       </div>
     </>
-  );
-}
-
-function ChipLink({ href, on, label, count, pulse }) {
-  return (
-    <Link href={href} className={`prv-chip ${on ? 'prv-chip-on' : ''} ${pulse ? 'prv-chip-pulse' : ''}`} scroll={false}>
-      <span>{label}</span>
-      <span className="prv-chip-count">{count}</span>
-    </Link>
   );
 }
 

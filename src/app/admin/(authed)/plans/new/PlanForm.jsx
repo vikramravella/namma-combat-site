@@ -13,7 +13,7 @@ export function PlanForm({ member, types }) {
   const defaultType = types.find((t) => /Gold Quarterly/i.test(t.name)) || types[0];
   const [typeId, setTypeId] = useState(defaultType.id);
   const [startDate, setStartDate] = useState(today());
-  const [bonusDays, setBonusDays] = useState(0);
+  const [bonusDays, setBonusDays] = useState('');
   const [agreedRupees, setAgreedRupees] = useState('');
   const [gstin, setGstin] = useState('');
   const [notes, setNotes] = useState('');
