@@ -118,35 +118,50 @@ export async function updateInquiry(id, formData) {
     }
     const stageChanged = data.stage && data.stage !== before.stage;
 
-    const updated = await db.inquiry.update({
-      where: { id },
-      data: {
-        designation: data.designation,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
-        interestedIn,
-        primaryGoal: data.primaryGoal,
-        experience: data.experience,
-        source: data.source,
-        sourceDetails: data.sourceDetails,
-        stage: data.stage || before.stage,
-        notes: data.notes,
-        // Stage change clears the pending follow-up — same logic as changeStage.
-        ...(stageChanged ? { nextFollowUpAt: null } : {}),
-        events: diffs.length || stageChanged ? {
-          create: [
-            ...diffs.map((d) => ({ type: 'detail', label: d.label, detail: d.detail, actorUserId: session.user.id })),
-            ...(stageChanged ? [{
-              type: 'stage',
-              label: `Stage → ${INQUIRY_STAGES.find((s) => s.key === data.stage)?.label || data.stage}`,
-              actorUserId: session.user.id,
-            }] : []),
-          ],
-        } : undefined,
-      },
+    // Update + audit log run in a single transaction so we never end up
+    // with a successful update but a failed audit (or vice versa).
+    // Nested events.create is already atomic with the parent update via
+    // Prisma's nested-write semantics; we extend that to the audit log.
+    const updated = await db.$transaction(async (tx) => {
+      const u = await tx.inquiry.update({
+        where: { id },
+        data: {
+          designation: data.designation,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone,
+          interestedIn,
+          primaryGoal: data.primaryGoal,
+          experience: data.experience,
+          source: data.source,
+          sourceDetails: data.sourceDetails,
+          stage: data.stage || before.stage,
+          notes: data.notes,
+          ...(stageChanged ? { nextFollowUpAt: null } : {}),
+          events: diffs.length || stageChanged ? {
+            create: [
+              ...diffs.map((d) => ({ type: 'detail', label: d.label, detail: d.detail, actorUserId: session.user.id })),
+              ...(stageChanged ? [{
+                type: 'stage',
+                label: `Stage → ${INQUIRY_STAGES.find((s) => s.key === data.stage)?.label || data.stage}`,
+                actorUserId: session.user.id,
+              }] : []),
+            ],
+          } : undefined,
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorUserId: session.user.id,
+          action: 'update',
+          entity: 'Inquiry',
+          entityId: id,
+          before,
+          after: u,
+        },
+      });
+      return u;
     });
-    await logAudit({ actorUserId: session.user.id, action: 'update', entity: 'Inquiry', entityId: id, before, after: updated });
     revalidatePath('/admin/inquiries');
     revalidatePath(`/admin/inquiries/${id}`);
     // If the user moved this inquiry to "trial_booked" and there's no trial
