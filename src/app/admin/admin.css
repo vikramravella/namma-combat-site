@@ -1955,6 +1955,15 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 /* Print — strict A4 fit. Goal: receipt fits exactly one page, payment-
    management chrome is hidden so the saved PDF is just the invoice. */
 @media print {
+  /* Print baseline: kill all animations + transitions. Safari's "Save as
+     PDF" can rasterize a frame at the moment Cmd+P is pressed, before
+     the media-query switch fully applies — leaving an animated element
+     captured at opacity 0. Animations and transitions have no meaning
+     in print, so this is a clean reset, not defensive. */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
   html, body {
     background: #fff !important;
     print-color-adjust: exact;
