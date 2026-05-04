@@ -1978,13 +1978,27 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   .adm-page-header,
   .prv-action-row,
   .rcpt-admin-only,
-  .adm-loading,
-  /* Closing seal + "Skill · Strength · Sanctuary" tagline is decorative
-     and was the cause of overflow onto a second page on heavy receipts
-     (long B2B name + partial payment block + 6 terms). Hide it in
-     print — the wordmark at the top already establishes brand. */
-  .rcpt-closing {
+  .adm-loading {
     display: none !important;
+  }
+  /* Closing seal: compact horizontal stamp in print (was vertical block
+     before, which overflowed onto a 2nd page on heavy receipts). 18px
+     seal + inline tagline keeps it under one line of vertical space. */
+  .rcpt-closing {
+    margin-top: 3mm !important;
+    padding-top: 3mm !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  .rcpt-closing-rule { display: none !important; }
+  .rcpt-closing-seal { width: 18px !important; height: 18px !important; margin: 0 !important; }
+  .rcpt-closing-tagline {
+    font-size: 8pt !important;
+    margin: 0 !important;
+    letter-spacing: 1.5px !important;
   }
   .adm-main { padding: 0 !important; }
   .rcpt-doc { padding: 0 !important; }
