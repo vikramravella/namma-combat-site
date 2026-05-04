@@ -13,13 +13,18 @@ export async function searchPeople(q) {
   const term = (q || '').trim();
   if (term.length < 2) return [];
 
-  // Substring match on name pieces and on the digits-only phone (so people
-  // can type "98876" and hit "+91 98876 12345").
+  // Phones are stored canonically as "+91 98765 43210" with the embedded
+  // space. A user typing "98876" matches the substring, but typing the
+  // full 10 digits "9887512345" doesn't because the space breaks the run.
+  // Build phone-search variants so both partial and full digit input work.
+  const phoneVariants = phoneSearchVariants(term);
+  const phoneOrs = phoneVariants.map((v) => ({ phone: { contains: v } }));
+
   const nameWhere = {
     OR: [
       { firstName: { contains: term, mode: 'insensitive' } },
       { lastName: { contains: term, mode: 'insensitive' } },
-      { phone: { contains: term } },
+      ...phoneOrs,
     ],
   };
 
@@ -89,4 +94,23 @@ export async function searchPeople(q) {
     });
   }
   return Array.from(byPhone.values()).slice(0, 8);
+}
+
+// Build the substring variants to search a phone column with. The stored
+// format is "+91 XXXXX XXXXX" (Indian) or "+CCXXXXXXXXXX" (foreign), so
+// digits typed as a continuous run won't match a stored value with a space
+// or a country code in front of them. We OR together the user's raw term
+// with these reformatted versions.
+function phoneSearchVariants(term) {
+  const variants = new Set([term]);
+  const digits = term.replace(/\D/g, '');
+  if (digits.length >= 5) variants.add(digits);
+  if (digits.length >= 10) {
+    const last10 = digits.slice(-10);
+    // Indian stored form: "98765 43210"
+    variants.add(`${last10.slice(0, 5)} ${last10.slice(5)}`);
+    // Indian stored form with country code: "+91 98765 43210"
+    variants.add(`+91 ${last10.slice(0, 5)} ${last10.slice(5)}`);
+  }
+  return [...variants];
 }
