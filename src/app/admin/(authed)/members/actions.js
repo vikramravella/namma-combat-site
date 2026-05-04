@@ -160,23 +160,28 @@ export async function deleteMember(id) {
     const before = await db.member.findUnique({
       where: { id },
       include: {
-        plans: { select: { id: true } },
+        plans: { select: { id: true, receipt: { select: { id: true, status: true, invoiceNumber: true } } } },
         fromTrial: { select: { id: true, inquiryId: true } },
         fromInquiry: { select: { id: true } },
       },
     });
     if (!before) return { ok: false, error: 'Member not found' };
 
-    // Plans/receipts are legally locked once issued — refuse to delete a
-    // member who has any. Staff must void the receipt(s) and cancel the
-    // membership(s) first.
-    if (before.plans.length > 0) {
-      return { ok: false, error: 'This member has memberships/receipts on file. Void those before deleting.' };
+    // Refuse only if the member still has a NON-VOID receipt. Voided
+    // receipts are no longer legal records — they're already retired
+    // from the books and can be cleaned up alongside the member. Plans
+    // attached to non-void receipts stay protected.
+    const liveReceipts = before.plans
+      .map((p) => p.receipt)
+      .filter((r) => r && r.status !== 'void');
+    if (liveReceipts.length > 0) {
+      const nums = liveReceipts.map((r) => r.invoiceNumber).join(', ');
+      return { ok: false, error: `This member has live receipts (${nums}). Void those first, then delete.` };
     }
 
     // Cascade the lifecycle chain so the deleted member doesn't leave behind
-    // an orphan inquiry or trial. Order matters: trial first (it FK-depends
-    // on inquiry via inquiryId), then inquiry.
+    // an orphan inquiry or trial. Plans + (void) receipts + payments cascade
+    // automatically via the schema's onDelete:Cascade FKs.
     const trialId = before.fromTrial?.id || null;
     const trialInquiryId = before.fromTrial?.inquiryId || null;
     const inquiryId = before.fromInquiry?.id || trialInquiryId || null;
