@@ -1114,6 +1114,69 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 .sch-th-day {
   background: var(--gold-soft, rgba(227, 199, 104, 0.2));
   color: var(--text, #2C2318);
+  vertical-align: middle;
+}
+.sch-th-day-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.sch-th-day-date {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-light, #6B5D4F);
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+  text-transform: none;
+}
+.sch-th-day-today {
+  background: rgba(154, 53, 32, 0.12);
+  border-bottom-color: var(--rust, #9A3520);
+}
+.sch-th-day-today .sch-th-day-name { color: var(--rust, #9A3520); }
+.sch-th-day-past { opacity: 0.55; }
+.sch-week-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.sch-week-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border, #E0D6C8);
+  background: var(--cream, #FEF8EE);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--rust, #9A3520);
+  font-weight: 700;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.sch-week-btn:hover {
+  background: var(--gold-soft, rgba(227, 199, 104, 0.2));
+  border-color: var(--gold, #E3C768);
+}
+.sch-week-range {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-light, #6B5D4F);
+  padding: 8px;
+  background: var(--cream, #FEF8EE);
+  border-bottom: 1px solid var(--border, #E0D6C8);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.sch-cell-past .sch-cell-btn {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.sch-cell-past .sch-cell-btn:hover {
+  background: transparent !important;
 }
 .sch-time {
   text-align: center;
