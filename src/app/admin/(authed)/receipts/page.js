@@ -23,7 +23,10 @@ export default async function ReceiptsPage({ searchParams }) {
       where,
       orderBy: sortToOrderBy(sp?.sort),
       take: 200,
-      include: { payments: true },
+      include: {
+        payments: true,
+        plan: { select: { memberId: true } },
+      },
     }),
     db.receipt.count(),
     db.receipt.groupBy({ by: ['status'], _count: { _all: true } }),
@@ -69,7 +72,14 @@ export default async function ReceiptsPage({ searchParams }) {
                   <tr key={r.id}>
                     <td><Link href={`/admin/receipts/${r.id}`} className="prv-name adm-mono">{r.invoiceNumber}</Link></td>
                     <td className="prv-muted">{formatDate(r.issueDate)}</td>
-                    <td>{r.customerNameSnapshot}<div className="prv-sub">{r.customerPhoneSnapshot}</div></td>
+                    <td>
+                      {r.plan?.memberId ? (
+                        <Link href={`/admin/members/${r.plan.memberId}`} className="prv-name">{r.customerNameSnapshot}</Link>
+                      ) : (
+                        r.customerNameSnapshot
+                      )}
+                      <div className="prv-sub">{r.customerPhoneSnapshot}</div>
+                    </td>
                     <td>{formatRupees(r.totalPaise)}</td>
                     <td>{formatRupees(paid)}{r.status === 'partial' && <div className="prv-sub">balance {formatRupees(r.totalPaise - paid)}</div>}</td>
                     <td><StatusChip value={r.status} /></td>

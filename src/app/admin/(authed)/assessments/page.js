@@ -49,7 +49,7 @@ export default async function AssessmentsPage() {
               {todayBookings.map((b) => (
                 <tr key={b.id}>
                   <td className="adm-mono"><strong>{b.slot.timeOfDay}</strong></td>
-                  <td><strong>{fullName(b.member)}</strong></td>
+                  <td><Link href={`/admin/members/${b.memberId}`} className="prv-name"><strong>{fullName(b.member)}</strong></Link></td>
                   <td className="adm-mono">{b.member.phone}</td>
                   <td><Link href={`/admin/assessments/new?bookingId=${b.id}`} className="adm-btn">Start →</Link></td>
                 </tr>
@@ -69,7 +69,7 @@ export default async function AssessmentsPage() {
                 <tr key={b.id}>
                   <td>{DAY_LABELS[b.slot.dayOfWeek]} {formatDate(b.scheduledDate)}</td>
                   <td className="adm-mono">{b.slot.timeOfDay}</td>
-                  <td>{fullName(b.member)}</td>
+                  <td><Link href={`/admin/members/${b.memberId}`} className="prv-name">{fullName(b.member)}</Link></td>
                   <td className="adm-mono">{b.member.phone}</td>
                   <td><Link href={`/admin/members/${b.memberId}`} className="adm-btn adm-btn-secondary adm-btn-sm">Member →</Link></td>
                 </tr>
