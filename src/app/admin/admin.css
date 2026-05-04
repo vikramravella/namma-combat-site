@@ -96,8 +96,23 @@
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 1px 2px rgba(44, 35, 24, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .adm-card + .adm-card { margin-top: 16px; }
+
+/* Subtle page-content fade so admin feels alive on each navigation
+   without taxing the eye. Layout / header don't fade — only the per-
+   page content under <main>. Animation on initial render only. */
+@keyframes admPageIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.adm-main > * {
+  animation: admPageIn 0.32s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .adm-main > * { animation: none; }
+}
 .adm-card-title {
   font-size: 11px;
   font-weight: 600;
@@ -134,11 +149,15 @@
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, transform 0.05s;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
   font-family: inherit;
   letter-spacing: 0.01em;
 }
-.adm-btn:hover:not(:disabled) { background: var(--rust-hover, #7D2A18); }
+.adm-btn:hover:not(:disabled) {
+  background: var(--rust-hover, #7D2A18);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(154, 53, 32, 0.22);
+}
 .adm-btn:active:not(:disabled) { transform: translateY(1px); }
 .adm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .adm-btn-secondary {
@@ -494,12 +513,13 @@
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.12s;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.12s ease;
   font-family: inherit;
 }
 .prv-chip:hover {
   border-color: var(--rust, #9A3520);
   color: var(--rust, #9A3520);
+  transform: translateY(-1px);
 }
 .prv-chip-on {
   background: var(--rust, #9A3520);
