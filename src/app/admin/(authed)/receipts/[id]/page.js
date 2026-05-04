@@ -32,6 +32,23 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
     },
   });
   if (!r) notFound();
+
+  // Find the most recent posture assessment for this member that happened
+  // strictly BEFORE this plan's start. Used to decide whether the receipt's
+  // "Includes" line should promise an assessment this term — quarterly+
+  // cycles always do; monthly cycles only when the prior assessment was
+  // 80+ days before the start date (roughly: every 3rd monthly receipt).
+  const lastAssessmentBefore = r.plan?.member?.id
+    ? await db.assessment.findFirst({
+        where: {
+          memberId: r.plan.member.id,
+          assessedAt: { lt: r.plan.startDate },
+        },
+        orderBy: { assessedAt: 'desc' },
+        select: { assessedAt: true },
+      })
+    : null;
+  const includesAssessment = isAssessmentIncluded(r.plan, lastAssessmentBefore?.assessedAt);
   const justCreated = sp?.created === '1';
 
   const totalPaid = r.payments.reduce((s, p) => s + p.amountPaise, 0);
@@ -122,7 +139,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
               <div><div className="rcpt-plan-key">Duration</div><div className="rcpt-plan-val">{r.plan.durationDays} days{r.plan.bonusDays > 0 ? ` (+${r.plan.bonusDays})` : ''}</div></div>
               <div><div className="rcpt-plan-key">Freeze allowance</div><div className="rcpt-plan-val">{r.plan.freezeDaysAllowed} days max</div></div>
             </div>
-            <p className="rcpt-plan-includes"><strong>Includes:</strong> {includesText(r.plan.floorAccess)}</p>
+            <p className="rcpt-plan-includes"><strong>Includes:</strong> {includesText(r.plan.floorAccess, { includesAssessment })}</p>
           </div>
 
           <div className="rcpt-service-line">
@@ -262,17 +279,35 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
 }
 
 // Returns the "Includes:" sentence for the receipt, branching on the
-// member's floor access. Silver-Arena members shouldn't see "Animal
-// Flow access" because Animal Flow is a Sanctuary class — they don't
-// have it. Same for the inverse.
-function includesText(floorAccess) {
+// member's floor access AND on whether a postural assessment is part of
+// THIS payment. Silver-Arena members aren't eligible for Animal Flow
+// (Sanctuary class) so it must be called out as not included. Postural
+// assessment is only promised when the cycle covers a quarter+ OR when
+// 80+ days have passed since the member's last one — otherwise we'd
+// keep claiming it month after month for monthly renewals.
+function includesText(floorAccess, { includesAssessment } = {}) {
   const a = (floorAccess || '').toLowerCase();
+  let floorPart;
   if (a.startsWith('arena only')) {
-    return 'Postural assessment + quarterly re-assessment. Combat-sports access (Arena floor).';
+    floorPart = 'Combat-sports access (Arena floor only — does not include Animal Flow / Sanctuary classes).';
+  } else if (a.startsWith('sanctuary only')) {
+    floorPart = 'S&C + Animal Flow access (Sanctuary floor only — does not include combat-sports / Arena classes).';
+  } else {
+    floorPart = 'Combat-sports + S&C + Animal Flow access (both floors).';
   }
-  if (a.startsWith('sanctuary only')) {
-    return 'Postural assessment + quarterly re-assessment, Animal Flow access (Sanctuary floor).';
-  }
-  // Both floors / unrestricted
-  return 'Postural assessment + quarterly re-assessment, Animal Flow access (both floors).';
+  const assessPart = includesAssessment
+    ? 'Postural assessment + re-assessment included this term. '
+    : 'Postural assessment not due this term (re-assessed quarterly). ';
+  return assessPart + floorPart;
+}
+
+// Decides whether the receipt's "Includes" line should claim an assessment.
+// Rule: any cycle longer than monthly always includes one; monthly only when
+// 80+ days have passed since the last assessment (or never assessed).
+function isAssessmentIncluded(plan, lastAssessmentAt) {
+  if (!plan) return true;
+  if ((plan.cycle || '').toLowerCase() !== 'monthly') return true;
+  if (!lastAssessmentAt) return true;
+  const daysSince = (new Date(plan.startDate) - new Date(lastAssessmentAt)) / (1000 * 60 * 60 * 24);
+  return daysSince >= 80;
 }
