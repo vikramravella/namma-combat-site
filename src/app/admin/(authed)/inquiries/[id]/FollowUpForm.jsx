@@ -1,12 +1,13 @@
 'use client';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { logEvent } from '../actions';
+import { logEvent, markFollowUpDone } from '../actions';
 import { DatePicker } from '@/components/DatePicker';
+import { formatDate } from '@/lib/format';
 
-// Lives in the right sidebar of the inquiry detail page. Just a date +
-// Save — sets nextFollowUpAt and records a 'note' event in the journey
-// so the timeline still reflects when a follow-up was scheduled.
+// Lives in the right sidebar of the inquiry detail page. Lets Vinod
+// either set a future follow-up date (date picker + Save) or, when a
+// follow-up is already pending, tick it off as done in one click.
 export function FollowUpForm({ inquiryId, currentNext }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -29,8 +30,34 @@ export function FollowUpForm({ inquiryId, currentNext }) {
     });
   }
 
+  function handleDone() {
+    startTransition(async () => {
+      const r = await markFollowUpDone(inquiryId);
+      if (r?.ok === false) return;
+      setDate('');
+      setSuccess('Marked done.');
+      router.refresh();
+      setTimeout(() => setSuccess(''), 3000);
+    });
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {currentNext && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, padding: '8px 10px', background: 'var(--gold-soft, rgba(227,199,104,0.15))', borderRadius: 6, fontSize: 13 }}>
+          <span>Pending — due <strong>{formatDate(currentNext)}</strong></span>
+          <button
+            type="button"
+            onClick={handleDone}
+            disabled={isPending}
+            className="adm-btn adm-btn-sm"
+            title="Mark this follow-up as done"
+            style={{ padding: '4px 10px' }}
+          >
+            ✓ Done
+          </button>
+        </div>
+      )}
       <DatePicker value={date} onChange={setDate} />
       <button
         type="button"
@@ -38,7 +65,7 @@ export function FollowUpForm({ inquiryId, currentNext }) {
         disabled={isPending || !date}
         className="adm-btn adm-btn-sm"
       >
-        {isPending ? 'Saving…' : 'Set follow-up'}
+        {isPending ? 'Saving…' : currentNext ? 'Reschedule follow-up' : 'Set follow-up'}
       </button>
       {success && <p className="adm-success" style={{ margin: 0, fontSize: 12 }}>{success}</p>}
     </div>

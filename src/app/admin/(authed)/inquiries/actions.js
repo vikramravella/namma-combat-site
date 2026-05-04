@@ -99,6 +99,25 @@ export async function updateInquiry(id, formData) {
   const interestedIn = formData.getAll('interestedIn').filter((v) => offeringSet.has(v));
   try {
     const before = await db.inquiry.findUnique({ where: { id }, include: { trials: { select: { id: true } } } });
+
+    // Detect what actually changed so we can write a journey event for
+    // each — name corrections, phone updates, stage moves all belong on
+    // the timeline so history is fully traceable.
+    const diffs = [];
+    if (data.firstName !== before.firstName || data.lastName !== before.lastName) {
+      diffs.push({ label: 'Name updated', detail: `${before.firstName} ${before.lastName} → ${data.firstName} ${data.lastName}` });
+    }
+    if (data.phone !== before.phone) {
+      diffs.push({ label: 'Phone updated', detail: `${before.phone} → ${data.phone}` });
+    }
+    if (data.primaryGoal !== before.primaryGoal && (data.primaryGoal || before.primaryGoal)) {
+      diffs.push({ label: 'Primary goal updated', detail: `${before.primaryGoal || '—'} → ${data.primaryGoal || '—'}` });
+    }
+    if (data.source !== before.source && (data.source || before.source)) {
+      diffs.push({ label: 'Source updated', detail: `${before.source || '—'} → ${data.source || '—'}` });
+    }
+    const stageChanged = data.stage && data.stage !== before.stage;
+
     const updated = await db.inquiry.update({
       where: { id },
       data: {
@@ -113,6 +132,18 @@ export async function updateInquiry(id, formData) {
         sourceDetails: data.sourceDetails,
         stage: data.stage || before.stage,
         notes: data.notes,
+        // Stage change clears the pending follow-up — same logic as changeStage.
+        ...(stageChanged ? { nextFollowUpAt: null } : {}),
+        events: diffs.length || stageChanged ? {
+          create: [
+            ...diffs.map((d) => ({ type: 'detail', label: d.label, detail: d.detail, actorUserId: session.user.id })),
+            ...(stageChanged ? [{
+              type: 'stage',
+              label: `Stage → ${INQUIRY_STAGES.find((s) => s.key === data.stage)?.label || data.stage}`,
+              actorUserId: session.user.id,
+            }] : []),
+          ],
+        } : undefined,
       },
     });
     await logAudit({ actorUserId: session.user.id, action: 'update', entity: 'Inquiry', entityId: id, before, after: updated });
@@ -158,10 +189,14 @@ export async function changeStage(id, newStage, reason) {
     if (!before) return { ok: false, error: 'Inquiry not found' };
     if (before.stage === newStage) return { ok: true };
     const stageLabel = INQUIRY_STAGES.find((s) => s.key === newStage)?.label || newStage;
+    // Stage change supersedes any pending follow-up — the act of changing
+    // stage IS the follow-up resolution. Clear nextFollowUpAt so this
+    // person drops out of the calls-due queue automatically.
     await db.inquiry.update({
       where: { id },
       data: {
         stage: newStage,
+        nextFollowUpAt: null,
         events: {
           create: {
             type: 'stage',
@@ -183,6 +218,42 @@ export async function changeStage(id, newStage, reason) {
   } catch (err) {
     console.error('changeStage failed', err);
     return { ok: false, error: 'Could not change stage.' };
+  }
+}
+
+// Tick-mark "follow-up done" — clears the pending nextFollowUpAt and
+// drops the inquiry out of the calls-due queue, leaving a journey
+// event behind so the action is traceable.
+export async function markFollowUpDone(id) {
+  const session = await requireSession();
+  try {
+    const before = await db.inquiry.findUnique({ where: { id } });
+    if (!before) return { ok: false, error: 'Inquiry not found' };
+    await db.inquiry.update({
+      where: { id },
+      data: {
+        nextFollowUpAt: null,
+        lastContactedAt: new Date(),
+        followUpAttempts: { increment: 1 },
+        events: {
+          create: {
+            type: 'note',
+            label: 'Follow-up marked done',
+            detail: before.nextFollowUpAt
+              ? `Was due ${new Date(before.nextFollowUpAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}`
+              : null,
+            actorUserId: session.user.id,
+          },
+        },
+      },
+    });
+    revalidatePath('/admin');
+    revalidatePath('/admin/inquiries');
+    revalidatePath(`/admin/inquiries/${id}`);
+    return { ok: true };
+  } catch (err) {
+    console.error('markFollowUpDone failed', err);
+    return { ok: false, error: 'Could not mark done.' };
   }
 }
 

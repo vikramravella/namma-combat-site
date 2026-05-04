@@ -130,8 +130,10 @@ export async function updateTrialStatus(id, formData) {
 
   try {
     const before = await db.trial.findUnique({ where: { id } });
-    const updates = { status, notes: notes || before.notes };
-    // Auto-set follow-up dates based on status
+    // Status change clears any pending follow-up — the act of moving the
+    // trial forward IS the follow-up resolution. Override below for
+    // statuses that need a fresh follow-up (no_show needs a callback).
+    const updates = { status, notes: notes || before.notes, nextFollowUpAt: null };
     if (status === 'no_show') {
       // Reach out next day to reschedule
       const next = new Date(); next.setDate(next.getDate() + 1);
