@@ -32,10 +32,15 @@ export function MemberForm({ member, action, deleteAction }) {
   }
 
   function handleDelete() {
-    if (!confirm(`Delete ${member.firstName} ${member.lastName}? This removes their member record (plans + receipts cascade).`)) return;
+    if (!confirm(`Delete ${member.firstName} ${member.lastName}?\n\nThis also deletes their linked trial + inquiry record. Members with any membership / receipt on file cannot be deleted — void those first.`)) return;
     startTransition(async () => {
       const r = await deleteAction(member.id);
-      if (r?.ok === false) setError(r.error);
+      if (r?.ok === false) {
+        setError(r.error);
+        // Bring the error into view so the staff doesn't think the
+        // delete succeeded when they only had it scrolled off-screen.
+        if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     });
   }
 
