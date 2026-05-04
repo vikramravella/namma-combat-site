@@ -10,6 +10,7 @@ import { logAudit } from '@/lib/audit';
 import { DESIGNATIONS, MEMBER_STATUSES, SKILL_LEVELS } from '@/lib/constants';
 import { normalizePhone } from '@/lib/phone';
 import { inferKidDesignation } from '@/lib/designation';
+import { normalizeHealthNote } from '@/lib/health-notes';
 
 const statusKeys = MEMBER_STATUSES.map((s) => s.key);
 const skillKeys = SKILL_LEVELS.map((s) => s.key);
@@ -79,7 +80,7 @@ export async function updateMember(id, formData) {
           emergencyName: data.emergencyName,
           emergencyPhone: data.emergencyPhone,
           emergencyRelation: data.emergencyRelation,
-          medicalNotes: data.medicalNotes,
+          medicalNotes: normalizeHealthNote(data.medicalNotes),
           criticalHealthFlag: data.criticalHealthFlag === 'true',
           smokes: data.smokes === 'true',
           mediaConsent: data.mediaConsent === 'true' ? true : data.mediaConsent === 'false' ? false : null,

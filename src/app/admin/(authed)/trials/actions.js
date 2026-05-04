@@ -11,6 +11,7 @@ import { TRIAL_STATUSES, TRIAL_OUTCOMES, INQUIRY_STAGES } from '@/lib/constants'
 import { inferKidDesignation } from '@/lib/designation';
 import { coachFor, nextOccurrence, DAY_LABELS } from '@/lib/schedule';
 import { randomToken } from '@/lib/format';
+import { combineHealthNotes } from '@/lib/health-notes';
 
 const statusKeys = TRIAL_STATUSES.map((s) => s.key);
 const outcomeKeys = TRIAL_OUTCOMES.map((s) => s.key);
@@ -261,7 +262,7 @@ export async function convertTrialToMember(id, formData) {
           emergencyName: hd?.emergencyName ?? null,
           emergencyPhone: hd?.emergencyPhone ?? null,
           emergencyRelation: hd?.emergencyRelation ?? null,
-          medicalNotes: hd?.medicalConditions || hd?.injuries || null,
+          medicalNotes: combineHealthNotes(hd?.medicalConditions, hd?.injuries),
           smokes: hd?.smoking === 'yes' || hd?.smoking === 'occasionally',
           mediaConsent: hd?.mediaConsent ?? null,
           // criticalHealthFlag remains false until set by staff
