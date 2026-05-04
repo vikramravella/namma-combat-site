@@ -35,22 +35,30 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
   if (!r) notFound();
   const VENDOR = await getVendor();
 
-  // Find the most recent posture assessment for this member that happened
-  // strictly BEFORE this plan's start. Used to decide whether the receipt's
-  // "Includes" line should promise an assessment this term — quarterly+
-  // cycles always do; monthly cycles only when the prior assessment was
-  // 80+ days before the start date (roughly: every 3rd monthly receipt).
-  const lastAssessmentBefore = r.plan?.member?.id
-    ? await db.assessment.findFirst({
-        where: {
+  // Decide whether this receipt's "Includes" line claims a postural
+  // assessment. Rule:
+  //   - Quarterly+ cycles cover a full quarter — always include.
+  //   - Monthly: count this member's prior NON-VOID monthly receipts
+  //     issued strictly before this one. Every 3rd monthly receipt
+  //     (1st, 4th, 7th, …) includes an assessment. So if priorCount
+  //     is divisible by 3, this is an assessment month.
+  // The count-based rule is independent of whether the Assessment row
+  // actually got created in the DB — staff can run the assessment
+  // off-system without breaking the cadence shown on receipts.
+  let priorMonthlyCount = 0;
+  if (r.plan?.member?.id && (r.plan.cycle || '').toLowerCase() === 'monthly') {
+    priorMonthlyCount = await db.receipt.count({
+      where: {
+        status: { not: 'void' },
+        issueDate: { lt: r.issueDate },
+        plan: {
           memberId: r.plan.member.id,
-          assessedAt: { lt: r.plan.startDate },
+          cycle: 'Monthly',
         },
-        orderBy: { assessedAt: 'desc' },
-        select: { assessedAt: true },
-      })
-    : null;
-  const includesAssessment = isAssessmentIncluded(r.plan, lastAssessmentBefore?.assessedAt);
+      },
+    });
+  }
+  const includesAssessment = isAssessmentIncluded(r.plan, priorMonthlyCount);
   const justCreated = sp?.created === '1';
 
   const totalPaid = r.payments.reduce((s, p) => s + p.amountPaise, 0);
@@ -298,18 +306,17 @@ function includesText(floorAccess, { includesAssessment } = {}) {
     floorPart = 'Combat-sports + S&C + Animal Flow access (both floors).';
   }
   const assessPart = includesAssessment
-    ? 'Postural assessment + re-assessment included this term. '
-    : 'Postural assessment not due this term (re-assessed quarterly). ';
+    ? 'Postural assessment included this month. '
+    : 'Postural assessment not due this month (every 3rd month). ';
   return assessPart + floorPart;
 }
 
 // Decides whether the receipt's "Includes" line should claim an assessment.
-// Rule: any cycle longer than monthly always includes one; monthly only when
-// 80+ days have passed since the last assessment (or never assessed).
-function isAssessmentIncluded(plan, lastAssessmentAt) {
+// Rule: any cycle longer than monthly always includes one; monthly is
+// every 3rd receipt — so if priorMonthlyCount % 3 === 0, this is the
+// assessment month (1st, 4th, 7th, …).
+function isAssessmentIncluded(plan, priorMonthlyCount = 0) {
   if (!plan) return true;
   if ((plan.cycle || '').toLowerCase() !== 'monthly') return true;
-  if (!lastAssessmentAt) return true;
-  const daysSince = (new Date(plan.startDate) - new Date(lastAssessmentAt)) / (1000 * 60 * 60 * 24);
-  return daysSince >= 80;
+  return priorMonthlyCount % 3 === 0;
 }
