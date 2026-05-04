@@ -13,10 +13,12 @@ export function PaymentForm({ receipt, balance }) {
   const [method, setMethod] = useState('upi');
   const [reference, setReference] = useState('');
   const [amount, setAmount] = useState('');
-  // Default the payment date to the receipt's issue date (which equals the
-  // membership start date in our model). Most payments are same-day; staff
-  // overrides only for the rare prepaid/postpaid case.
-  const [receivedAt, setReceivedAt] = useState(toIsoDate(receipt.issueDate));
+  // Default the payment date to the membership's START date — that's
+  // the day staff actually expect the customer to have paid. The receipt's
+  // issueDate would also work, but on receipts created via the normal flow
+  // the issueDate is "now" (auto-default) and not necessarily the start.
+  // Falls back to issueDate if plan isn't available for some reason.
+  const [receivedAt, setReceivedAt] = useState(toIsoDate(receipt.plan?.startDate || receipt.issueDate));
   const [nextDate, setNextDate] = useState('');
   const [nextNote, setNextNote] = useState('');
 
