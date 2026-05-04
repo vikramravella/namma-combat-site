@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth';
 import { SignOutButton } from './SignOutButton';
 import { HeaderSearch } from './HeaderSearch';
 import { HeaderHistory } from './HeaderHistory';
+import { BackLinkBehavior } from './BackLinkBehavior';
 
 export default async function AuthedLayout({ children }) {
   const session = await getServerSession(authOptions);
@@ -35,6 +36,7 @@ export default async function AuthedLayout({ children }) {
         </div>
       </header>
       <main className="adm-main">{children}</main>
+      <BackLinkBehavior />
     </>
   );
 }
