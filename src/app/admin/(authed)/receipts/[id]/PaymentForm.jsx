@@ -11,7 +11,7 @@ export function PaymentForm({ receipt, balance }) {
   const [error, setError] = useState('');
   const [method, setMethod] = useState('upi');
   const [reference, setReference] = useState('');
-  const [amount, setAmount] = useState((balance / 100).toFixed(2));
+  const [amount, setAmount] = useState('');
   const [receivedAt, setReceivedAt] = useState(new Date().toISOString().slice(0, 10));
   const [nextDate, setNextDate] = useState('');
   const [nextNote, setNextNote] = useState('');
@@ -61,8 +61,8 @@ export function PaymentForm({ receipt, balance }) {
       <div className="adm-form-row">
         <div className="adm-field">
           <label className="adm-label">Amount (₹)</label>
-          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} max={(balance / 100).toFixed(2)} step="0.01" className="adm-input" />
-          <span className="adm-help">Balance: ₹{(balance / 100).toLocaleString('en-IN')}</span>
+          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} max={(balance / 100).toFixed(2)} step="0.01" placeholder={(balance / 100).toFixed(2)} className="adm-input" />
+          <span className="adm-help">Balance: ₹{(balance / 100).toLocaleString('en-IN')} — enter the amount actually received.</span>
         </div>
         <div className="adm-field">
           <label className="adm-label">Received on</label>
