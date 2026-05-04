@@ -22,13 +22,23 @@ export function reverseCalc(basePricePaise, agreedFinalPaise) {
   const agreedFinal = (agreedFinalPaise == null || agreedFinalPaise === '')
     ? fullTotal
     : Number(agreedFinalPaise);
+
+  // Anchor everything on agreedFinal so the receipt total ends up
+  // EXACTLY at the round number staff entered (₹15,000.00, not ₹14,999.99).
+  // Earlier version computed discount → netTaxable → cgst/sgst all with
+  // independent Math.round calls, so the rounding errors stacked up.
+  // Now: derive netTaxable from agreedFinal, then split the GST as the
+  // exact integer remainder. CGST/SGST may differ by 1 paise on odd
+  // totals — that's standard GST practice and accepted by tax software.
+  const netTaxable = Math.round(agreedFinal / (1 + GST_RATE));
+  const totalGst = Math.max(0, agreedFinal - netTaxable);
+  const cgst = Math.floor(totalGst / 2);
+  const sgst = totalGst - cgst;
+  const total = netTaxable + cgst + sgst; // === agreedFinal by construction
+
+  const discountPreTax = Math.max(0, grossTaxable - netTaxable);
   const discountFinal = Math.max(0, fullTotal - agreedFinal);
-  // Pre-tax discount = discountFinal / 1.05
-  const discountPreTax = Math.round(discountFinal / (1 + GST_RATE));
-  const netTaxable = grossTaxable - discountPreTax;
-  const cgst = Math.round(netTaxable * CGST_RATE);
-  const sgst = Math.round(netTaxable * SGST_RATE);
-  const total = netTaxable + cgst + sgst;
+
   return {
     grossTaxablePaise: grossTaxable,
     fullTotalPaise: fullTotal,
