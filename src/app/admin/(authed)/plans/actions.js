@@ -69,23 +69,28 @@ export async function createPlan(formData) {
   end.setDate(end.getDate() + type.durationDays + bonusDays);
   const fiscalYear = fiscalYearOf(new Date());
 
-  // Prevent overlapping memberships. A renewal is fine — its start date must
-  // sit strictly AFTER the current active/on_freeze plan's end date. Without
-  // this guard the system was happily creating two simultaneous active plans
-  // for the same member.
+  // Prevent overlapping memberships using proper interval intersection:
+  // two ranges [s1,e1] and [s2,e2] overlap iff s1 <= e2 AND s2 <= e1.
+  // Earlier version only checked existing.endDate >= new.startDate, which
+  // wrongly blocked backdated entries that ended before any existing
+  // membership began.
   const liveOverlap = await db.plan.findFirst({
     where: {
       memberId,
       status: { in: ['active', 'on_freeze'] },
-      endDate: { gte: start },
+      AND: [
+        { startDate: { lte: end } },
+        { endDate: { gte: start } },
+      ],
     },
-    orderBy: { endDate: 'desc' },
+    orderBy: { startDate: 'asc' },
   });
   if (liveOverlap) {
+    const existingStart = new Date(liveOverlap.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
     const existingEnd = new Date(liveOverlap.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
     return {
       ok: false,
-      error: `Member already has an active membership running until ${existingEnd}. Set the new start date to after that.`,
+      error: `Membership overlaps with an existing one (${existingStart} → ${existingEnd}). Pick start + end dates that don't intersect that range.`,
     };
   }
 
@@ -112,7 +117,10 @@ export async function createPlan(formData) {
           agreedFinalPaise: calc.totalPaise,
           customerGstin: customerGstin || null,
           notes: notes || null,
-          status: 'active',
+          // Backdated entries (whose end date is already in the past) are
+          // created in 'ended' status directly so they don't pollute the
+          // active-membership counts or the calls/expiring queues.
+          status: end < new Date() ? 'ended' : 'active',
         },
       });
 
