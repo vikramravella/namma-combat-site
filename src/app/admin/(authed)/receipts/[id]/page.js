@@ -115,7 +115,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
               <div><div className="rcpt-plan-key">Duration</div><div className="rcpt-plan-val">{r.plan.durationDays} days{r.plan.bonusDays > 0 ? ` (+${r.plan.bonusDays})` : ''}</div></div>
               <div><div className="rcpt-plan-key">Freeze allowance</div><div className="rcpt-plan-val">{r.plan.freezeDaysAllowed} days max</div></div>
             </div>
-            <p className="rcpt-plan-includes"><strong>Includes:</strong> Postural assessment + quarterly re-assessment, Animal Flow access.</p>
+            <p className="rcpt-plan-includes"><strong>Includes:</strong> {includesText(r.plan.floorAccess)}</p>
           </div>
 
           <div className="rcpt-service-line">
@@ -252,4 +252,20 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
       </div>
     </>
   );
+}
+
+// Returns the "Includes:" sentence for the receipt, branching on the
+// member's floor access. Silver-Arena members shouldn't see "Animal
+// Flow access" because Animal Flow is a Sanctuary class — they don't
+// have it. Same for the inverse.
+function includesText(floorAccess) {
+  const a = (floorAccess || '').toLowerCase();
+  if (a.startsWith('arena only')) {
+    return 'Postural assessment + quarterly re-assessment. Combat-sports access (Arena floor).';
+  }
+  if (a.startsWith('sanctuary only')) {
+    return 'Postural assessment + quarterly re-assessment, Animal Flow access (Sanctuary floor).';
+  }
+  // Both floors / unrestricted
+  return 'Postural assessment + quarterly re-assessment, Animal Flow access (both floors).';
 }

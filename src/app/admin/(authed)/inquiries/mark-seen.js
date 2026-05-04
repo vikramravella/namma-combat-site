@@ -1,15 +1,16 @@
 'use server';
-import { cookies } from 'next/headers';
+import { db } from '@/lib/db';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
-// Stamp the last-seen-inquiries cookie so the dashboard's "new from website"
-// badge clears once Vinod has actually opened the inquiries list. Cookie
-// lives 90 days — anything earlier than that is stale anyway.
+// Stamp the signed-in user's lastSeenInquiriesAt so the dashboard
+// "new from website" badge clears once they actually open the inquiry
+// list. Persists across devices/sessions; survives cookie clears.
 export async function markInquiriesSeen() {
-  const jar = await cookies();
-  jar.set('last-seen-inq', String(Date.now()), {
-    httpOnly: false,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 90,
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return;
+  await db.user.update({
+    where: { id: session.user.id },
+    data: { lastSeenInquiriesAt: new Date() },
   });
 }

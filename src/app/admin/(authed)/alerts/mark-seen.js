@@ -1,12 +1,13 @@
 'use server';
-import { cookies } from 'next/headers';
+import { db } from '@/lib/db';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export async function markAlertsSeen() {
-  const jar = await cookies();
-  jar.set('last-seen-alerts', String(Date.now()), {
-    httpOnly: false,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 90,
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return;
+  await db.user.update({
+    where: { id: session.user.id },
+    data: { lastSeenAlertsAt: new Date() },
   });
 }

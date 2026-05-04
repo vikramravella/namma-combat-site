@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
 import { db } from '@/lib/db';
+import { authOptions } from '@/lib/auth';
 import { fullName, formatDate, formatRelative, formatRupees } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
 import { isHealthNoteMeaningful } from '@/lib/health-notes';
@@ -21,13 +22,17 @@ export default async function HomePage() {
   const now = new Date();
   const { start: todayStart, end: todayEnd } = istTodayWindow(now);
 
-  // Read the "last seen" cookies so badges only count items that arrived
-  // since Vinod last opened the relevant module — clears once he visits.
-  const jar = await cookies();
-  const lastSeenInqRaw = jar.get('last-seen-inq')?.value;
-  const lastSeenInq = lastSeenInqRaw ? new Date(Number(lastSeenInqRaw)) : new Date(0);
-  const lastSeenAlertsRaw = jar.get('last-seen-alerts')?.value;
-  const lastSeenAlerts = lastSeenAlertsRaw ? new Date(Number(lastSeenAlertsRaw)) : new Date(0);
+  // Read this admin user's last-seen timestamps. Persisted on the User
+  // row so badges drop across device + session boundaries.
+  const session = await getServerSession(authOptions);
+  const me = session?.user?.id
+    ? await db.user.findUnique({
+        where: { id: session.user.id },
+        select: { lastSeenInquiriesAt: true, lastSeenAlertsAt: true },
+      })
+    : null;
+  const lastSeenInq = me?.lastSeenInquiriesAt || new Date(0);
+  const lastSeenAlerts = me?.lastSeenAlertsAt || new Date(0);
 
   const [
     callsToday,

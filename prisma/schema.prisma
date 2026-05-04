@@ -27,6 +27,11 @@ model User {
   name         String
   passwordHash String
   role         String   @default("admin")
+  // "Seen" timestamps — drive the dashboard notification badges. Replaces
+  // the brittle cookie-based last-seen-inq / last-seen-alerts state which
+  // didn't survive cookie clears or device switches.
+  lastSeenInquiriesAt DateTime?
+  lastSeenAlertsAt    DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   auditLogs    AuditLog[]
