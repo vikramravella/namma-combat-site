@@ -2830,6 +2830,54 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   color: var(--text-muted, #9B8E7E);
   text-align: center;
 }
+/* Partial-collections swatch dashboard — three coloured tiles
+   summarising overdue / due-this-week / open partial receipts. */
+.rep-partial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.rep-swatch {
+  border-radius: 12px;
+  padding: 18px 20px;
+  border: 1px solid transparent;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.rep-swatch:hover { box-shadow: 0 6px 20px rgba(44, 35, 24, 0.06); }
+.rep-swatch-rust  { background: rgba(154, 53, 32, 0.10); border-color: rgba(154, 53, 32, 0.20); }
+.rep-swatch-gold  { background: rgba(201, 148, 25, 0.10); border-color: rgba(201, 148, 25, 0.22); }
+.rep-swatch-green { background: rgba(56, 113, 67, 0.08); border-color: rgba(56, 113, 67, 0.16); }
+.rep-swatch-label {
+  font-family: var(--font-display, 'Archivo Black', sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted, #9B8E7E);
+  margin: 0 0 8px;
+}
+.rep-swatch-num {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--text, #2C2318);
+  line-height: 1;
+  margin: 0;
+}
+.rep-swatch-sub {
+  font-size: 12px;
+  color: var(--text-muted, #9B8E7E);
+  margin: 6px 0 0;
+}
+.rep-swatch-total {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text, #2C2318);
+  margin: 12px 0 0;
+}
+
 .rep-drill {
   margin-top: 18px;
   padding-top: 14px;

@@ -86,7 +86,14 @@ export default async function ReportsPage({ searchParams }) {
     db.member.groupBy({ by: ['skillLevel'], where: memberFilter, _count: { _all: true } }),
     db.trial.count({ where: { scheduledDate: { gte: since } } }),
     db.trial.count({ where: { scheduledDate: { gte: since }, outcome: 'joined' } }),
-    db.receipt.findMany({ where: { status: 'partial' }, include: { payments: { select: { amountPaise: true } } } }),
+    db.receipt.findMany({
+      where: { status: 'partial' },
+      orderBy: [{ nextAgreedDate: 'asc' }, { issueDate: 'asc' }],
+      include: {
+        payments: { orderBy: { receivedAt: 'desc' } },
+        plan: { select: { memberId: true } },
+      },
+    }),
     monthlyRowsP,
     drillPaymentsP,
   ]);
@@ -124,6 +131,35 @@ export default async function ReportsPage({ searchParams }) {
 
   const counts = { active: 0, on_freeze: 0, lapsed: 0, left: 0 };
   for (const r of byStatus) counts[r.status] = r._count._all;
+
+  // Bucket each partial receipt: overdue / due-this-week / open. The
+  // "due date" is whatever staff agreed with the member as the next
+  // payment day. If no date was set, the receipt sits in "open" with
+  // an age computed from the original issue date.
+  const partialNow = new Date(); partialNow.setHours(0, 0, 0, 0);
+  const partialWeek = new Date(partialNow); partialWeek.setDate(partialWeek.getDate() + 7);
+  const partialEnriched = partialReceipts.map((r) => {
+    const paid = r.payments.reduce((s, p) => s + p.amountPaise, 0);
+    const balance = r.totalPaise - paid;
+    const lastPmt = r.payments[0]?.receivedAt || null; // ordered desc
+    const nextAgreed = r.nextAgreedDate ? new Date(r.nextAgreedDate) : null;
+    let bucket = 'open';
+    let daysFromDue = null;
+    if (nextAgreed) {
+      daysFromDue = Math.ceil((nextAgreed - partialNow) / (1000 * 60 * 60 * 24));
+      if (nextAgreed < partialNow) bucket = 'overdue';
+      else if (nextAgreed < partialWeek) bucket = 'due_week';
+      else bucket = 'open';
+    }
+    const ageDays = Math.floor((partialNow - new Date(r.issueDate)) / (1000 * 60 * 60 * 24));
+    return { ...r, paid, balance, lastPaymentAt: lastPmt, bucket, daysFromDue, ageDays };
+  });
+  const partialBuckets = {
+    overdue:  partialEnriched.filter((r) => r.bucket === 'overdue'),
+    due_week: partialEnriched.filter((r) => r.bucket === 'due_week'),
+    open:     partialEnriched.filter((r) => r.bucket === 'open'),
+  };
+  const partialBucketTotal = (b) => b.reduce((s, r) => s + r.balance, 0);
 
   return (
     <div className="ed">
@@ -222,13 +258,74 @@ export default async function ReportsPage({ searchParams }) {
       <div className="ed-rule" />
 
       <section className="ed-section">
-        <h2 className="ed-section-head">Outstanding</h2>
+        <h2 className="ed-section-head">Partial collections</h2>
         <p className="ed-paragraph">
           <strong>{formatRupees(outstandingTotalPaise)}</strong> owed across <strong>{partialReceipts.length}</strong> receipt{partialReceipts.length === 1 ? '' : 's'}.
         </p>
-        <p style={{ marginTop: 8 }}>
-          <Link href="/admin/receipts?status=partial" className="adm-btn adm-btn-secondary">See all outstanding →</Link>
-        </p>
+
+        <div className="rep-partial-grid">
+          <PartialSwatch
+            tone="rust"
+            label="Overdue"
+            sub={`Past their agreed date`}
+            count={partialBuckets.overdue.length}
+            total={partialBucketTotal(partialBuckets.overdue)}
+          />
+          <PartialSwatch
+            tone="gold"
+            label="Due this week"
+            sub={`Next 7 days`}
+            count={partialBuckets.due_week.length}
+            total={partialBucketTotal(partialBuckets.due_week)}
+          />
+          <PartialSwatch
+            tone="green"
+            label="Open"
+            sub={`No date set or > 7 days away`}
+            count={partialBuckets.open.length}
+            total={partialBucketTotal(partialBuckets.open)}
+          />
+        </div>
+
+        {partialEnriched.length > 0 && (
+          <div className="prv-table-wrap" style={{ marginTop: 16 }}>
+            <table className="prv-table">
+              <thead>
+                <tr>
+                  <th>Bucket</th>
+                  <th>Invoice</th>
+                  <th>Customer</th>
+                  <th>Total</th>
+                  <th>Paid</th>
+                  <th>Balance</th>
+                  <th>Last payment</th>
+                  <th>Next agreed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {partialEnriched.map((r) => (
+                  <tr key={r.id}>
+                    <td><PartialBucketChip bucket={r.bucket} daysFromDue={r.daysFromDue} ageDays={r.ageDays} /></td>
+                    <td><Link href={`/admin/receipts/${r.id}`} className="adm-mono prv-name">{r.invoiceNumber}</Link></td>
+                    <td>
+                      {r.plan?.memberId ? (
+                        <Link href={`/admin/members/${r.plan.memberId}`} className="prv-name">{r.customerNameSnapshot}</Link>
+                      ) : (
+                        r.customerNameSnapshot
+                      )}
+                      <div className="prv-sub">{r.customerPhoneSnapshot}</div>
+                    </td>
+                    <td>{formatRupees(r.totalPaise)}</td>
+                    <td className="prv-muted">{formatRupees(r.paid)}</td>
+                    <td><strong>{formatRupees(r.balance)}</strong></td>
+                    <td className="prv-muted">{r.lastPaymentAt ? formatDate(r.lastPaymentAt) : <span className="adm-muted">—</span>}</td>
+                    <td className="prv-muted">{r.nextAgreedDate ? formatDate(r.nextAgreedDate) : <span className="adm-muted">no date set</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       <div className="ed-rule" />
@@ -247,6 +344,28 @@ export default async function ReportsPage({ searchParams }) {
 
 function labelFor(period) {
   return { today: 'today', week: 'last 7 days', month: 'last 30 days', quarter: 'last 90 days', year: 'last 365 days' }[period];
+}
+
+function PartialSwatch({ tone, label, sub, count, total }) {
+  return (
+    <div className={`rep-swatch rep-swatch-${tone}`}>
+      <p className="rep-swatch-label">{label}</p>
+      <p className="rep-swatch-num">{count}</p>
+      <p className="rep-swatch-sub">{sub}</p>
+      <p className="rep-swatch-total">{count > 0 ? formatRupees(total) : '—'}</p>
+    </div>
+  );
+}
+
+function PartialBucketChip({ bucket, daysFromDue, ageDays }) {
+  if (bucket === 'overdue') {
+    const d = Math.abs(daysFromDue);
+    return <span className="prv-stage prv-stage-rust"><span className="prv-stage-dot" />{d}d overdue</span>;
+  }
+  if (bucket === 'due_week') {
+    return <span className="prv-stage prv-stage-gold"><span className="prv-stage-dot" />{daysFromDue === 0 ? 'today' : `${daysFromDue}d`}</span>;
+  }
+  return <span className="prv-stage prv-stage-green"><span className="prv-stage-dot" />open · {ageDays}d old</span>;
 }
 
 function BreakdownGroup({ label, rows }) {
