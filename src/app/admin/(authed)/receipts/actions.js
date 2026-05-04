@@ -130,6 +130,11 @@ const editReceiptSchema = z.object({
   customerNameSnapshot: z.string().trim().min(1).max(160),
   customerGstinSnapshot: z.string().trim().regex(/^[0-9A-Z]{15}$/, 'GSTIN must be 15 chars').optional().or(z.literal('')),
   notes: z.string().trim().max(2000).optional().or(z.literal('')),
+  // Optional plan-side edits made through the receipt UI. The receipt's
+  // linked plan owns the membership term — for backdated paper entries
+  // staff need to fix the plan start date too without a second round-trip.
+  planStartDate: z.string().optional().or(z.literal('')),
+  planBonusDays: z.coerce.number().int().min(0).max(180).optional(),
 });
 
 export async function editReceipt(receiptId, formData) {
@@ -137,15 +142,64 @@ export async function editReceipt(receiptId, formData) {
   const raw = Object.fromEntries(formData);
   const parsed = editReceiptSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
-  const { issueDate, customerNameSnapshot, customerGstinSnapshot, notes } = parsed.data;
+  const { issueDate, customerNameSnapshot, customerGstinSnapshot, notes, planStartDate, planBonusDays } = parsed.data;
 
-  const receipt = await db.receipt.findUnique({ where: { id: receiptId } });
+  const receipt = await db.receipt.findUnique({
+    where: { id: receiptId },
+    include: { plan: true },
+  });
   if (!receipt) return { ok: false, error: 'Receipt not found' };
   if (receipt.status === 'void') return { ok: false, error: 'Voided receipts cannot be edited. Issue a fresh one.' };
 
   const newIssueDate = new Date(issueDate);
   const newFy = fiscalYearOf(newIssueDate);
   const fyChanged = newFy !== receipt.fiscalYear;
+
+  // Compute plan-side edits if requested. Recompute endDate from base
+  // duration so bonus days and start date stay consistent.
+  let planUpdate = null;
+  if (planStartDate && receipt.plan) {
+    if ((receipt.plan.freezeDaysUsed || 0) > 0) {
+      return { ok: false, error: 'Linked membership has freeze days applied. End the freeze first, then edit dates.' };
+    }
+    const priorBonus = receipt.plan.bonusDays || 0;
+    const baseDays = (receipt.plan.durationDays || 0) - priorBonus;
+    if (baseDays <= 0) return { ok: false, error: 'Linked membership base duration looks corrupted; edit blocked.' };
+    const newBonus = Number.isFinite(planBonusDays) ? planBonusDays : priorBonus;
+    const newStart = new Date(planStartDate);
+    const newEnd = new Date(newStart);
+    newEnd.setDate(newEnd.getDate() + baseDays + newBonus);
+
+    // Overlap guard, excluding this plan itself.
+    const overlap = await db.plan.findFirst({
+      where: {
+        id: { not: receipt.plan.id },
+        memberId: receipt.plan.memberId,
+        status: { in: ['active', 'on_freeze'] },
+        AND: [
+          { startDate: { lte: newEnd } },
+          { endDate: { gte: newStart } },
+        ],
+      },
+    });
+    if (overlap) {
+      const s = new Date(overlap.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      const e = new Date(overlap.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      return { ok: false, error: `New dates overlap an existing membership (${s} → ${e}).` };
+    }
+    planUpdate = {
+      id: receipt.plan.id,
+      data: {
+        startDate: newStart,
+        endDate: newEnd,
+        bonusDays: newBonus,
+        durationDays: baseDays + newBonus,
+        status: newEnd < new Date()
+          ? (['cancelled', 'on_freeze'].includes(receipt.plan.status) ? receipt.plan.status : 'ended')
+          : (receipt.plan.status === 'ended' ? 'active' : receipt.plan.status),
+      },
+    };
+  }
 
   try {
     const result = await db.$transaction(async (tx) => {
@@ -170,7 +224,12 @@ export async function editReceipt(receiptId, formData) {
         data.invoiceNumber = formatInvoiceNumber(newFy, nextSeq);
       }
 
-      return tx.receipt.update({ where: { id: receiptId }, data });
+      const updatedReceipt = await tx.receipt.update({ where: { id: receiptId }, data });
+      let updatedPlan = null;
+      if (planUpdate) {
+        updatedPlan = await tx.plan.update({ where: { id: planUpdate.id }, data: planUpdate.data });
+      }
+      return { receipt: updatedReceipt, plan: updatedPlan };
     });
 
     await logAudit({
@@ -185,19 +244,28 @@ export async function editReceipt(receiptId, formData) {
         customerNameSnapshot: receipt.customerNameSnapshot,
         customerGstinSnapshot: receipt.customerGstinSnapshot,
         notes: receipt.notes,
+        planStartDate: receipt.plan?.startDate,
+        planEndDate: receipt.plan?.endDate,
+        planBonusDays: receipt.plan?.bonusDays,
       },
       after: {
-        issueDate: result.issueDate,
-        invoiceNumber: result.invoiceNumber,
-        fiscalYear: result.fiscalYear,
-        customerNameSnapshot: result.customerNameSnapshot,
-        customerGstinSnapshot: result.customerGstinSnapshot,
-        notes: result.notes,
+        issueDate: result.receipt.issueDate,
+        invoiceNumber: result.receipt.invoiceNumber,
+        fiscalYear: result.receipt.fiscalYear,
+        customerNameSnapshot: result.receipt.customerNameSnapshot,
+        customerGstinSnapshot: result.receipt.customerGstinSnapshot,
+        notes: result.receipt.notes,
+        planStartDate: result.plan?.startDate,
+        planEndDate: result.plan?.endDate,
+        planBonusDays: result.plan?.bonusDays,
       },
     });
     revalidatePath('/admin/receipts');
     revalidatePath(`/admin/receipts/${receiptId}`);
-    return { ok: true, invoiceNumber: result.invoiceNumber };
+    revalidatePath('/admin/plans');
+    if (receipt.plan) revalidatePath(`/admin/plans/${receipt.plan.id}`);
+    if (receipt.plan) revalidatePath(`/admin/members/${receipt.plan.memberId}`);
+    return { ok: true, invoiceNumber: result.receipt.invoiceNumber };
   } catch (err) {
     console.error('editReceipt failed', err);
     return { ok: false, error: 'Could not save changes.' };

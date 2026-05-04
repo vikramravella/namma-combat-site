@@ -62,6 +62,19 @@ function EditReceiptCard({ receipt, onClose }) {
   const [customerName, setCustomerName] = useState(receipt.customerNameSnapshot || '');
   const [customerGstin, setCustomerGstin] = useState(receipt.customerGstinSnapshot || '');
   const [notes, setNotes] = useState(receipt.notes || '');
+  const [planStartDate, setPlanStartDate] = useState(toIsoDate(receipt.plan?.startDate));
+  const [planBonusDays, setPlanBonusDays] = useState(
+    receipt.plan?.bonusDays > 0 ? String(receipt.plan.bonusDays) : ''
+  );
+
+  const baseDays = (receipt.plan?.durationDays || 0) - (receipt.plan?.bonusDays || 0);
+  const previewEnd = (() => {
+    if (!planStartDate || !receipt.plan) return null;
+    const start = new Date(planStartDate);
+    const end = new Date(start);
+    end.setDate(end.getDate() + baseDays + (Number(planBonusDays) || 0));
+    return end;
+  })();
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -73,6 +86,10 @@ function EditReceiptCard({ receipt, onClose }) {
     fd.set('customerNameSnapshot', customerName.trim());
     if (customerGstin) fd.set('customerGstinSnapshot', customerGstin.toUpperCase());
     if (notes) fd.set('notes', notes);
+    if (planStartDate) {
+      fd.set('planStartDate', planStartDate);
+      fd.set('planBonusDays', String(Number(planBonusDays) || 0));
+    }
     startTransition(async () => {
       const r = await editReceipt(receipt.id, fd);
       if (r?.ok === false) {
@@ -120,6 +137,37 @@ function EditReceiptCard({ receipt, onClose }) {
           />
           <span className="adm-help">For B2B you can override with the company name. Otherwise leave as the member name.</span>
         </div>
+
+        {receipt.plan && (
+          <>
+            <h3 className="adm-card-title" style={{ marginTop: 8 }}>Membership term</h3>
+            <div className="adm-form-row">
+              <div className="adm-field">
+                <label className="adm-label">Start date</label>
+                <DatePicker value={planStartDate} onChange={setPlanStartDate} />
+              </div>
+              <div className="adm-field">
+                <label className="adm-label">Bonus days</label>
+                <input
+                  type="number"
+                  value={planBonusDays}
+                  onChange={(e) => setPlanBonusDays(e.target.value)}
+                  placeholder="0"
+                  min="0"
+                  max="180"
+                  className="adm-input"
+                />
+              </div>
+            </div>
+            {previewEnd && (
+              <p className="adm-help">
+                New end date: <strong>{previewEnd.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</strong>
+                {' '}({baseDays + (Number(planBonusDays) || 0)} days)
+              </p>
+            )}
+          </>
+        )}
+
         <div className="adm-field">
           <label className="adm-label">Internal notes</label>
           <textarea
