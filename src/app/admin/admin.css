@@ -1973,6 +1973,14 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
     background: #fff !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+    /* Zero out any UA-default margins/padding so trailing whitespace
+       can't push layout past A4 and produce a phantom blank page 2. */
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .adm-main {
+    padding: 0 !important;
+    margin: 0 !important;
   }
   .adm-header,
   .adm-page-header,
@@ -2008,8 +2016,14 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
     border-radius: 0 !important;
     padding: 7mm 10mm !important;
     max-width: none !important;
+    margin: 0 !important;
     page-break-inside: avoid;
     break-inside: avoid;
+    /* Belt-and-suspenders against the phantom blank page 2: tell the
+       browser explicitly there must NOT be a page break after the
+       printable paper. The receipt is the entire document. */
+    page-break-after: avoid !important;
+    break-after: avoid !important;
     font-size: 9pt !important;
   }
   /* Aggressive vertical-rhythm compression so a fully-loaded receipt
