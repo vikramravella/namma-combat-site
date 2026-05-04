@@ -2672,6 +2672,84 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 .adm-row { display: flex; gap: 12px; align-items: center; }
 .adm-spacer { flex: 1; }
 
+/* Reports — 12-month bar chart with drill-in. Each bar is a Link. */
+.rep-bars {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+  align-items: end;
+  padding: 12px 0 4px;
+}
+.rep-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 6px 4px 8px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+.rep-bar-col:hover { background: var(--warm, #F5F0E8); }
+.rep-bar-col-drill { background: var(--warm, #F5F0E8); outline: 2px solid var(--rust, #9A3520); outline-offset: -2px; }
+.rep-bar-amt {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text, #2C2318);
+  text-align: center;
+  letter-spacing: 0;
+}
+.rep-bar-wrap {
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.rep-bar {
+  width: 100%;
+  background: linear-gradient(180deg, var(--rust, #9A3520) 0%, rgba(154, 53, 32, 0.7) 100%);
+  border-radius: 4px 4px 0 0;
+}
+.rep-bar-col-now .rep-bar {
+  background: linear-gradient(180deg, var(--gold, #E3C768) 0%, rgba(227, 199, 104, 0.7) 100%);
+}
+.rep-bar-month {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted, #9B8E7E);
+  text-align: center;
+}
+.rep-bar-col-now .rep-bar-month { color: var(--rust, #9A3520); font-weight: 700; }
+.rep-bar-count {
+  font-size: 9px;
+  color: var(--text-muted, #9B8E7E);
+  text-align: center;
+}
+.rep-drill {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border, #E0D6C8);
+}
+.rep-drill-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.rep-drill-title {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text, #2C2318);
+  margin: 0;
+}
+
 /* ─── Dashboard revenue strip ─── */
 .dash-revenue {
   background: var(--cream, #FEF8EE);

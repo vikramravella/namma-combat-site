@@ -124,38 +124,6 @@ export default async function HomePage() {
 
   const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || isHealthNoteMeaningful(m.medicalNotes));
 
-  // Last 12 months of revenue, bucketed by Payment.receivedAt so backdated
-  // entries land in the correct month (e.g. an April payment recorded in
-  // May still counts towards April).
-  const revenueStart = new Date(now); revenueStart.setMonth(revenueStart.getMonth() - 11); revenueStart.setDate(1); revenueStart.setHours(0, 0, 0, 0);
-  const monthlyRows = await db.$queryRaw`
-    SELECT
-      DATE_TRUNC('month', "receivedAt") AS month,
-      SUM("amountPaise")::bigint AS paise
-    FROM "Payment"
-    WHERE "receivedAt" >= ${revenueStart}
-    GROUP BY 1
-    ORDER BY 1 ASC
-  `;
-  const monthlyMap = new Map();
-  for (const r of monthlyRows) {
-    const key = new Date(r.month).toISOString().slice(0, 7); // YYYY-MM
-    monthlyMap.set(key, Number(r.paise));
-  }
-  const monthly = [];
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(now); d.setMonth(d.getMonth() - i); d.setDate(1);
-    const key = d.toISOString().slice(0, 7);
-    monthly.push({
-      key,
-      label: d.toLocaleDateString('en-IN', { month: 'short' }),
-      year: d.getFullYear(),
-      paise: monthlyMap.get(key) || 0,
-      isCurrent: i === 0,
-    });
-  }
-  const peakPaise = monthly.reduce((m, x) => Math.max(m, x.paise), 0) || 1;
-
   // Alerts badge counts items NEW since the last visit to /admin/alerts.
   // The alerts page itself still shows the full live list — this only
   // affects the badge on the dashboard tile.
@@ -193,24 +161,6 @@ export default async function HomePage() {
       </header>
 
       <div className="home-rule" />
-
-      <div className="dash-revenue">
-        <div className="dash-revenue-head">
-          <span className="dash-revenue-title">Money in · last 12 months</span>
-          <span className="dash-revenue-total">{formatRupees(monthly.reduce((s, m) => s + m.paise, 0))}</span>
-        </div>
-        <div className="dash-revenue-bars">
-          {monthly.map((m) => (
-            <div key={m.key} className={`dash-revenue-col ${m.isCurrent ? 'dash-revenue-col-now' : ''}`}>
-              <div className="dash-revenue-bar-wrap">
-                <div className="dash-revenue-bar" style={{ height: `${Math.max((m.paise / peakPaise) * 100, m.paise > 0 ? 4 : 0)}%` }} title={`${m.label} ${m.year}: ${formatRupees(m.paise)}`} />
-              </div>
-              <div className="dash-revenue-amt">{m.paise > 0 ? `₹${Math.round(m.paise / 100000)}L` : '—'}</div>
-              <div className="dash-revenue-month">{m.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       <div className="home-grid">
         {MODULES.map((m, i) => {

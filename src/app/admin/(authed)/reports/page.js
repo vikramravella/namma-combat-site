@@ -15,6 +15,7 @@ export default async function ReportsPage({ searchParams }) {
   const discipline = sp?.discipline || '';
   const gender = sp?.gender || '';
   const tier = sp?.tier && TIERS.find((t) => t.key === sp.tier) ? sp.tier : '';
+  const drillMonth = sp?.month || ''; // 'YYYY-MM'
 
   const days = PERIOD_DAYS[period];
   const since = new Date();
@@ -44,8 +45,40 @@ export default async function ReportsPage({ searchParams }) {
     }
   }
 
+  // 12-month revenue series, bucketed by Payment.receivedAt
+  const seriesStart = new Date(); seriesStart.setHours(0, 0, 0, 0); seriesStart.setMonth(seriesStart.getMonth() - 11); seriesStart.setDate(1);
+  const monthlyRowsP = db.$queryRaw`
+    SELECT DATE_TRUNC('month', "receivedAt") AS month,
+           SUM("amountPaise")::bigint AS paise,
+           COUNT(*)::int AS count
+    FROM "Payment"
+    WHERE "receivedAt" >= ${seriesStart}
+    GROUP BY 1 ORDER BY 1 ASC
+  `;
+
+  // Drilldown: payments for the specific month
+  let drillStart, drillEnd;
+  if (drillMonth && /^\d{4}-\d{2}$/.test(drillMonth)) {
+    const [yy, mm] = drillMonth.split('-').map(Number);
+    drillStart = new Date(yy, mm - 1, 1);
+    drillEnd = new Date(yy, mm, 1);
+  }
+  const drillPaymentsP = drillStart
+    ? db.payment.findMany({
+        where: { receivedAt: { gte: drillStart, lt: drillEnd } },
+        orderBy: { receivedAt: 'desc' },
+        include: {
+          receipt: {
+            include: {
+              plan: { include: { member: { select: { id: true, firstName: true, lastName: true, phone: true } } } },
+            },
+          },
+        },
+      })
+    : Promise.resolve([]);
+
   const [periodPayments, todayPayments, memberCount, byStatus, byGender, bySkill,
-         periodTrials, periodConversions, partialReceipts] = await Promise.all([
+         periodTrials, periodConversions, partialReceipts, monthlyRows, drillPayments] = await Promise.all([
     db.payment.findMany({ where: paymentWhere }),
     db.payment.findMany({ where: { receivedAt: { gte: dayStart, lt: dayEnd } } }),
     db.member.count({ where: memberFilter }),
@@ -55,7 +88,30 @@ export default async function ReportsPage({ searchParams }) {
     db.trial.count({ where: { scheduledDate: { gte: since } } }),
     db.trial.count({ where: { scheduledDate: { gte: since }, outcome: 'joined' } }),
     db.receipt.findMany({ where: { status: 'partial' }, include: { payments: { select: { amountPaise: true } } } }),
+    monthlyRowsP,
+    drillPaymentsP,
   ]);
+
+  const monthlyMap = new Map();
+  for (const r of monthlyRows) {
+    const key = new Date(r.month).toISOString().slice(0, 7);
+    monthlyMap.set(key, { paise: Number(r.paise), count: r.count });
+  }
+  const monthly = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(1); d.setMonth(d.getMonth() - i);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const entry = monthlyMap.get(key) || { paise: 0, count: 0 };
+    monthly.push({
+      key,
+      label: d.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' }),
+      paise: entry.paise,
+      count: entry.count,
+      isCurrent: i === 0,
+      isDrill: key === drillMonth,
+    });
+  }
+  const peakPaise = monthly.reduce((m, x) => Math.max(m, x.paise), 0) || 1;
 
   const periodRevenuePaise = periodPayments.reduce((s, p) => s + p.amountPaise, 0);
   const todayRevenuePaise = todayPayments.reduce((s, p) => s + p.amountPaise, 0);
@@ -98,6 +154,58 @@ export default async function ReportsPage({ searchParams }) {
       </section>
 
       <div className="ed-rule ed-rule-gold" />
+
+      <section className="ed-section">
+        <h2 className="ed-section-head">Money in · last 12 months</h2>
+        <div className="rep-bars">
+          {monthly.map((m) => (
+            <Link
+              key={m.key}
+              href={`?month=${m.key}`}
+              scroll={false}
+              className={`rep-bar-col ${m.isCurrent ? 'rep-bar-col-now' : ''} ${m.isDrill ? 'rep-bar-col-drill' : ''}`}
+            >
+              <div className="rep-bar-amt">{m.paise > 0 ? formatRupees(m.paise).replace('₹', '₹').replace(',00', 'k').replace(',000', 'k') : '—'}</div>
+              <div className="rep-bar-wrap">
+                <div className="rep-bar" style={{ height: `${Math.max((m.paise / peakPaise) * 100, m.paise > 0 ? 4 : 0)}%` }} />
+              </div>
+              <div className="rep-bar-month">{m.label}</div>
+              {m.count > 0 && <div className="rep-bar-count">{m.count} pmt{m.count === 1 ? '' : 's'}</div>}
+            </Link>
+          ))}
+        </div>
+        <p className="adm-help" style={{ marginTop: 8 }}>Click any month to see who paid, how much, and what.</p>
+
+        {drillMonth && (
+          <div className="rep-drill">
+            <div className="rep-drill-head">
+              <h3 className="rep-drill-title">{drillMonth} · {drillPayments.length} payment{drillPayments.length === 1 ? '' : 's'} · {formatRupees(drillPayments.reduce((s, p) => s + p.amountPaise, 0))}</h3>
+              <Link href="?" className="adm-btn adm-btn-secondary adm-btn-sm">Close ✕</Link>
+            </div>
+            {drillPayments.length === 0 ? (
+              <p className="adm-muted">No payments in this month.</p>
+            ) : (
+              <table className="prv-table">
+                <thead><tr><th>Date</th><th>Member</th><th>Plan</th><th>Method</th><th>Reference</th><th>Amount</th></tr></thead>
+                <tbody>
+                  {drillPayments.map((p) => (
+                    <tr key={p.id}>
+                      <td className="prv-muted">{formatDate(p.receivedAt)}</td>
+                      <td>{p.receipt.plan?.member ? <Link href={`/admin/members/${p.receipt.plan.member.id}`} className="prv-name">{fullName(p.receipt.plan.member)}</Link> : '—'}</td>
+                      <td className="prv-muted">{p.receipt.plan ? `${p.receipt.plan.tier} ${p.receipt.plan.cycle}` : '—'}</td>
+                      <td className="prv-muted">{p.method}</td>
+                      <td className="adm-mono prv-muted">{p.reference || '—'}</td>
+                      <td><strong>{formatRupees(p.amountPaise)}</strong></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+      </section>
+
+      <div className="ed-rule" />
 
       <section className="ed-section">
         <h2 className="ed-section-head">The membership</h2>
