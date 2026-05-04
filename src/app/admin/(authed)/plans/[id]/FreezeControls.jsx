@@ -116,7 +116,7 @@ export function FreezeControls({ plan }) {
       </div>
       <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
         <input type="checkbox" checked={medical} onChange={(e) => setMedical(e.target.checked)} />
-        Medical exception (bypass freeze cap + minimum-length rule)
+        Medical exception (bypass freeze allowance cap)
       </label>
       <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
         <button type="button" onClick={handleCancel} className="adm-btn adm-btn-danger">Cancel membership</button>

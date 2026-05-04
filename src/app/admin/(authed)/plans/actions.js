@@ -7,7 +7,7 @@ import { getServerSession } from 'next-auth';
 import { db } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
-import { FREEZE_POLICY, PLAN_STATUSES } from '@/lib/constants';
+import { PLAN_STATUSES } from '@/lib/constants';
 import { reverseCalc, fiscalYearOf, formatInvoiceNumber } from '@/lib/calc';
 import { rupeesInputToPaise, fullName } from '@/lib/format';
 import { syncMemberStatusFromPlans } from '@/lib/member-status';
@@ -182,9 +182,6 @@ export async function freezePlan(planId, formData) {
   if (end <= start) return { ok: false, error: 'End date must be after start date.' };
 
   const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-  if (!medicalException && days < FREEZE_POLICY.minDaysPerFreeze) {
-    return { ok: false, error: `Minimum freeze is ${FREEZE_POLICY.minDaysPerFreeze} days (or use medical exception).` };
-  }
 
   try {
     const plan = await db.plan.findUnique({ where: { id: planId } });
