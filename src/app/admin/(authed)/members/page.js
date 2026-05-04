@@ -76,7 +76,6 @@ export default async function MembersPage({ searchParams }) {
           <h1 className="adm-page-title">Members</h1>
           <p className="adm-page-subtitle">{rows.length === allCount ? `${allCount} ${allCount === 1 ? 'member' : 'members'}` : `${rows.length} of ${allCount} matching`}</p>
         </div>
-        <Link href="/admin/members/new" className="adm-btn">+ Quick add (backdated)</Link>
       </div>
 
       <div className="prv-chips">
