@@ -32,7 +32,7 @@ export function QuickAddForm({ types }) {
   // Payment
   const [paymentAmount, setPaymentAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('upi');
-  const [paymentReceivedAt, setPaymentReceivedAt] = useState(today());
+  const [paymentReceivedAt, setPaymentReceivedAt] = useState('');
   const [paymentReference, setPaymentReference] = useState('');
 
   const selected = types.find((t) => t.id === typeId) || defaultType;
@@ -50,6 +50,13 @@ export function QuickAddForm({ types }) {
       return end;
     } catch { return null; }
   }, [startDate, selected, bonusDays]);
+
+  // Tick stays in sync if staff types the full amount manually, OR if the
+  // total changes (e.g. they switched membership type or added a discount).
+  const paidInFull = useMemo(() => {
+    if (!paymentAmount || calc.totalPaise === 0) return false;
+    return Math.round(Number(paymentAmount) * 100) === calc.totalPaise;
+  }, [paymentAmount, calc.totalPaise]);
 
   const grouped = useMemo(() => {
     const m = new Map();
@@ -86,7 +93,10 @@ export function QuickAddForm({ types }) {
     if (paymentAmount && Number(paymentAmount) > 0) {
       fd.set('paymentAmount', paymentAmount);
       fd.set('paymentMethod', paymentMethod);
-      fd.set('paymentReceivedAt', paymentReceivedAt);
+      // Default the payment date to the membership start date — most
+      // entries have same-day payment + start, and staff can override
+      // for the rare prepaid case.
+      fd.set('paymentReceivedAt', paymentReceivedAt || startDate);
       if (paymentReference) fd.set('paymentReference', paymentReference);
     }
 
@@ -220,11 +230,25 @@ export function QuickAddForm({ types }) {
       <div className="adm-card">
         <h2 className="adm-card-title">Payment (optional — leave blank to record later)</h2>
         <div className="adm-form">
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, marginBottom: 4 }}>
+            <input
+              type="checkbox"
+              checked={paidInFull}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setPaymentAmount((calc.totalPaise / 100).toFixed(2));
+                } else {
+                  setPaymentAmount('');
+                }
+              }}
+            />
+            <span>Paid in full ({formatRupees(calc.totalPaise)})</span>
+          </label>
           <div className="adm-form-row">
             <div className="adm-field">
               <label className="adm-label">Amount paid (₹)</label>
               <input type="number" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} placeholder={(calc.totalPaise / 100).toFixed(2)} step="0.01" min="0" className="adm-input" />
-              <span className="adm-help">Leave blank to skip — receipt will sit as &ldquo;issued&rdquo; until you record it.</span>
+              <span className="adm-help">Tick &ldquo;Paid in full&rdquo; above, or type a partial amount. Leave blank to skip.</span>
             </div>
             <div className="adm-field">
               <label className="adm-label">Method</label>
@@ -236,7 +260,8 @@ export function QuickAddForm({ types }) {
           <div className="adm-form-row">
             <div className="adm-field">
               <label className="adm-label">Received on</label>
-              <DatePicker value={paymentReceivedAt} onChange={setPaymentReceivedAt} />
+              <DatePicker value={paymentReceivedAt || startDate} onChange={setPaymentReceivedAt} />
+              <span className="adm-help">Defaults to the membership start date. Override only if payment was on a different day.</span>
             </div>
             <div className="adm-field">
               <label className="adm-label">Reference</label>
