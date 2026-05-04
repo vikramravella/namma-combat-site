@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
+import { SeedDayPassButton } from './SeedDayPassButton';
 
 export const revalidate = 10;
 
@@ -7,6 +8,7 @@ export default async function MembershipTypesPage({ searchParams }) {
   const sp = await searchParams;
   const justCreated = sp?.created;
   const rows = await db.membershipType.findMany({ orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] });
+  const hasDayPass = rows.some((r) => r.tier === 'Day Pass');
 
   return (
     <>
@@ -19,6 +21,10 @@ export default async function MembershipTypesPage({ searchParams }) {
       </div>
 
       {justCreated && <p className="adm-success" style={{ marginBottom: 16 }}>Created &ldquo;{justCreated}&rdquo;.</p>}
+
+      <div style={{ marginBottom: 16 }}>
+        <SeedDayPassButton alreadyHas={hasDayPass} />
+      </div>
 
       <div className="prv-table-wrap">
         <table className="prv-table">

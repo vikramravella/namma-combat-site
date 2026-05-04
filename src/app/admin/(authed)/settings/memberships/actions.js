@@ -80,6 +80,62 @@ export async function updateMembershipType(id, formData) {
   }
 }
 
+// Idempotent seed for the Day Pass catalog entries. Pricing source:
+// nammacombat.com FAQ ("Single class passes: ₹788 regular / ₹1,050 elite
+// 90-minute"). Pre-GST base = incl-GST / 1.05, rounded to a clean number.
+// Safe to call repeatedly: existing rows get upserted in place.
+const DAY_PASS_SEEDS = [
+  {
+    name: 'Day Pass — Regular',
+    tier: 'Day Pass',
+    cycle: 'Single Day',
+    durationDays: 1,
+    freezeDaysAllowed: 0,
+    basePriceRupees: 750,
+    floorAccess: 'Both floors',
+    notes: 'Single class drop-in. ₹788 incl GST. For travelers or members from other academies trying us out.',
+    sortOrder: 900,
+    active: true,
+  },
+  {
+    name: 'Day Pass — Elite 90-min',
+    tier: 'Day Pass',
+    cycle: 'Elite 90min',
+    durationDays: 1,
+    freezeDaysAllowed: 0,
+    basePriceRupees: 1000,
+    floorAccess: 'Both floors',
+    notes: 'Single 90-minute elite class drop-in. ₹1,050 incl GST.',
+    sortOrder: 901,
+    active: true,
+  },
+];
+
+export async function seedDayPassTypes() {
+  const session = await requireSession();
+  const created = [];
+  const updated = [];
+  for (const seed of DAY_PASS_SEEDS) {
+    const existing = await db.membershipType.findUnique({ where: { name: seed.name } });
+    if (existing) {
+      await db.membershipType.update({ where: { name: seed.name }, data: seed });
+      updated.push(seed.name);
+    } else {
+      await db.membershipType.create({ data: seed });
+      created.push(seed.name);
+    }
+  }
+  await logAudit({
+    actorUserId: session.user.id,
+    action: 'seed_day_pass',
+    entity: 'MembershipType',
+    entityId: 'day-pass-batch',
+    after: { created, updated },
+  });
+  revalidatePath('/admin/settings/memberships');
+  return { ok: true, created: created.length, updated: updated.length };
+}
+
 export async function toggleMembershipTypeActive(id) {
   const session = await requireSession();
   const before = await db.membershipType.findUnique({ where: { id } });
