@@ -69,9 +69,10 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
 
       <div className="rcpt-doc">
         <div className="rcpt-paper">
-          {/* Wordmark header */}
+          {/* Wordmark header — legal name first, address below */}
           <div className="rcpt-wordmark">
             <img src="/logo.svg" alt="Namma Combat" className="rcpt-wordmark-logo" />
+            <p className="rcpt-wordmark-legal">{VENDOR.legalName}</p>
             <p className="rcpt-wordmark-address">{VENDOR.address}</p>
             <div className="rcpt-wordmark-rule" />
           </div>
@@ -86,6 +87,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
               <div><dt>FY</dt><dd>{fyDisplay}</dd></div>
               <div><dt>Place of supply</dt><dd>{VENDOR.placeOfSupply}</dd></div>
               <div><dt>GSTIN</dt><dd className="adm-mono">{r.vendorGstin}</dd></div>
+              <div><dt>Reverse charge</dt><dd>No</dd></div>
             </dl>
           </div>
 
@@ -94,9 +96,11 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
             <div className="rcpt-party-name">{r.customerNameSnapshot}</div>
             <dl className="rcpt-party-defs">
               <div><dt>Phone</dt><dd className="adm-mono">{r.customerPhoneSnapshot}</dd></div>
-              {r.customerGstinSnapshot && (
-                <div><dt>GSTIN</dt><dd className="adm-mono">{r.customerGstinSnapshot}</dd></div>
-              )}
+              <div><dt>Location</dt><dd>Bangalore, Karnataka, India</dd></div>
+              <div>
+                <dt>GSTIN</dt>
+                <dd className="adm-mono">{r.customerGstinSnapshot || 'N/A (B2C)'}</dd>
+              </div>
             </dl>
           </div>
 
@@ -106,12 +110,21 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
               <div><div className="rcpt-plan-key">Tier</div><div className="rcpt-plan-val">{r.plan.tier}</div></div>
               <div><div className="rcpt-plan-key">Billing cycle</div><div className="rcpt-plan-val">{r.plan.cycle}</div></div>
               <div><div className="rcpt-plan-key">Floor access</div><div className="rcpt-plan-val">{r.plan.floorAccess}</div></div>
-              <div><div className="rcpt-plan-key">SAC</div><div className="rcpt-plan-val adm-mono">{r.vendorSac}</div></div>
+              <div><div className="rcpt-plan-key">SAC</div><div className="rcpt-plan-val"><span className="adm-mono">{r.vendorSac}</span> <span className="rcpt-plan-sac-desc">· {VENDOR.sacDescription}</span></div></div>
               <div><div className="rcpt-plan-key">Start date</div><div className="rcpt-plan-val">{formatDate(r.plan.startDate)}</div></div>
               <div><div className="rcpt-plan-key">End date</div><div className="rcpt-plan-val">{formatDate(r.plan.endDate)}</div></div>
               <div><div className="rcpt-plan-key">Duration</div><div className="rcpt-plan-val">{r.plan.durationDays} days{r.plan.bonusDays > 0 ? ` (+${r.plan.bonusDays})` : ''}</div></div>
               <div><div className="rcpt-plan-key">Freeze allowance</div><div className="rcpt-plan-val">{r.plan.freezeDaysAllowed} days max</div></div>
             </div>
+            <p className="rcpt-plan-includes"><strong>Includes:</strong> Postural assessment + quarterly re-assessment, Animal Flow access.</p>
+          </div>
+
+          <div className="rcpt-service-line">
+            <span className="rcpt-service-label">Service:</span>
+            <span>
+              {r.plan.tier} {r.plan.cycle} membership ({r.plan.floorAccess}) ·{' '}
+              {formatDate(r.plan.startDate)} → {formatDate(r.plan.endDate)}
+            </span>
           </div>
 
           {/* Two-column finance row: payment status (left) sits in the
@@ -175,13 +188,13 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
                 <tbody>
                   <tr><td>Subtotal (taxable)</td><td className="rcpt-num">₹{paiseToString(r.grossTaxablePaise)}</td></tr>
                   {r.discountFinalPaise > 0 && (
-                    <tr className="rcpt-discount-row">
-                      <td>Discount<span className="rcpt-discount-note">agreed ₹{paiseToString(r.totalPaise)} of full ₹{paiseToString(r.grossTaxablePaise + Math.round(r.grossTaxablePaise * 0.05))}</span></td>
-                      <td className="rcpt-num">−₹{paiseToString(r.discountPreTaxPaise)}</td>
-                    </tr>
-                  )}
-                  {r.discountFinalPaise > 0 && (
-                    <tr><td>Net taxable</td><td className="rcpt-num">₹{paiseToString(r.netTaxablePaise)}</td></tr>
+                    <>
+                      <tr className="rcpt-discount-row">
+                        <td>Discount applied</td>
+                        <td className="rcpt-num">−₹{paiseToString(r.discountPreTaxPaise)}</td>
+                      </tr>
+                      <tr><td>Net taxable</td><td className="rcpt-num">₹{paiseToString(r.netTaxablePaise)}</td></tr>
+                    </>
                   )}
                   <tr><td>CGST <span className="rcpt-rate">@ 2.5%</span></td><td className="rcpt-num">₹{paiseToString(r.cgstPaise)}</td></tr>
                   <tr><td>SGST <span className="rcpt-rate">@ 2.5%</span></td><td className="rcpt-num">₹{paiseToString(r.sgstPaise)}</td></tr>
@@ -201,8 +214,8 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
               <li><strong>Period locked</strong> to dates above; membership starts on start date regardless of first attendance.</li>
               <li><strong>Non-refundable</strong> once started. Pre-start cancellations: 5% processing deduction. Non-transferable.</li>
               <li><strong>Health declaration</strong> must be on file and current; disclose any change before next session.</li>
-              <li>GST under reverse charge: No. Consumer (B2C). Jurisdiction: Bangalore courts.</li>
-              <li>Digitally generated — no signature required. Queries: WhatsApp <span className="adm-mono">{VENDOR.phone}</span>.</li>
+              <li>Consumer sale (B2C). Jurisdiction: Bangalore courts. Full member terms available at the front desk.</li>
+              <li>Digitally generated — no signature required. Queries: <span className="adm-mono">{VENDOR.email}</span> · WhatsApp <span className="adm-mono">{VENDOR.phone}</span>.</li>
             </ol>
           </div>
 

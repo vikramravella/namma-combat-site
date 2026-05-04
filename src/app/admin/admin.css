@@ -1800,6 +1800,57 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
   margin: 0;
 }
 
+/* Receipt: legal name, SAC description, includes, service line */
+.rcpt-wordmark-legal {
+  font-family: var(--font-display, 'Materia Pro'), 'Archivo Black', sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text, #2C2318);
+  margin: 6px 0 2px;
+  text-align: center;
+}
+.rcpt-plan-sac-desc {
+  color: var(--text-light, #6B5D4F);
+  font-size: 11px;
+  font-weight: 400;
+}
+.rcpt-plan-includes {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border, #E0D6C8);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--text-light, #6B5D4F);
+  font-style: italic;
+}
+.rcpt-plan-includes strong {
+  color: var(--text, #2C2318);
+  font-style: normal;
+}
+.rcpt-service-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 8px 0 12px;
+  padding: 8px 12px;
+  background: var(--warm, #F5F0E8);
+  border-left: 3px solid var(--gold, #E3C768);
+  border-radius: 4px;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 12.5px;
+  color: var(--text, #2C2318);
+}
+.rcpt-service-label {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 10px;
+  color: var(--rust, #9A3520);
+  flex: 0 0 auto;
+}
+
 /* Print — strict A4 fit. Goal: receipt fits exactly one page, payment-
    management chrome is hidden so the saved PDF is just the invoice. */
 @media print {

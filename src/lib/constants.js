@@ -140,9 +140,11 @@ export const VENDOR = {
   address: 'No. 10, 80 Feet Road, Koramangala, Bangalore 560034',
   gstin: '29AHXPV9545M2ZR',
   sac: '999723',
+  sacDescription: 'Physical fitness / health club services',
   placeOfSupply: '29 — Karnataka',
   pan: 'AHXPV9545M',
   phone: '+91 77700 87700',
+  email: 'sales@nammacombat.com',
   whatsappNumber: '917770087700', // for wa.me links (no spaces, no +)
   cgstRate: 0.025,
   sgstRate: 0.025,
