@@ -5,7 +5,8 @@ import { istTodayWindow } from '@/lib/today-ist';
 import { isHealthNoteMeaningful } from '@/lib/health-notes';
 import { MarkAlertsSeenOnMount } from './MarkAlertsSeenOnMount';
 
-export const dynamic = 'force-dynamic';
+// Implicitly dynamic via getServerSession() in the markAlertsSeen
+// child component path.
 
 export default async function AlertsPage() {
   const now = new Date();

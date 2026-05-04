@@ -5,7 +5,7 @@ import { formatDate, formatRelative } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
 import { isHealthNoteMeaningful } from '@/lib/health-notes';
 
-export const dynamic = 'force-dynamic';
+// Auth check (getServerSession in the layout) keeps this page dynamic.
 
 const KINDS = {
   calls:    { title: 'Calls today', sub: 'Follow-ups due', empty: 'Nobody to chase right now.' },

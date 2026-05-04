@@ -6,9 +6,9 @@ import { fullName, formatDate, formatRelative, formatRupees } from '@/lib/format
 import { istTodayWindow } from '@/lib/today-ist';
 import { isHealthNoteMeaningful } from '@/lib/health-notes';
 
-// Always render fresh — no cache. Dashboard counts must reflect the
-// state right now, not 30s ago. Accelerate keeps the DB roundtrip fast.
-export const dynamic = 'force-dynamic';
+// Page reads getServerSession() + the per-user lastSeen columns, so
+// Next.js auto-marks it dynamic. No need for an explicit force-dynamic
+// override — the per-user reads naturally bypass the static cache.
 
 const MODULES = [
   { href: '/admin/alerts',      label: 'Alerts',      sub: 'Calls · Trials · Health', tone: 'rust',     emoji: '⏻' },
