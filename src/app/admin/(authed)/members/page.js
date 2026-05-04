@@ -85,7 +85,7 @@ export default async function MembersPage({ searchParams }) {
                 <th>Status</th>
                 <th>Skill</th>
                 <th>Disciplines</th>
-                <th>Current plan</th>
+                <th>Current membership</th>
                 <th>Joined</th>
               </tr>
             </thead>

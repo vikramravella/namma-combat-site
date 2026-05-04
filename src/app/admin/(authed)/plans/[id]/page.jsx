@@ -19,7 +19,7 @@ export default async function PlanDetailPage({ params }) {
     <>
       <div className="adm-page-header">
         <div>
-          <p className="prv-eyebrow"><Link href="/admin/plans" className="prv-back">← Plans</Link></p>
+          <p className="prv-eyebrow"><Link href="/admin/plans" className="prv-back">← Memberships</Link></p>
           <h1 className="adm-page-title">{plan.tier} {plan.cycle}</h1>
           <p className="adm-page-subtitle">
             <span className={`prv-stage prv-stage-${status.tone}`}><span className="prv-stage-dot" />{status.label}</span>

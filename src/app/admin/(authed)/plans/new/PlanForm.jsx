@@ -174,13 +174,13 @@ export function PlanForm({ member, types }) {
 
       <div className="adm-card">
         <h2 className="adm-card-title">Notes</h2>
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="adm-textarea" rows={3} placeholder="Any context worth keeping with this plan." />
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="adm-textarea" rows={3} placeholder="Any context worth keeping with this membership." />
       </div>
 
       <div className="adm-form-actions">
         <Link href={`/admin/members/${member.id}`} className="adm-btn adm-btn-secondary">Cancel</Link>
         <button type="submit" disabled={isPending} className="adm-btn">
-          {isPending ? 'Creating…' : 'Create plan + receipt'}
+          {isPending ? 'Creating…' : 'Create membership + receipt'}
         </button>
       </div>
     </form>

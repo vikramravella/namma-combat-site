@@ -29,7 +29,7 @@ export function FreezeControls({ plan }) {
   }
 
   function handleEnd() {
-    if (!confirm('End freeze early? Plan resumes today.')) return;
+    if (!confirm('End freeze early? Membership resumes today.')) return;
     startTransition(async () => {
       await endFreeze(plan.id);
       router.refresh();

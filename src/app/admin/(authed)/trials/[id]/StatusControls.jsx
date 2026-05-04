@@ -74,7 +74,7 @@ export function ConvertControl({ trial }) {
 
   function handleConvert() {
     setError('');
-    if (!confirm('Convert this trial to a member? You\'ll be sent to the New Plan page next.')) return;
+    if (!confirm('Convert this trial to a member? You\'ll be sent to the New Membership page next.')) return;
     const fd = new FormData();
     fd.set('primaryDiscipline', trial.discipline);
     startTransition(async () => {
@@ -91,7 +91,7 @@ export function ConvertControl({ trial }) {
     <>
       {error && <p className="adm-error">{error}</p>}
       <button type="button" onClick={handleConvert} disabled={isPending} className="adm-btn" style={{ width: '100%' }}>
-        {isPending ? 'Converting…' : 'Convert to member → create plan'}
+        {isPending ? 'Converting…' : 'Convert to member → create membership'}
       </button>
       <p className="adm-help" style={{ marginTop: 8 }}>Creates a Member record, links from this Trial + Inquiry, and opens the new membership form.</p>
     </>
