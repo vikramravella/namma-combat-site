@@ -69,10 +69,9 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
 
       <div className="rcpt-doc">
         <div className="rcpt-paper">
-          {/* Wordmark header — legal name first, address below */}
+          {/* Wordmark header */}
           <div className="rcpt-wordmark">
             <img src="/logo.svg" alt="Namma Combat" className="rcpt-wordmark-logo" />
-            <p className="rcpt-wordmark-legal">{VENDOR.legalName}</p>
             <p className="rcpt-wordmark-address">{VENDOR.address}</p>
             <div className="rcpt-wordmark-rule" />
           </div>
