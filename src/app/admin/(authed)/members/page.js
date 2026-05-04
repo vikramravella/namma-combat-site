@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { fullName, formatDate, formatRupees } from '@/lib/format';
 import { MEMBER_STATUSES, SKILL_LEVELS, TIERS, CYCLES, stageMeta } from '@/lib/constants';
-import { SortChips, sortToOrderBy } from '@/components/SortChips';
 import { ChipLink } from '@/components/ChipLink';
 
 export const revalidate = 10;
@@ -58,7 +57,9 @@ export default async function MembersPage({ searchParams }) {
   const [rows, allCount, byStatus] = await Promise.all([
     db.member.findMany({
       where,
-      orderBy: sortToOrderBy(sp?.sort),
+      // Newest entries first, always. The list is short enough that a
+      // fixed createdAt ordering is more useful than a sort toggle.
+      orderBy: { createdAt: 'desc' },
       take: 200,
       include: { plans: { where: { status: { in: ['active', 'on_freeze'] } }, take: 1, orderBy: { endDate: 'desc' } } },
     }),
@@ -75,6 +76,7 @@ export default async function MembersPage({ searchParams }) {
           <h1 className="adm-page-title">Members</h1>
           <p className="adm-page-subtitle">{rows.length === allCount ? `${allCount} ${allCount === 1 ? 'member' : 'members'}` : `${rows.length} of ${allCount} matching`}</p>
         </div>
+        <Link href="/admin/members/new" className="adm-btn">+ Quick add (backdated)</Link>
       </div>
 
       <div className="prv-chips">
@@ -84,7 +86,6 @@ export default async function MembersPage({ searchParams }) {
         ))}
       </div>
 
-      <SortChips sort={sp?.sort || 'modified'} sp={sp} />
       <div className="prv-table-wrap">
         {rows.length === 0 ? (
           <div className="prv-empty"><p>{allCount === 0 ? 'No members yet — they appear after a trial converts.' : 'No members match these filters.'}</p></div>
