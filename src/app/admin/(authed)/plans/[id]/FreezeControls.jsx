@@ -8,10 +8,30 @@ export function FreezeControls({ plan }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
-  const [start, setStart] = useState(addDays(7));
-  const [end, setEnd] = useState(addDays(14));
+  const [start, setStart] = useState(addDays(0));
+  const [end, setEnd] = useState(addDays(7));
+  const [days, setDays] = useState('7');
   const [reason, setReason] = useState('');
   const [medical, setMedical] = useState(false);
+
+  // Two-way sync between the days input and the end date — staff can
+  // type either, the other auto-fills.
+  function handleStartChange(newStart) {
+    setStart(newStart);
+    if (days) setEnd(addToDate(newStart, Number(days) || 0));
+  }
+  function handleDaysChange(v) {
+    setDays(v);
+    const n = Number(v);
+    if (Number.isFinite(n) && n > 0 && start) setEnd(addToDate(start, n));
+  }
+  function handleEndChange(newEnd) {
+    setEnd(newEnd);
+    if (start && newEnd) {
+      const d = Math.ceil((new Date(newEnd) - new Date(start)) / (1000 * 60 * 60 * 24));
+      if (d > 0) setDays(String(d));
+    }
+  }
 
   function handleFreeze(e) {
     e.preventDefault();
@@ -67,20 +87,36 @@ export function FreezeControls({ plan }) {
       <div className="adm-form-row">
         <div className="adm-field">
           <label className="adm-label">Freeze from</label>
-          <DatePicker value={start} onChange={setStart} />
+          <DatePicker value={start} onChange={handleStartChange} />
+        </div>
+        <div className="adm-field">
+          <label className="adm-label">Number of days</label>
+          <input
+            type="number"
+            value={days}
+            onChange={(e) => handleDaysChange(e.target.value)}
+            min="1"
+            max="365"
+            placeholder="e.g. 30"
+            className="adm-input"
+          />
         </div>
         <div className="adm-field">
           <label className="adm-label">Freeze to</label>
-          <DatePicker value={end} onChange={setEnd} />
+          <DatePicker value={end} onChange={handleEndChange} />
         </div>
       </div>
+      <p className="adm-help" style={{ margin: 0 }}>
+        Type either the number of days or the end date — the other auto-fills.
+        Allowance: <strong>{plan.freezeDaysAllowed}</strong> days max ({plan.freezeDaysUsed || 0} used so far).
+      </p>
       <div className="adm-field">
         <label className="adm-label">Reason</label>
         <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Travel, injury, etc." className="adm-input" />
       </div>
       <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
         <input type="checkbox" checked={medical} onChange={(e) => setMedical(e.target.checked)} />
-        Medical exception (bypass cap + minimum + advance-notice rules)
+        Medical exception (bypass freeze cap + minimum-length rule)
       </label>
       <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
         <button type="button" onClick={handleCancel} className="adm-btn adm-btn-danger">Cancel membership</button>
@@ -92,6 +128,13 @@ export function FreezeControls({ plan }) {
 
 function addDays(n) {
   const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+function addToDate(isoDate, n) {
+  if (!isoDate) return '';
+  const d = new Date(isoDate);
   d.setDate(d.getDate() + n);
   return d.toISOString().slice(0, 10);
 }

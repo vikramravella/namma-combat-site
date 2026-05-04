@@ -120,7 +120,6 @@ export const CYCLES = [
 // Freeze policy add-ons (enforced in plan/freeze actions, shown in receipt T&Cs)
 export const FREEZE_POLICY = {
   minDaysPerFreeze: 7,            // a single freeze must be at least this long
-  advanceNoticeDays: 7,           // must request this many days before start of freeze
   medicalExceptionUnlimited: true, // doctor's note → freeze cap doesn't apply
 };
 

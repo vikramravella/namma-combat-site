@@ -186,12 +186,6 @@ export async function freezePlan(planId, formData) {
     return { ok: false, error: `Minimum freeze is ${FREEZE_POLICY.minDaysPerFreeze} days (or use medical exception).` };
   }
 
-  // Advance notice check
-  const noticeMs = (start - new Date()) / (1000 * 60 * 60 * 24);
-  if (!medicalException && noticeMs < FREEZE_POLICY.advanceNoticeDays) {
-    return { ok: false, error: `Freezes need ${FREEZE_POLICY.advanceNoticeDays} days advance notice (or use medical exception).` };
-  }
-
   try {
     const plan = await db.plan.findUnique({ where: { id: planId } });
     if (!plan) return { ok: false, error: 'Membership not found' };
