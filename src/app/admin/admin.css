@@ -111,7 +111,12 @@
 }
 @media not print {
   @media (prefers-reduced-motion: no-preference) {
-    .adm-main > * {
+    /* Document-style views (receipt invoice, payments admin block under
+       it) opt out of the navigation fade — the receipt is a "document"
+       not a "page" and Safari's PDF rasterizer can otherwise catch a
+       half-faded frame and save a blank invoice. The surrounding chrome
+       (page header) still fades in; it's hidden in print regardless. */
+    .adm-main > *:not(.rcpt-doc):not(.rcpt-admin-only) {
       animation: admPageIn 0.32s ease-out both;
     }
   }
