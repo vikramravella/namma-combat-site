@@ -3290,15 +3290,18 @@ textarea.prv-form-input { min-height: 60px; resize: vertical; }
 .dash-feed-who { font-weight: 500; color: var(--text, #2C2318); }
 .dash-feed-detail { color: var(--text-light); }
 
-/* Reschedule chip — sits in the trial status row but visually it's an action,
-   not a state. Gold accent + arrow icon set it apart from the status pills. */
-.prv-chip-action {
-  border-color: var(--gold, #E3C768) !important;
-  color: var(--rust, #9A3520) !important;
+/* Reschedule chip — sits in the trial status row but visually it's an
+   action, not a state. Gold accent + arrow icon set it apart from the
+   status pills. Higher specificity (.prv-chips .prv-chip-action) avoids
+   needing !important to override the base .prv-chip cascade. */
+.prv-chips .prv-chip-action {
+  border-color: var(--gold, #E3C768);
+  color: var(--rust, #9A3520);
   font-weight: 600;
 }
-.prv-chip-action:hover {
-  background: rgba(227, 199, 104, 0.12) !important;
+.prv-chips .prv-chip-action:hover {
+  background: rgba(227, 199, 104, 0.12);
+  border-color: var(--gold, #E3C768);
 }
 
 /* ─── Header search (Spotlight-style icon → modal) ─── */
