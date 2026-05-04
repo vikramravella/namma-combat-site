@@ -7,11 +7,6 @@ const nextConfig = {
   // where the rhel-openssl-3.0.x engine binary is generated during postinstall.
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client', '.prisma/client'],
-    // Disable Next.js's default 30s client-side router cache so every
-    // soft navigation refetches dynamic data. Vinod expects instant
-    // updates after creating/editing — extra network is acceptable for
-    // a small admin tool.
-    staleTimes: { dynamic: 0, static: 180 },
   },
 };
 
