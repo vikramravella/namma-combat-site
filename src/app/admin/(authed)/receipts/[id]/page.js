@@ -110,7 +110,7 @@ export default async function ReceiptDetailPage({ params, searchParams }) {
               <div><div className="rcpt-plan-key">Tier</div><div className="rcpt-plan-val">{r.plan.tier}</div></div>
               <div><div className="rcpt-plan-key">Billing cycle</div><div className="rcpt-plan-val">{r.plan.cycle}</div></div>
               <div><div className="rcpt-plan-key">Floor access</div><div className="rcpt-plan-val">{r.plan.floorAccess}</div></div>
-              <div><div className="rcpt-plan-key">SAC</div><div className="rcpt-plan-val"><span className="adm-mono">{r.vendorSac}</span> <span className="rcpt-plan-sac-desc">· {VENDOR.sacDescription}</span></div></div>
+              <div><div className="rcpt-plan-key">SAC</div><div className="rcpt-plan-val adm-mono">{r.vendorSac}</div></div>
               <div><div className="rcpt-plan-key">Start date</div><div className="rcpt-plan-val">{formatDate(r.plan.startDate)}</div></div>
               <div><div className="rcpt-plan-key">End date</div><div className="rcpt-plan-val">{formatDate(r.plan.endDate)}</div></div>
               <div><div className="rcpt-plan-key">Duration</div><div className="rcpt-plan-val">{r.plan.durationDays} days{r.plan.bonusDays > 0 ? ` (+${r.plan.bonusDays})` : ''}</div></div>
