@@ -1,5 +1,5 @@
 'use client';
-import { useState, useTransition, useMemo } from 'react';
+import { useState, useTransition, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { recordPayment } from '../actions';
 import { PAYMENT_METHODS } from '@/lib/constants';
@@ -10,6 +10,11 @@ export function PaymentForm({ receipt, balance }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
+  // Re-entry guard: useTransition's isPending only flips on the NEXT render,
+  // so two clicks within the same event microtask can both fire recordPayment
+  // and create duplicate Payment rows. The ref blocks a second submit
+  // synchronously regardless of when isPending has updated.
+  const submittingRef = useRef(false);
   const [method, setMethod] = useState('upi');
   const [reference, setReference] = useState('');
   const [amount, setAmount] = useState('');
@@ -38,6 +43,8 @@ export function PaymentForm({ receipt, balance }) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setError('');
     const fd = new FormData();
     fd.set('method', method);
@@ -47,9 +54,13 @@ export function PaymentForm({ receipt, balance }) {
     if (nextDate) fd.set('nextAgreedDate', nextDate);
     if (nextNote) fd.set('nextAgreedNote', nextNote);
     startTransition(async () => {
-      const r = await recordPayment(receipt.id, fd);
-      if (r?.ok === false) setError(r.error);
-      else router.refresh();
+      try {
+        const r = await recordPayment(receipt.id, fd);
+        if (r?.ok === false) setError(r.error);
+        else router.refresh();
+      } finally {
+        submittingRef.current = false;
+      }
     });
   }
 

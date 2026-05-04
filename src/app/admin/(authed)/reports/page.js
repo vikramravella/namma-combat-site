@@ -31,9 +31,14 @@ export default async function ReportsPage({ searchParams }) {
     { disciplines: { contains: discipline } },
   ];
 
-  const paymentWhere = { receivedAt: { gte: since } };
+  // Voided receipts have their payments excluded everywhere — voiding
+  // cancels the transaction, so it must not show up in revenue counts.
+  const paymentWhere = {
+    receivedAt: { gte: since },
+    receipt: { status: { not: 'void' } },
+  };
   if (tier || gender || discipline) {
-    paymentWhere.receipt = { plan: {} };
+    paymentWhere.receipt = { ...paymentWhere.receipt, plan: {} };
     if (tier) paymentWhere.receipt.plan.tier = tier;
     if (gender || discipline) {
       paymentWhere.receipt.plan.member = {};
@@ -51,7 +56,10 @@ export default async function ReportsPage({ searchParams }) {
   // small enough that the in-memory aggregate is cheap.
   const seriesStart = new Date(); seriesStart.setHours(0, 0, 0, 0); seriesStart.setMonth(seriesStart.getMonth() - 11); seriesStart.setDate(1);
   const monthlyRowsP = db.payment.findMany({
-    where: { receivedAt: { gte: seriesStart } },
+    where: {
+      receivedAt: { gte: seriesStart },
+      receipt: { status: { not: 'void' } },
+    },
     select: { receivedAt: true, amountPaise: true },
   });
 
@@ -64,7 +72,10 @@ export default async function ReportsPage({ searchParams }) {
   }
   const drillPaymentsP = drillStart
     ? db.payment.findMany({
-        where: { receivedAt: { gte: drillStart, lt: drillEnd } },
+        where: {
+          receivedAt: { gte: drillStart, lt: drillEnd },
+          receipt: { status: { not: 'void' } },
+        },
         orderBy: { receivedAt: 'desc' },
         include: {
           receipt: {
@@ -79,7 +90,7 @@ export default async function ReportsPage({ searchParams }) {
   const [periodPayments, todayPayments, memberCount, byStatus, byGender, bySkill,
          periodTrials, periodConversions, partialReceipts, monthlyRows, drillPayments] = await Promise.all([
     db.payment.findMany({ where: paymentWhere }),
-    db.payment.findMany({ where: { receivedAt: { gte: dayStart, lt: dayEnd } } }),
+    db.payment.findMany({ where: { receivedAt: { gte: dayStart, lt: dayEnd }, receipt: { status: { not: 'void' } } } }),
     db.member.count({ where: memberFilter }),
     db.member.groupBy({ by: ['status'], where: memberFilter, _count: { _all: true } }),
     db.member.groupBy({ by: ['gender'], where: memberFilter, _count: { _all: true } }),
