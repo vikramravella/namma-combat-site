@@ -1,9 +1,10 @@
 'use client';
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { recordPayment } from '../actions';
 import { PAYMENT_METHODS } from '@/lib/constants';
 import { DatePicker } from '@/components/DatePicker';
+import { formatRupees } from '@/lib/format';
 
 export function PaymentForm({ receipt, balance }) {
   const router = useRouter();
@@ -12,9 +13,18 @@ export function PaymentForm({ receipt, balance }) {
   const [method, setMethod] = useState('upi');
   const [reference, setReference] = useState('');
   const [amount, setAmount] = useState('');
-  const [receivedAt, setReceivedAt] = useState(new Date().toISOString().slice(0, 10));
+  // Default the payment date to the receipt's issue date (which equals the
+  // membership start date in our model). Most payments are same-day; staff
+  // overrides only for the rare prepaid/postpaid case.
+  const [receivedAt, setReceivedAt] = useState(toIsoDate(receipt.issueDate));
   const [nextDate, setNextDate] = useState('');
   const [nextNote, setNextNote] = useState('');
+
+  const balanceRupees = balance / 100;
+  const paidInFull = useMemo(() => {
+    if (!amount || balance <= 0) return false;
+    return Math.round(Number(amount) * 100) === balance;
+  }, [amount, balance]);
 
   if (balance <= 0 || receipt.status === 'void') {
     return (
@@ -41,7 +51,7 @@ export function PaymentForm({ receipt, balance }) {
     });
   }
 
-  const partialAfter = Number(amount) > 0 && Number(amount) < balance / 100;
+  const partialAfter = Number(amount) > 0 && Number(amount) < balanceRupees;
 
   return (
     <form onSubmit={handleSubmit} className="adm-form">
@@ -58,15 +68,24 @@ export function PaymentForm({ receipt, balance }) {
           <input value={reference} onChange={(e) => setReference(e.target.value)} placeholder="UPI ref, txn id, cheque no…" className="adm-input adm-mono" />
         </div>
       </div>
+      <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, marginBottom: 0 }}>
+        <input
+          type="checkbox"
+          checked={paidInFull}
+          onChange={(e) => setAmount(e.target.checked ? balanceRupees.toFixed(2) : '')}
+        />
+        <span>Paid in full ({formatRupees(balance)})</span>
+      </label>
       <div className="adm-form-row">
         <div className="adm-field">
           <label className="adm-label">Amount (₹)</label>
-          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} max={(balance / 100).toFixed(2)} step="0.01" placeholder={(balance / 100).toFixed(2)} className="adm-input" />
-          <span className="adm-help">Balance: ₹{(balance / 100).toLocaleString('en-IN')} — enter the amount actually received.</span>
+          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} max={balanceRupees.toFixed(2)} step="0.01" placeholder={balanceRupees.toFixed(2)} className="adm-input" />
+          <span className="adm-help">Tick &ldquo;Paid in full&rdquo; above, or type a partial amount.</span>
         </div>
         <div className="adm-field">
           <label className="adm-label">Received on</label>
           <DatePicker value={receivedAt} onChange={setReceivedAt} />
+          <span className="adm-help">Defaults to the membership start date.</span>
         </div>
       </div>
 
@@ -90,4 +109,9 @@ export function PaymentForm({ receipt, balance }) {
       </div>
     </form>
   );
+}
+
+function toIsoDate(d) {
+  if (!d) return new Date().toISOString().slice(0, 10);
+  return new Date(d).toISOString().slice(0, 10);
 }
