@@ -20,7 +20,6 @@ export default async function MembersPage({ searchParams }) {
   const q = (sp?.q || '').trim();
 
   const expiring = sp?.expiring === '1';
-  const noMembership = sp?.no_membership === '1';
 
   const planFilter = (tier || cycle) ? {
     some: {
@@ -40,12 +39,6 @@ export default async function MembersPage({ searchParams }) {
     where.plans = {
       some: { status: { in: ['active', 'on_freeze'] }, endDate: { gte: now, lte: in14 } },
     };
-  }
-  if (noMembership) {
-    // Members who have NEVER had a plan attached to them (lapsed members
-    // still have the historical plan rows, so they're excluded from this
-    // filter). Useful for one-off cleanup of test/orphan member rows.
-    where.plans = { none: {} };
   }
   if (q) {
     where.OR = [
@@ -85,11 +78,10 @@ export default async function MembersPage({ searchParams }) {
       </div>
 
       <div className="prv-chips">
-        <ChipLink href="?" on={!status && !noMembership && !expiring} label="All" count={allCount} />
+        <ChipLink href="?" on={!status && !expiring} label="All" count={allCount} />
         {MEMBER_STATUSES.map((s) => (
           <ChipLink key={s.key} href={`?status=${s.key}`} on={status === s.key} label={s.label} count={statusCounts[s.key] ?? 0} />
         ))}
-        <ChipLink href="?no_membership=1" on={noMembership} label="No membership" />
       </div>
 
       <SortChips sort={sp?.sort || 'modified'} sp={sp} />
