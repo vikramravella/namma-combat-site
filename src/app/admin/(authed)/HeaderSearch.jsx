@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { searchPeople } from './search/actions';
+import { useDebouncedValue } from '@/lib/use-debounced-value';
 
 // Spotlight-style search: tiny magnifying-glass icon in the header.
 // Click (or ⌘K / CtrlK) opens a centered modal that filters across all
@@ -39,19 +40,17 @@ export function HeaderSearch() {
     }
   }, [open]);
 
-  // Debounced lookup
+  // Debounced lookup driven by a shared hook — no raw setTimeout shuffling.
+  const debouncedQ = useDebouncedValue(q, 180);
   useEffect(() => {
     if (!open) return;
-    if (q.trim().length < 2) { setResults([]); return; }
-    const t = setTimeout(() => {
-      startTransition(async () => {
-        const r = await searchPeople(q);
-        setResults(r);
-        setHighlight(0);
-      });
-    }, 180);
-    return () => clearTimeout(t);
-  }, [q, open]);
+    if (debouncedQ.trim().length < 2) { setResults([]); return; }
+    startTransition(async () => {
+      const r = await searchPeople(debouncedQ);
+      setResults(r);
+      setHighlight(0);
+    });
+  }, [debouncedQ, open]);
 
   function handleKey(e) {
     if (results.length === 0) return;

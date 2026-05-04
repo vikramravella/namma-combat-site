@@ -10,16 +10,23 @@ export function HeaderHistory() {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
-  const [events, setEvents] = useState(null); // null = not yet loaded
+  const [events, setEvents] = useState(null);
+  const [fetchedAt, setFetchedAt] = useState(0);
 
+  // Cache events for 30s — reopening the modal within the window reuses
+  // the existing list instead of refetching. Mutations elsewhere in the
+  // admin still flow through revalidatePath so the dashboard's other
+  // surfaces stay current; for the History panel a 30s window is fine.
   useEffect(() => {
     if (!open) return;
-    if (events !== null) return;
+    const isFresh = events !== null && (Date.now() - fetchedAt) < 30_000;
+    if (isFresh) return;
     startTransition(async () => {
       const r = await fetchHistory();
       setEvents(r);
+      setFetchedAt(Date.now());
     });
-  }, [open, events]);
+  }, [open, events, fetchedAt]);
 
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape') setOpen(false); }
