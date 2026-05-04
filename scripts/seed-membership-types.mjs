@@ -26,6 +26,33 @@ const CYCLES = [
 
 const TIER_ORDER = { Silver: 1, Student: 2, Gold: 3, Platinum: 4 };
 
+// Day-pass + drop-in catalog entries. Pricing source: nammacombat.com FAQ
+// (₹788 regular / ₹1,050 elite 90-min). Pre-GST = incl / 1.05 rounded.
+const DAY_PASSES = [
+  {
+    name: 'Day Pass — Regular',
+    tier: 'Day Pass',
+    cycle: 'Single Day',
+    durationDays: 1,
+    freezeDaysAllowed: 0,
+    basePriceRupees: 750,
+    floorAccess: 'Both floors',
+    notes: 'Single class drop-in. ₹788 incl GST. For travelers or members from other academies trying us out.',
+    sortOrder: 900,
+  },
+  {
+    name: 'Day Pass — Elite 90-min',
+    tier: 'Day Pass',
+    cycle: 'Elite 90min',
+    durationDays: 1,
+    freezeDaysAllowed: 0,
+    basePriceRupees: 1000,
+    floorAccess: 'Both floors',
+    notes: 'Single 90-minute elite class drop-in. ₹1,050 incl GST.',
+    sortOrder: 901,
+  },
+];
+
 const db = new PrismaClient();
 let upserted = 0;
 for (const t of TIERS) {
@@ -58,6 +85,15 @@ for (const t of TIERS) {
     });
     upserted++;
   }
+}
+// Day passes: create if missing, leave alone if present. Lets staff
+// adjust the price / notes via the admin UI later without the next
+// deploy overwriting their edits.
+for (const dp of DAY_PASSES) {
+  const existing = await db.membershipType.findUnique({ where: { name: dp.name } });
+  if (existing) continue;
+  await db.membershipType.create({ data: { ...dp, active: true } });
+  upserted++;
 }
 console.log(`Seeded/updated ${upserted} membership types.`);
 await db.$disconnect();
