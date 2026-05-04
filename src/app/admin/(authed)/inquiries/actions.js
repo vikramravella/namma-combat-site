@@ -78,6 +78,12 @@ export async function createInquiry(formData) {
     await logAudit({ actorUserId: session.user.id, action: 'create', entity: 'Inquiry', entityId: created.id, after: created });
     revalidatePath('/admin');
     revalidatePath('/admin/inquiries');
+    // If staff picked stage = "Interested in trial" on the create form,
+    // skip the inquiry detail page and drop them straight on the trial
+    // scheduler — same shortcut updateInquiry already does on edit.
+    if (data.stage === 'trial_booked') {
+      redirect(`/admin/trials/new?inquiryId=${created.id}`);
+    }
     redirect(`/admin/inquiries/${created.id}?created=1`);
   } catch (err) {
     if (err?.digest?.startsWith('NEXT_REDIRECT')) throw err;
