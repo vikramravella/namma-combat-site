@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { fullName, formatDate, formatRelative } from '@/lib/format';
 import { TRIAL_STATUSES, TRIAL_OUTCOMES, stageMeta } from '@/lib/constants';
 import { StatusControls, ConvertControl } from './StatusControls';
+import { DeleteTrialButton } from './DeleteTrialButton';
 import { TrialFollowUpForm } from './TrialFollowUpForm';
 import { Booker } from '../new/Booker';
 
@@ -77,6 +78,13 @@ export default async function TrialDetailPage({ params, searchParams }) {
           <div className="adm-card">
             <h2 className="adm-card-title">Status & outcome</h2>
             <StatusControls trial={trial} />
+            <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
+              <DeleteTrialButton
+                trialId={trial.id}
+                summary={`${trial.discipline} · ${formatDate(trial.scheduledDate)} ${trial.scheduledTime}`}
+                hasConvertedMember={!!trial.convertedMember}
+              />
+            </div>
           </div>
 
           {trial.outcome === 'joined' && !trial.convertedMember && (

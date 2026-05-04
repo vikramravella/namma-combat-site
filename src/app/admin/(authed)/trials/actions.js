@@ -42,6 +42,30 @@ export async function scheduleTrial(formData) {
     ? new Date(parsed.data.scheduledDate)
     : nextOccurrence(dayIndex);
 
+  // Block scheduling if the inquiry's phone+name matches an existing
+  // Member. This is what produced Sethu / Richa-style duplicates: a
+  // Zoho-imported Member plus a fresh Inquiry+Trial for the same person.
+  // The trial sits unconverted forever because the matching Member is
+  // already taking the "lifecycle" slot. Route staff to the member page
+  // and let them add a fresh membership there instead.
+  const inquiry = await db.inquiry.findUnique({ where: { id: inquiryId } });
+  if (!inquiry) return { ok: false, error: 'Inquiry not found' };
+  const existingMember = await db.member.findFirst({
+    where: {
+      phone: inquiry.phone,
+      firstName: { equals: inquiry.firstName, mode: 'insensitive' },
+      lastName: { equals: inquiry.lastName, mode: 'insensitive' },
+    },
+    select: { id: true, firstName: true, lastName: true },
+  });
+  if (existingMember) {
+    return {
+      ok: false,
+      error: `${existingMember.firstName} ${existingMember.lastName} is already a member. Open their member page and click "+ Add membership" instead of scheduling a new trial.`,
+      memberId: existingMember.id,
+    };
+  }
+
   const coachName = coachFor(area, discipline, time);
   let coachId = null;
   if (coachName) {
@@ -455,5 +479,40 @@ export async function logTrialFollowUp(id, formData) {
   } catch (err) {
     console.error('logTrialFollowUp failed', err);
     return { ok: false, error: 'Could not log.' };
+  }
+}
+
+// Removes a trial record entirely. Used for cleanup of duplicates or
+// trials created by mistake. The Trial.events / HealthDeclaration /
+// HealthFormToken cascade automatically (onDelete: Cascade FKs).
+//
+// If the trial is linked to a converted Member, that Member is left
+// alone — it has its own life now, possibly with plans + receipts. We
+// just sever the back-pointer by removing the trial.
+//
+// On the inquiry side, deleting the trial flips the inquiry's "trials"
+// relation, which means /admin/inquiries (the list filtered to
+// trials.none) will start showing it again. The inquiry's stage stays
+// as-is (staff can re-edit if they want to move it).
+export async function deleteTrial(id) {
+  const session = await requireSession();
+  try {
+    const before = await db.trial.findUnique({
+      where: { id },
+      include: { inquiry: { select: { id: true } } },
+    });
+    if (!before) return { ok: false, error: 'Trial not found' };
+
+    await db.trial.delete({ where: { id } });
+    await logAudit({ actorUserId: session.user.id, action: 'delete', entity: 'Trial', entityId: id, before });
+
+    revalidatePath('/admin');
+    revalidatePath('/admin/trials');
+    revalidatePath('/admin/inquiries');
+    if (before.inquiry?.id) revalidatePath(`/admin/inquiries/${before.inquiry.id}`);
+    return { ok: true };
+  } catch (err) {
+    console.error('deleteTrial failed', err);
+    return { ok: false, error: 'Could not delete trial.' };
   }
 }
