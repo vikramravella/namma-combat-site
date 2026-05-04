@@ -5,6 +5,12 @@ import { istTodayWindow } from '@/lib/today-ist';
 import { hasMeaningfulHealthData } from '@/lib/health-notes';
 import { MarkAlertsSeenOnMount } from './MarkAlertsSeenOnMount';
 
+// Alerts is an aggregator across Members + Trials + Inquiries. Every
+// mutation in those modules has to bust this page's cache, which is
+// fragile — easier to just render dynamically on every visit. Low
+// traffic, cheap query.
+export const dynamic = 'force-dynamic';
+
 // Implicitly dynamic via getServerSession() in the markAlertsSeen
 // child component path.
 

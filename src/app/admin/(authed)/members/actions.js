@@ -120,9 +120,14 @@ export async function updateMember(id, formData) {
     });
 
     await logAudit({ actorUserId: session.user.id, action: 'update', entity: 'Member', entityId: id, before, after: updated });
+    revalidatePath('/admin');
     revalidatePath('/admin/members');
     revalidatePath(`/admin/members/${id}`);
     revalidatePath('/admin/receipts');
+    revalidatePath('/admin/alerts');
+    revalidatePath('/admin/alerts/health');
+    revalidatePath('/admin/alerts/smokers');
+    revalidatePath('/admin/alerts/media');
     return { ok: true };
   } catch (err) {
     if (err?.code === 'P2002') return { ok: false, error: 'Another member has this phone.' };
@@ -186,6 +191,13 @@ export async function deleteMember(id) {
     revalidatePath('/admin/members');
     revalidatePath('/admin/trials');
     revalidatePath('/admin/inquiries');
+    revalidatePath('/admin/alerts');
+    revalidatePath('/admin/alerts/health');
+    revalidatePath('/admin/alerts/smokers');
+    revalidatePath('/admin/alerts/media');
+    revalidatePath('/admin/alerts/calls');
+    revalidatePath('/admin/alerts/trials');
+    revalidatePath('/admin/alerts/convert');
     redirect('/admin/members');
   } catch (err) {
     if (err?.digest?.startsWith('NEXT_REDIRECT')) throw err;

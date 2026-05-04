@@ -5,6 +5,10 @@ import { formatDate, formatRelative } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
 import { hasMeaningfulHealthData, structuredHealthSummary } from '@/lib/health-notes';
 
+// Alerts drilldown reads live aggregated data from Members / Trials /
+// Inquiries. Render dynamic so deletions and updates appear immediately.
+export const dynamic = 'force-dynamic';
+
 // Auth check (getServerSession in the layout) keeps this page dynamic.
 
 const KINDS = {
