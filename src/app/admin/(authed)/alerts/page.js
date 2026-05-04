@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { DashFolder } from '../DashFolder';
 import { istTodayWindow } from '@/lib/today-ist';
-import { isHealthNoteMeaningful } from '@/lib/health-notes';
+import { hasMeaningfulHealthData } from '@/lib/health-notes';
 import { MarkAlertsSeenOnMount } from './MarkAlertsSeenOnMount';
 
 // Implicitly dynamic via getServerSession() in the markAlertsSeen
@@ -36,9 +36,20 @@ export default async function AlertsPage() {
     // health conditions" etc.) need a JS-side filter to match the
     // /admin/alerts/health list. Cheap (≤ ~150 rows).
     db.member.findMany({
-      where: { OR: [{ criticalHealthFlag: true }, { medicalNotes: { not: null } }] },
-      select: { id: true, criticalHealthFlag: true, medicalNotes: true },
-    }).then((rows) => rows.filter((m) => m.criticalHealthFlag || isHealthNoteMeaningful(m.medicalNotes)).length),
+      where: {
+        OR: [
+          { criticalHealthFlag: true },
+          { medicalConditions: { not: null } },
+          { injuries: { not: null } },
+          { medications: { not: null } },
+          { medicalNotes: { not: null } },
+        ],
+      },
+      select: {
+        id: true, criticalHealthFlag: true,
+        medicalConditions: true, injuries: true, medications: true, medicalNotes: true,
+      },
+    }).then((rows) => rows.filter(hasMeaningfulHealthData).length),
     db.member.count({ where: { smokes: true } }),
     db.member.count({ where: { mediaConsent: false } }),
   ]);

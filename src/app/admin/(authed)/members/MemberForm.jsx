@@ -101,7 +101,10 @@ export function MemberForm({ member, action, deleteAction }) {
       <div className="adm-card">
         <h2 className="adm-card-title">Health & status</h2>
         <div className="adm-form">
-          <Textarea label="Medical notes" name="medicalNotes" defaultValue={member.medicalNotes} placeholder="Allergies, conditions, prior injuries…" />
+          <Textarea label="Medical conditions" name="medicalConditions" defaultValue={member.medicalConditions} placeholder="Asthma, diabetes, BP, heart, allergies — leave blank if none" />
+          <Textarea label="Injuries (past or current)" name="injuries" defaultValue={member.injuries} placeholder="Old fractures, surgeries, joint issues — leave blank if none" />
+          <Textarea label="Medications" name="medications" defaultValue={member.medications} placeholder="Currently on any medication? — leave blank if none" />
+          <Textarea label="Additional staff notes" name="medicalNotes" defaultValue={member.medicalNotes} placeholder="Coach observations not covered above (e.g. limp seen during May trial)" />
           <div className="adm-form-row">
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
               <input type="checkbox" name="criticalHealthFlag" defaultChecked={member.criticalHealthFlag} value="true" />

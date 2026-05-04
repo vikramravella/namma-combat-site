@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { formatDate, formatRelative } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
-import { isHealthNoteMeaningful } from '@/lib/health-notes';
+import { hasMeaningfulHealthData, structuredHealthSummary } from '@/lib/health-notes';
 
 // Auth check (getServerSession in the layout) keeps this page dynamic.
 
@@ -53,7 +53,7 @@ function headers(kind) {
   if (kind === 'calls') return <><th>Name</th><th>Phone</th><th>Stage</th><th>Attempts</th><th>Due</th></>;
   if (kind === 'trials') return <><th>Name</th><th>Time</th><th>Discipline</th><th>Status</th><th>Form</th></>;
   if (kind === 'convert') return <><th>Name</th><th>Trial date</th><th>Discipline</th><th>Status</th><th>Outcome</th></>;
-  if (kind === 'health') return <><th>Name</th><th>Critical</th><th>Notes</th></>;
+  if (kind === 'health') return <><th>Name</th><th>Critical</th><th>Conditions</th><th>Injuries</th><th>Medications</th><th>Notes</th></>;
   if (kind === 'smokers') return <><th>Name</th><th>Status</th></>;
   if (kind === 'media') return <><th>Name</th><th>Status</th></>;
 }
@@ -93,11 +93,15 @@ function row(kind, it) {
     );
   }
   if (kind === 'health') {
+    const cell = (v) => v ? <span className="prv-muted" style={{ whiteSpace: 'pre-wrap' }}>{v}</span> : <span className="adm-muted">—</span>;
     return (
       <tr key={it.id}>
         <td><Link href={`/admin/members/${it.id}`} className="prv-name">{it.firstName} {it.lastName}</Link></td>
         <td>{it.criticalHealthFlag ? <span style={{ color: 'var(--rust)' }}>⚠ critical</span> : <span className="adm-muted">—</span>}</td>
-        <td className="prv-muted">{it.medicalNotes || '—'}</td>
+        <td>{cell(it.medicalConditions)}</td>
+        <td>{cell(it.injuries)}</td>
+        <td>{cell(it.medications)}</td>
+        <td>{cell(it.medicalNotes)}</td>
       </tr>
     );
   }
@@ -161,11 +165,22 @@ async function fetchItems(kind, now, todayStart, todayEnd) {
   }
   if (kind === 'health') {
     const rows = await db.member.findMany({
-      where: { OR: [{ criticalHealthFlag: true }, { medicalNotes: { not: null } }] },
+      where: {
+        OR: [
+          { criticalHealthFlag: true },
+          { medicalConditions: { not: null } },
+          { injuries: { not: null } },
+          { medications: { not: null } },
+          { medicalNotes: { not: null } },
+        ],
+      },
       orderBy: { joinedAt: 'desc' },
-      select: { id: true, firstName: true, lastName: true, criticalHealthFlag: true, medicalNotes: true },
+      select: {
+        id: true, firstName: true, lastName: true, criticalHealthFlag: true,
+        medicalConditions: true, injuries: true, medications: true, medicalNotes: true,
+      },
     });
-    return rows.filter((m) => m.criticalHealthFlag || isHealthNoteMeaningful(m.medicalNotes));
+    return rows.filter(hasMeaningfulHealthData);
   }
   if (kind === 'smokers') {
     return db.member.findMany({

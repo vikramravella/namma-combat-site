@@ -45,3 +45,28 @@ export function combineHealthNotes(...parts) {
   if (cleaned.length === 0) return null;
   return cleaned.join('\n\n');
 }
+
+// True if a member has ANY meaningful health data across the four fields,
+// or if a coach has explicitly flagged them as critical. Used by the
+// dashboard alerts query and the alerts/[kind]/page list.
+export function hasMeaningfulHealthData(member) {
+  if (!member) return false;
+  if (member.criticalHealthFlag) return true;
+  return (
+    isHealthNoteMeaningful(member.medicalConditions) ||
+    isHealthNoteMeaningful(member.injuries) ||
+    isHealthNoteMeaningful(member.medications) ||
+    isHealthNoteMeaningful(member.medicalNotes)
+  );
+}
+
+// Returns the structured health record as a dict of category → text, with
+// noise filtered out. Empty categories are dropped.
+export function structuredHealthSummary(member) {
+  const out = {};
+  if (isHealthNoteMeaningful(member?.medicalConditions)) out['Medical conditions'] = member.medicalConditions;
+  if (isHealthNoteMeaningful(member?.injuries)) out['Injuries'] = member.injuries;
+  if (isHealthNoteMeaningful(member?.medications)) out['Medications'] = member.medications;
+  if (isHealthNoteMeaningful(member?.medicalNotes)) out['Notes'] = member.medicalNotes;
+  return out;
+}

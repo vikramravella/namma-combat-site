@@ -7,7 +7,7 @@ import { MemberForm } from '../MemberForm';
 import { updateMember, deleteMember } from '../actions';
 import { SkillLevelEditor } from './SkillLevelEditor';
 import { BookAssessment } from './BookAssessment';
-import { isHealthNoteMeaningful } from '@/lib/health-notes';
+import { isHealthNoteMeaningful, hasMeaningfulHealthData, structuredHealthSummary } from '@/lib/health-notes';
 
 export default async function MemberDetailPage({ params }) {
   const { id } = await params;
@@ -189,10 +189,14 @@ export default async function MemberDetailPage({ params }) {
             </div>
           )}
 
-          {member.medicalNotes && (
+          {hasMeaningfulHealthData(member) && (
             <div className="adm-card">
-              <h2 className="adm-card-title">Medical</h2>
-              <p className="prv-notes">{member.medicalNotes}</p>
+              <h2 className="adm-card-title">Medical record</h2>
+              <dl className="prv-defs">
+                {Object.entries(structuredHealthSummary(member)).map(([label, value]) => (
+                  <DefRow key={label} label={label} value={<span style={{ whiteSpace: 'pre-wrap' }}>{value}</span>} />
+                ))}
+              </dl>
             </div>
           )}
 
@@ -223,13 +227,14 @@ function MemberAlerts({ member }) {
       detail: 'Coach attention required before any session.',
     });
   }
-  if (isHealthNoteMeaningful(member.medicalNotes)) {
+  const summary = structuredHealthSummary(member);
+  for (const [label, value] of Object.entries(summary)) {
     items.push({
-      key: 'medical',
+      key: `health-${label}`,
       tone: 'rust',
       icon: '🩺',
-      label: 'Medical notes on file',
-      detail: member.medicalNotes,
+      label,
+      detail: value,
     });
   }
   if (member.mediaConsent === false) {

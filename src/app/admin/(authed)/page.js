@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { fullName, formatDate, formatRelative, formatRupees } from '@/lib/format';
 import { istTodayWindow } from '@/lib/today-ist';
-import { isHealthNoteMeaningful } from '@/lib/health-notes';
+import { hasMeaningfulHealthData, structuredHealthSummary } from '@/lib/health-notes';
 
 // Page reads getServerSession() + the per-user lastSeen columns, so
 // Next.js auto-marks it dynamic. No need for an explicit force-dynamic
@@ -90,17 +90,24 @@ export default async function HomePage() {
         inquiry: { select: { firstName: true, lastName: true, phone: true } },
       },
     }),
-    // 4. Members with critical health flag or medical notes
+    // 4. Members with critical health flag or any structured health record
     db.member.findMany({
       where: {
         OR: [
           { criticalHealthFlag: true },
+          { medicalConditions: { not: null } },
+          { injuries: { not: null } },
+          { medications: { not: null } },
           { medicalNotes: { not: null } },
         ],
       },
       orderBy: { joinedAt: 'desc' },
       take: 10,
-      select: { id: true, firstName: true, lastName: true, criticalHealthFlag: true, medicalNotes: true, joinedAt: true },
+      select: {
+        id: true, firstName: true, lastName: true, joinedAt: true,
+        criticalHealthFlag: true,
+        medicalConditions: true, injuries: true, medications: true, medicalNotes: true,
+      },
     }),
     // 5. Smoker members — coach attention for cardio plan
     db.member.findMany({
@@ -127,7 +134,7 @@ export default async function HomePage() {
     }),
   ]);
 
-  const healthAlertsFiltered = healthAlerts.filter((m) => m.criticalHealthFlag || isHealthNoteMeaningful(m.medicalNotes));
+  const healthAlertsFiltered = healthAlerts.filter(hasMeaningfulHealthData);
 
   // Alerts badge counts items NEW since the last visit to /admin/alerts.
   // The alerts page itself still shows the full live list — this only

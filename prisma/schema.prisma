@@ -220,6 +220,13 @@ model Member {
   emergencyName       String?
   emergencyPhone      String?
   emergencyRelation   String?
+  // Structured health record carried over from the health declaration.
+  // Each is a free-text textarea kept separate so the dashboard alerts
+  // and the coach view can show them by category. medicalNotes stays as
+  // a catch-all for additional staff observations that don't fit above.
+  medicalConditions   String?
+  injuries            String?
+  medications         String?
   medicalNotes        String?
   // Alert flags (drive dashboard alerts)
   criticalHealthFlag  Boolean      @default(false) // serious condition / injury — coach attention
